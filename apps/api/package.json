@@ -26,11 +26,13 @@
     "fastify-plugin": "5.0.1",
     "ioredis": "5.10.1",
     "jose": "6.2.2",
+    "opossum": "9.0.0",
     "pino": "10.3.1",
     "zod": "4.3.6"
   },
   "devDependencies": {
     "@types/node": "latest",
+    "@types/opossum": "^8.1.9",
     "@typescript-eslint/eslint-plugin": "latest",
     "@typescript-eslint/parser": "latest",
     "@vitest/coverage-v8": "latest",
