@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: verifying
-stopped_at: "Completed 03-01: Claude AI translation pipeline — core value prop proven"
-last_updated: "2026-04-15T20:25:28.057Z"
-last_activity: 2026-04-15
+status: executing
+stopped_at: "Completed 01-03: custom-access-token hook ativo + SMTP Resend configurado"
+last_updated: "2026-04-15T16:43:12.871Z"
+last_activity: 2026-04-15 -- Phase 02 execution started
 progress:
   total_phases: 9
-  completed_phases: 3
+  completed_phases: 2
   total_plans: 20
-  completed_plans: 18
-  percent: 90
+  completed_plans: 13
+  percent: 65
 ---
 
 # Project State
@@ -22,14 +22,14 @@ See: .planning/PROJECT.md (updated 2026-04-14)
 
 **Project:** Portal Jurídico — SaaS B2B para Escritórios de Advocacia
 **Core value:** O cliente leigo consegue entender o que está acontecendo no seu processo jurídico sem precisar ligar para o advogado.
-**Current focus:** Phase 03 — claude-ai-translation-core-value-prop
+**Current focus:** Phase 02 — datajud-integration-sync-worker
 
 ## Current Position
 
-Phase: 03 (claude-ai-translation-core-value-prop) — EXECUTING
-Plan: 1 of 1
-Status: Phase complete — ready for verification
-Last activity: 2026-04-15
+Phase: 02 (datajud-integration-sync-worker) — EXECUTING
+Plan: 1 of 6
+Status: Executing Phase 02
+Last activity: 2026-04-15 -- Phase 02 execution started
 
 Progress: [░░░░░░░░░░] 0%
 
@@ -53,7 +53,6 @@ Progress: [░░░░░░░░░░] 0%
 - Trend: —
 
 *Updated after each plan completion*
-| Phase 03-claude-ai-translation-core-value-prop P03-01 | 72 | 7 tasks | 13 files |
 
 ## Accumulated Context
 
@@ -67,9 +66,6 @@ Recent decisions affecting current work:
 - Project init: Supabase como backend-as-a-service (Auth + DB + RLS + Storage)
 - Project init: Dois apps Android separados (cliente + escritório) — evita UI condicional
 - Project init: Stripe para monetização (SDK maduro, assinaturas recorrentes)
-- [Phase 03]: TRANSLATION_MODEL = claude-haiku-4-5-20251001 (not deprecated claude-3-haiku)
-- [Phase 03]: sanitizeForXml() uses </ to < / substitution to prevent XML tag injection from untrusted DataJud content
-- [Phase 03]: Budget cycle auto-reset detected when percentual < ultimoNivel — no external scheduler needed
 
 ### Pending Todos
 
@@ -83,6 +79,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-15T20:25:28.048Z
-Stopped at: Completed 03-01: Claude AI translation pipeline — core value prop proven
+Last session: 2026-04-15T03:03:16.570Z
+Stopped at: Completed 01-03: custom-access-token hook ativo + SMTP Resend configurado
 Resume file: None
