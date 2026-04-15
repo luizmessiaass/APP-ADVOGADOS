@@ -14,6 +14,7 @@ android {
     }
 
     defaultConfig {
+        applicationId = "com.aethixdigital.portaljuridico.cliente"
         minSdk = 27
         targetSdk = 36
         versionCode = 1
