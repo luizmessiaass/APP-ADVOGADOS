@@ -2,7 +2,7 @@
 
 ## Overview
 
-Portal Jurídico is a multi-tenant SaaS platform where Brazilian law offices subscribe to a service so their end clients can understand their legal cases in plain Portuguese via Android apps. The journey goes bottom-up: first clean up the Android scaffold and establish a bulletproof multi-tenant backend foundation (Supabase + Fastify + RLS + LGPD basics). Then prove the two highest-risk integrations — DataJud (the free, SLA-less CNJ legal API) and Claude AI translation — before building any client-facing UI. The simpler admin app (app_escritorio) ships first to validate the API contract; then the consumer-facing app_cliente delivers the end-user MVP. Push notifications turn the app from "unopened" to "actively useful." Stripe billing gates commercial launch. Finally, LGPD hardening and production readiness close out v1 for safe release to Brazilian law offices.
+Portal Jurídico is a multi-tenant SaaS platform where Brazilian law offices subscribe to a service so their end clients can understand their legal cases in plain Portuguese via a single Android app. The journey goes bottom-up: first clean up the Android scaffold and establish a bulletproof multi-tenant backend foundation (Supabase + Fastify + RLS + LGPD basics). Then prove the two highest-risk integrations — DataJud (the free, SLA-less CNJ legal API) and Claude AI translation — before building any client-facing UI. A single Android app detects the user's role (advogado or cliente) from the JWT and renders the appropriate flow. The advogado flow ships first to validate the API contract; then the cliente flow delivers the end-user MVP. Push notifications turn the app from "unopened" to "actively useful." Stripe billing gates commercial launch. Finally, LGPD hardening and production readiness close out v1 for safe release to Brazilian law offices.
 
 ## Phases
 
@@ -16,8 +16,8 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [ ] **Phase 1: Backend Foundation** - Supabase + Fastify + Auth + RLS + LGPD basics & observability
 - [ ] **Phase 2: DataJud Integration & Sync Worker** - CNJ validation, BullMQ worker, tiered refresh, circuit breaker, diffing
 - [ ] **Phase 3: Claude AI Translation** - Jargon-to-plain-PT translation with prompt caching, injection defense, token telemetry
-- [ ] **Phase 4: app_escritorio (Admin Android Client)** - Advogado/admin flow: client CRUD, preview "as client sees", manual messages
-- [ ] **Phase 5: app_cliente (End-user MVP)** - Process list, plain-language status, timeline, onboarding, LGPD consent gate
+- [ ] **Phase 4: Android App — Fluxo Advogado** - Role-based single app: advogado flow — client CRUD, preview "as cliente sees", manual messages
+- [ ] **Phase 5: Android App — Fluxo Cliente (MVP)** - Role-based single app: cliente flow — process list, plain-language status, timeline, onboarding, LGPD consent gate
 - [ ] **Phase 6: Push Notifications & In-app Center** - FCM high-priority dispatch + WorkManager fallback + notification center
 - [ ] **Phase 7: Stripe Billing & Grace Period** - Checkout, Customer Portal, webhook idempotency, entitlement ladder
 - [ ] **Phase 8: LGPD Hardening & Production Readiness** - Art. 18 deletion, Art. 33 disclosures, production drills, launch gates
@@ -77,9 +77,9 @@ Plans:
   5. When DataJud is unavailable, API responses still return cached data with a "última atualização" freshness stamp — UI is never blocked by a failed sync
 **Plans**: 6 plans
 Plans:
-- [ ] 02-01-PLAN.md — CNJ validator (mod-97) + tribunal map + DataJud adapter (HTTP + Zod)
-- [ ] 02-02-PLAN.md — Supabase migration 002: processos, movimentacoes, sync_errors + RLS
-- [ ] 02-03-PLAN.md — [BLOCKING] supabase db push + verificação do schema no painel
+- [x] 02-01-PLAN.md — CNJ validator (mod-97) + tribunal map + DataJud adapter (HTTP + Zod)
+- [x] 02-02-PLAN.md — Supabase migration 002: processos, movimentacoes, sync_errors + RLS
+- [x] 02-03-PLAN.md — [BLOCKING] supabase db push + verificação do schema no painel
 - [ ] 02-04-PLAN.md — BullMQ worker: circuit breaker Redis + step-job checkpoint + tier scheduler + diff idempotente
 - [ ] 02-05-PLAN.md — Fastify routes: GET /processos/:id (staleness 72h) + POST /processos + Bull Board /admin/queues
 - [ ] 02-06-PLAN.md — Testes completos: checkpoint, idempotência, circuit breaker Redis, staleness limites
@@ -100,29 +100,29 @@ Plans:
 - [ ] 03-01-PLAN.md — Servico completo: glossario juridico, translation-service (Claude Haiku 4.5), worker BullMQ dedup por hash, budget por tenant com alertas, endpoint assincrono 202, migration token_usage
 **UI hint**: no
 
-### Phase 4: app_escritorio (Admin Android Client)
-**Goal**: The admin Android app gives advogados/admins a working end-to-end flow — login, client CRUD with CPF+CNJ validation, searchable client list, read-only "as client sees" preview of translated movimentações, manual message send, and Stripe Customer Portal access — validating the backend API contract before the end-user app is built.
+### Phase 4: Android App — Fluxo Advogado
+**Goal**: The single Android app, when logged in as advogado/admin, delivers a working end-to-end flow — login with role detection from JWT, client CRUD with CPF+CNJ validation, searchable client list, read-only "as client sees" preview of translated movimentações, manual message send, and Stripe Customer Portal access — validating the backend API contract before the cliente flow is built.
 **Depends on**: Phase 3
 **Requirements**: ESCR-01, ESCR-02, ESCR-03, ESCR-04, ESCR-05, ESCR-06, ESCR-07, ESCR-08, ESCR-09, ESCR-10, ESCR-11
 **Success Criteria** (what must be TRUE):
-  1. An advogado/admin can log in, register a new client with validated CPF and CNJ, and see the client appear in the list with DataJud sync status
-  2. The advogado can search the client list by name, CPF, or CNJ number and results return correctly
-  3. Tapping a client opens the read-only "as client sees" preview showing AI-translated movimentações exactly as app_cliente will render them
+  1. An advogado/admin can log in and the app detects the `advogado` role from the JWT, routing to the advogado home — not the cliente flow
+  2. The advogado can register a new client with validated CPF and CNJ and see the client appear in the list with DataJud sync status; list is searchable by name, CPF, or CNJ
+  3. Tapping a client opens the read-only "as client sees" preview showing AI-translated movimentações exactly as the cliente flow will render them
   4. The advogado can send a manual message/aviso to a specific client, and the message is persisted for eventual delivery
-  5. The "gerenciar assinatura" button opens the Stripe Customer Portal via Chrome Custom Tabs (portal session acquired from backend), and CI runs lint + unit + UI tests on every commit to the app_escritorio module
+  5. The "gerenciar assinatura" button opens the Stripe Customer Portal via Chrome Custom Tabs, and CI runs lint + unit + UI tests on every commit
 **Plans**: TBD
 **UI hint**: yes
 
-### Phase 5: app_cliente (End-user MVP)
-**Goal**: The end-user Android app delivers the MVP experience — login, a list of their own processes, plain-language status, translated timeline, next important date, process cadastral data, "last update" freshness indicator, onboarding, LGPD consent gate, and WhatsApp fallback to their advogado — so a leigo can understand their case without calling their lawyer.
+### Phase 5: Android App — Fluxo Cliente (MVP)
+**Goal**: The single Android app, when logged in as cliente, delivers the MVP experience — login with role detection from JWT, a list of their own processes, plain-language status, translated timeline, next important date, process cadastral data, "last update" freshness indicator, onboarding, LGPD consent gate, and WhatsApp fallback to their advogado — so a leigo can understand their case without calling their lawyer.
 **Depends on**: Phase 4
 **Requirements**: APP-01, APP-02, APP-03, APP-04, APP-05, APP-06, APP-07, APP-08, APP-11, APP-12, APP-13, APP-14, APP-15, APP-16, LGPD-02
 **Success Criteria** (what must be TRUE):
-  1. A cliente logs in and immediately sees a list of their own processes, bound to their CPF, with nothing from other tenants leaking through
+  1. A cliente logs in and the app detects the `cliente` role from the JWT, routing to the cliente home — immediately showing their own processes with no cross-tenant leakage
   2. Opening a process shows: plain-language current status, translated movimentação timeline, next important date in a prominent card, and cadastral data (CNJ, vara, comarca, partes), all labeled with "Explicação gerada por IA" disclaimers where applicable
   3. "Última sincronização há X horas" is visible on the process screen, and the "sem movimentação recente" state renders a reassuring message instead of a blank screen
   4. The 3-4 step onboarding appears on first open and the LGPD consent screen must be accepted before any process data is shown (consent gate)
-  5. A "Falar com meu advogado" button opens WhatsApp or email via deep-link, and CI runs lint + unit + UI tests on every commit to the app_cliente module
+  5. A "Falar com meu advogado" button opens WhatsApp or email via deep-link, and CI runs lint + unit + UI tests on every commit
 **Plans**: TBD
 **UI hint**: yes
 
@@ -176,8 +176,8 @@ Phases execute in numeric order: 0 → 1 → 2 → 3 → 4 → 5 → 6 → 7 →
 | 1. Backend Foundation | 3/8 | In Progress|  |
 | 2. DataJud Integration & Sync Worker | 0/6 | Not started | - |
 | 3. Claude AI Translation | 0/1 | Not started | - |
-| 4. app_escritorio | 0/TBD | Not started | - |
-| 5. app_cliente | 0/TBD | Not started | - |
+| 4. Android App — Fluxo Advogado | 0/TBD | Not started | - |
+| 5. Android App — Fluxo Cliente (MVP) | 0/TBD | Not started | - |
 | 6. Push Notifications & In-app Center | 0/TBD | Not started | - |
 | 7. Stripe Billing & Grace Period | 0/TBD | Not started | - |
 | 8. LGPD Hardening & Production Readiness | 0/TBD | Not started | - |
