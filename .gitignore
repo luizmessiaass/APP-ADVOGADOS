@@ -1,0 +1,36 @@
+# Node.js / Backend
+node_modules/
+dist/
+.env
+.env.local
+*.env
+apps/*/dist/
+apps/*/node_modules/
+
+# pnpm
+pnpm-debug.log*
+
+# Android (existing entries — do not remove)
+*.iml
+.gradle
+/local.properties
+/.idea/caches
+/.idea/libraries
+/.idea/modules.xml
+/.idea/workspace.xml
+/.idea/navEditor.xml
+/.idea/assetWizardSettings.xml
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+.cxx
+local.properties
+
+# Logs
+*.log
+logs/
+
+# Coverage
+coverage/
+.nyc_output/
