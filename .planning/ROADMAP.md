@@ -58,11 +58,11 @@ Plans:
 - [x] 01-01-PLAN.md — Monorepo scaffold + Fastify project init + dev tooling
 - [x] 01-02-PLAN.md — Supabase CLI setup + SQL migrations + RLS policies
 - [x] 01-03-PLAN.md — Custom Access Token Hook (Edge Function)
-- [ ] 01-04-PLAN.md — Fastify server core — logger, Sentry, tenant middleware
-- [ ] 01-05-PLAN.md — Auth routes + LGPD consent endpoint
-- [ ] 01-06-PLAN.md — Health endpoint + BullMQ worker process
-- [ ] 01-07-PLAN.md — [BLOCKING] Schema push + CI/CD GitHub Actions
-- [ ] 01-08-PLAN.md — Cross-tenant integration gate + LGPD PII redaction test
+- [x] 01-04-PLAN.md — Fastify server core — logger, Sentry, tenant middleware
+- [x] 01-05-PLAN.md — Auth routes + LGPD consent endpoint
+- [x] 01-06-PLAN.md — Health endpoint + BullMQ worker process
+- [x] 01-07-PLAN.md — [BLOCKING] Schema push + CI/CD GitHub Actions
+- [x] 01-08-PLAN.md — Cross-tenant integration gate + LGPD PII redaction test
 **UI hint**: no
 
 ### Phase 2: DataJud Integration & Sync Worker
