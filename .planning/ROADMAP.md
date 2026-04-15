@@ -47,7 +47,16 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. A CI integration test proves tenant A cannot read tenant B's data through any endpoint or Supabase query (cross-tenant leak gate passes)
   4. `/health` endpoint reports status of Supabase, Redis, and DataJud dependencies; BullMQ worker starts as a separate process
   5. LGPD consent records table persists opt-in with timestamp and terms version; logs and outbound Claude payloads strip CPF/PII by construction
-**Plans**: TBD
+**Plans**: 8 plans
+Plans:
+- [ ] 01-01-PLAN.md — Monorepo scaffold + Fastify project init + dev tooling
+- [ ] 01-02-PLAN.md — Supabase CLI setup + SQL migrations + RLS policies
+- [ ] 01-03-PLAN.md — Custom Access Token Hook (Edge Function)
+- [ ] 01-04-PLAN.md — Fastify server core — logger, Sentry, tenant middleware
+- [ ] 01-05-PLAN.md — Auth routes + LGPD consent endpoint
+- [ ] 01-06-PLAN.md — Health endpoint + BullMQ worker process
+- [ ] 01-07-PLAN.md — [BLOCKING] Schema push + CI/CD GitHub Actions
+- [ ] 01-08-PLAN.md — Cross-tenant integration gate + LGPD PII redaction test
 **UI hint**: no
 
 ### Phase 2: DataJud Integration & Sync Worker
@@ -149,7 +158,7 @@ Phases execute in numeric order: 0 â†’ 1 â†’ 2 â†’ 3 â†’ 4 â†’ 5 â†’ 6 â†’ 7 â†’
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 0. Android Bootstrap & Cleanup | 0/TBD | Not started | - |
-| 1. Backend Foundation | 0/TBD | Not started | - |
+| 1. Backend Foundation | 0/8 | Not started | - |
 | 2. DataJud Integration & Sync Worker | 0/TBD | Not started | - |
 | 3. Claude AI Translation | 0/TBD | Not started | - |
 | 4. app_escritorio | 0/TBD | Not started | - |
