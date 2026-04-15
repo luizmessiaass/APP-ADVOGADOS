@@ -1,12 +1,18 @@
 import Fastify, { type FastifyInstance, type FastifyServerOptions } from 'fastify'
 import helmet from '@fastify/helmet'
 import rateLimit from '@fastify/rate-limit'
+import { createBullBoard } from '@bull-board/api'
+import { BullMQAdapter } from '@bull-board/api/bullMQAdapter'
+import { FastifyAdapter } from '@bull-board/fastify'
 import { env } from './config.js'
 import authPlugin from './plugins/auth.js'
 import sentryPlugin from './plugins/sentry.js'
 import { authRoutes } from './routes/auth/index.js'
 import { lgpdRoutes } from './routes/lgpd/index.js'
 import { healthRoutes } from './routes/health.js'
+import { processosRoutes } from './routes/processos.js'
+import { getDatajudQueue } from './queues/datajud-queue.js'
+import { createBullMQRedisClient } from './lib/redis.js'
 
 export function buildApp(opts: FastifyServerOptions = {}): FastifyInstance {
   const app = Fastify({
@@ -62,6 +68,45 @@ export function buildApp(opts: FastifyServerOptions = {}): FastifyInstance {
   app.register(sentryPlugin)
   app.register(authPlugin)
 
+  // -------------------------------------------------------------------------
+  // Bull Board em /admin/queues com guard Bearer token (D-10/D-11/D-12)
+  // T-02-19: token de 32 bytes (openssl rand -hex 32) em ADMIN_TOKEN env var
+  // T-02-20: admin-only, não exposto externamente sem token forte
+  // -------------------------------------------------------------------------
+  app.addHook('onRequest', async (request, reply) => {
+    if (!request.url.startsWith('/admin/queues')) return
+
+    const authHeader = request.headers.authorization ?? ''
+    const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : ''
+    const adminToken = process.env.ADMIN_TOKEN
+
+    if (!adminToken || token !== adminToken) {
+      return reply.status(401).send({
+        success: false,
+        error: 'Unauthorized',
+        code: 'UNAUTHORIZED',
+      })
+    }
+  })
+
+  // Registrar Bull Board (D-12 — roteado pelo servico API)
+  if (env.NODE_ENV !== 'test') {
+    // Apenas inicializa Bull Board fora de testes para evitar conexão Redis desnecessária
+    const redis = createBullMQRedisClient()
+    const bullBoardAdapter = new FastifyAdapter()
+
+    createBullBoard({
+      queues: [new BullMQAdapter(getDatajudQueue(redis))],
+      serverAdapter: bullBoardAdapter,
+    })
+
+    bullBoardAdapter.setBasePath('/admin/queues')
+
+    app.register(bullBoardAdapter.registerPlugin(), {
+      prefix: '/admin/queues',
+    })
+  }
+
   // Rota de health publica (sem autenticacao)
   app.get('/', { config: { skipAuth: true } }, async (_req, reply) => {
     return reply.send({ service: 'portaljuridico-api', version: '0.1.0' })
@@ -73,6 +118,9 @@ export function buildApp(opts: FastifyServerOptions = {}): FastifyInstance {
   // Rotas de autenticacao e LGPD
   app.register(authRoutes, { prefix: '/api/v1/auth' })
   app.register(lgpdRoutes, { prefix: '/api/v1/lgpd' })
+
+  // Rotas de processos (DATAJUD-01, DATAJUD-02, DATAJUD-09)
+  app.register(processosRoutes, { prefix: '/api/v1' })
 
   return app
 }

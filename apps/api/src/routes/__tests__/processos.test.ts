@@ -56,7 +56,7 @@ describe('validação CNJ na rota POST /processos', () => {
       expect.fail('Deveria ter lançado CNJInvalidoError')
     } catch (e) {
       expect(e).toBeInstanceOf(CNJInvalidoError)
-      expect((e as CNJInvalidoError).code).toBe('INVALID_CNJ')
+      expect((e as InstanceType<typeof CNJInvalidoError>).code).toBe('INVALID_CNJ')
     }
   })
 

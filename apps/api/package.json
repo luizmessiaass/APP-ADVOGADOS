@@ -2,7 +2,9 @@
   "name": "api",
   "version": "0.1.0",
   "type": "module",
-  "engines": { "node": ">=22.0.0" },
+  "engines": {
+    "node": ">=22.0.0"
+  },
   "scripts": {
     "dev": "tsx watch src/server.ts",
     "build": "tsc --project tsconfig.json",
@@ -12,24 +14,33 @@
     "lint": "eslint src --ext .ts"
   },
   "dependencies": {
+    "@bull-board/api": "^7.0.0",
+    "@bull-board/fastify": "^7.0.0",
+    "@bull-board/ui": "^7.0.0",
     "@fastify/helmet": "13.0.2",
     "@fastify/rate-limit": "10.3.0",
+    "@fastify/static": "^9.1.0",
     "@fastify/type-provider-typebox": "latest",
+    "@fastify/view": "^11.1.1",
     "@sentry/node": "10.48.0",
     "@sinclair/typebox": "latest",
     "@supabase/supabase-js": "2.103.0",
     "bullmq": "5.73.5",
+    "ejs": "^5.0.2",
     "envalid": "8.1.1",
     "fastify": "5.8.5",
     "fastify-plugin": "5.0.1",
     "ioredis": "5.10.1",
     "jose": "6.2.2",
-    "pino": "10.3.1"
+    "opossum": "9.0.0",
+    "pino": "10.3.1",
+    "zod": "4.3.6"
   },
   "devDependencies": {
+    "@types/node": "latest",
+    "@types/opossum": "^8.1.9",
     "@typescript-eslint/eslint-plugin": "latest",
     "@typescript-eslint/parser": "latest",
-    "@types/node": "latest",
     "@vitest/coverage-v8": "latest",
     "eslint": "latest",
     "pino-pretty": "13.1.3",
