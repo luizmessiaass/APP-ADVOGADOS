@@ -3,13 +3,13 @@ phase: 01-backend-foundation-supabase-fastify-auth-rls-lgpd-basics
 plan: 03
 title: Custom Access Token Hook (Edge Function) + Supabase Edge Function Deploy
 subsystem: auth
-tags: [supabase, edge-function, jwt, multi-tenant, custom-access-token, deno, auth-hook]
+tags: [supabase, edge-function, jwt, multi-tenant, custom-access-token, deno, auth-hook, smtp, resend]
 dependency_graph:
   requires:
     - supabase/migrations/0002_create_usuarios.sql (public.usuarios table)
     - supabase/config.toml (Supabase CLI project config)
   provides:
-    - supabase/functions/custom-access-token/index.ts (JWT injection hook)
+    - supabase/functions/custom-access-token/index.ts (JWT injection hook — ativo)
     - supabase/functions/custom-access-token/deno.json (Deno import map)
   affects:
     - All downstream JWT consumers (01-04 Fastify middleware, 01-08 cross-tenant tests)
@@ -18,6 +18,7 @@ tech_stack:
   added:
     - Deno (Supabase Edge Functions runtime)
     - supabase-js v2 (via esm.sh CDN import for Deno)
+    - Resend SMTP (email de convite para clientes)
   patterns:
     - Custom Access Token Hook pattern (Supabase Auth Hooks)
     - app_metadata injection (never user_metadata) for tenant isolation
@@ -35,9 +36,9 @@ decisions:
   - key: service_role_for_hook_query
     summary: "Hook usa SUPABASE_SERVICE_ROLE_KEY (disponivel automaticamente no Edge Function runtime) para contornar RLS ao buscar em public.usuarios — operacao de sistema, bypass correto"
 metrics:
-  duration: "5 minutes"
+  duration: "verified and completed post-checkpoint"
   completed: "2026-04-15"
-  tasks_completed: 1
+  tasks_completed: 2
   tasks_total: 2
   files_created: 2
   files_modified: 0
@@ -48,19 +49,14 @@ requirements:
 
 # Phase 01 Plan 03: Custom Access Token Hook (Edge Function) Summary
 
-**One-liner:** Deno Edge Function que injeta `tenant_id` e `role` em `app_metadata` de cada JWT via Supabase Custom Access Token Hook, buscando dados de `public.usuarios` com service_role (nunca de user_metadata editavel pelo usuario).
+**One-liner:** Deno Edge Function deployada e ativa como Custom Access Token Hook no Supabase — injeta `tenant_id` e `role` em `app_metadata` de cada JWT via `public.usuarios` (service_role); SMTP Resend configurado para convites por email.
 
 ## Tasks Completed
 
 | Task | Name | Commit | Files |
 |------|------|--------|-------|
 | 1 | Criar Edge Function custom-access-token | 39be6ba | supabase/functions/custom-access-token/index.ts, deno.json |
-
-## Tasks Pending (Awaiting Human Action)
-
-| Task | Name | Type | Blocked By |
-|------|------|------|-----------|
-| 2 | Checkpoint: registrar hook no Dashboard + configurar SMTP Resend | checkpoint:human-verify | Acao manual no Supabase Dashboard |
+| 2 | Checkpoint: registrar hook no Dashboard + configurar SMTP Resend | human-verified | Supabase Dashboard — hook ativo, SMTP Resend configurado |
 
 ## What Was Built
 
@@ -68,7 +64,7 @@ requirements:
 
 **`supabase/functions/custom-access-token/index.ts`**
 
-Deno Edge Function registrada como Custom Access Token Hook no Supabase Auth:
+Deno Edge Function registrada e ativa como Custom Access Token Hook no Supabase Auth:
 
 1. Recebe payload do hook: `{ user_id, claims }` (chamada automatica pelo Supabase a cada geracao de JWT)
 2. Abre cliente Supabase com `SUPABASE_SERVICE_ROLE_KEY` (bypass RLS — operacao de sistema)
@@ -93,18 +89,18 @@ Deno Edge Function registrada como Custom Access Token Hook no Supabase Auth:
 Import map para resolucao de dependencias no runtime Deno:
 - `@supabase/supabase-js` → `https://esm.sh/@supabase/supabase-js@2`
 
-### Deploy Necessario
+### Configuracoes Ativas no Supabase Dashboard
 
-A Edge Function foi criada localmente. Para ativar, e necessario:
-```bash
-supabase functions deploy custom-access-token --project-ref <PROJECT_REF>
-```
-
-E registrar como hook no Dashboard (ver secao Pending Human Actions abaixo).
+| Configuracao | Status |
+|---|---|
+| Edge Function `custom-access-token` deployada | Ativo |
+| Custom Access Token Hook registrado | Ativo |
+| SMTP Resend configurado (smtp.resend.com:587) | Ativo |
+| Migrations aplicadas via `supabase db push` | Ativo |
 
 ## Deviations from Plan
 
-None — plan executed exactly as written.
+None — plan executed exactly as written. Checkpoint human-verify concluido com hook registrado e SMTP configurado conforme instrucoes.
 
 ## Threat Model Coverage
 
@@ -115,41 +111,9 @@ None — plan executed exactly as written.
 | T-1-03-T (Tampering via hook payload) | Tampering | Supabase assina o payload do hook; HOOK_SECRET pode ser adicionado em config.toml quando disponivel | Partial (aceito em dev) |
 | T-1-03-I (Info Disclosure via logs) | Info Disclosure | Logs ficam no Supabase Dashboard; aceito em dev | Accepted |
 
-## Pending Human Actions
-
-Para que o hook funcione em producao, as seguintes acoes manuais sao necessarias:
-
-### 1. Deploy da Edge Function
-```bash
-supabase functions deploy custom-access-token --project-ref <PROJECT_REF>
-```
-(`PROJECT_REF` visivel em Supabase Dashboard > Settings > API)
-
-### 2. Registrar como Custom Access Token Hook
-- Supabase Dashboard > Authentication > Hooks
-- Localizar "Custom Access Token Hook"
-- Clicar "Enable" > selecionar funcao `custom-access-token`
-- Salvar
-
-### 3. Configurar SMTP Resend (AUTH-08)
-- Supabase Dashboard > Authentication > SMTP Settings
-- Habilitar "Custom SMTP"
-- Credenciais Resend:
-  - Host: `smtp.resend.com`
-  - Port: `587`
-  - Username: `resend`
-  - Password: `<RESEND_API_KEY>` (obter em resend.com/api-keys)
-  - Sender name: `Portal Juridico`
-  - Sender email: `noreply@<seudominio>.com`
-
-### 4. Verificacao pos-deploy
-- Fazer signup de teste via Dashboard > Authentication > Users > Invite
-- Decodificar o JWT gerado em jwt.io
-- Confirmar que `app_metadata.tenant_id` esta presente
-
 ## Known Stubs
 
-None — o codigo e producao-ready. Requer deploy e configuracao manual no Dashboard para estar ativo.
+None — Edge Function e producao-ready, deployada e com hook ativo no Dashboard.
 
 ## Self-Check: PASSED
 
@@ -159,6 +123,12 @@ Files verified:
 
 Commits verified:
 - 39be6ba: feat(01-03): add custom-access-token Edge Function
+- 32428c1: docs(01-03): complete custom-access-token Edge Function plan summary
+
+Human actions verified (per user confirmation):
+- Hook registrado no Dashboard: CONFIRMED
+- SMTP Resend configurado: CONFIRMED
+- Migrations aplicadas via supabase db push: CONFIRMED
 
 Security checks:
 - app_metadata injetado (nao user_metadata): PASS
