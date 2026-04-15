@@ -55,9 +55,9 @@ Plans:
   5. LGPD consent records table persists opt-in with timestamp and terms version; logs and outbound Claude payloads strip CPF/PII by construction
 **Plans**: 8 plans
 Plans:
-- [ ] 01-01-PLAN.md — Monorepo scaffold + Fastify project init + dev tooling
-- [ ] 01-02-PLAN.md — Supabase CLI setup + SQL migrations + RLS policies
-- [ ] 01-03-PLAN.md — Custom Access Token Hook (Edge Function)
+- [x] 01-01-PLAN.md — Monorepo scaffold + Fastify project init + dev tooling
+- [x] 01-02-PLAN.md — Supabase CLI setup + SQL migrations + RLS policies
+- [x] 01-03-PLAN.md — Custom Access Token Hook (Edge Function)
 - [ ] 01-04-PLAN.md — Fastify server core — logger, Sentry, tenant middleware
 - [ ] 01-05-PLAN.md — Auth routes + LGPD consent endpoint
 - [ ] 01-06-PLAN.md — Health endpoint + BullMQ worker process
@@ -173,7 +173,7 @@ Phases execute in numeric order: 0 → 1 → 2 → 3 → 4 → 5 → 6 → 7 →
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 0. Android Bootstrap & Cleanup | 0/5 | Not started | - |
-| 1. Backend Foundation | 0/8 | Not started | - |
+| 1. Backend Foundation | 3/8 | In Progress|  |
 | 2. DataJud Integration & Sync Worker | 0/6 | Not started | - |
 | 3. Claude AI Translation | 0/1 | Not started | - |
 | 4. app_escritorio | 0/TBD | Not started | - |

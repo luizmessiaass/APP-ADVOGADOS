@@ -21,12 +21,12 @@
 
 - [ ] **AUTH-01**: Escritório consegue criar conta e fazer login com email/senha via Supabase Auth
 - [ ] **AUTH-02**: Cliente final consegue fazer login com email/senha via Supabase Auth
-- [ ] **AUTH-03**: JWT contém `tenant_id` e `role` em `app_metadata` (injetados pelo Custom Access Token Hook)
+- [x] **AUTH-03**: JWT contém `tenant_id` e `role` em `app_metadata` (injetados pelo Custom Access Token Hook)
 - [ ] **AUTH-04**: Middleware de tenant extrai `tenant_id` do JWT e rejeita requisições sem contexto de tenant válido
 - [ ] **AUTH-05**: Row Level Security está ativa em todas as tabelas com dados por tenant (tenants, users, processos, movimentacoes, chat_messages)
 - [ ] **AUTH-06**: Test de integração "tenant A não consegue ler dados do tenant B via nenhum endpoint" é executado no CI como gate
 - [ ] **AUTH-07**: Roles `admin_escritorio`, `advogado`, `cliente` têm políticas RLS distintas no banco
-- [ ] **AUTH-08**: Cliente final recebe email com credenciais de acesso ao app quando cadastrado pelo escritório
+- [x] **AUTH-08**: Cliente final recebe email com credenciais de acesso ao app quando cadastrado pelo escritório
 - [ ] **AUTH-09**: Usuário consegue fazer logout e sessão é invalidada
 
 ### DataJud Integration (DATAJUD)
@@ -199,12 +199,12 @@ Full per-requirement mapping (updated 2026-04-14 after roadmap creation).
 | INFRA-09 | Phase 1 | Pending |
 | AUTH-01 | Phase 1 | Pending |
 | AUTH-02 | Phase 1 | Pending |
-| AUTH-03 | Phase 1 | Pending |
+| AUTH-03 | Phase 1 | Complete |
 | AUTH-04 | Phase 1 | Pending |
 | AUTH-05 | Phase 1 | Pending |
 | AUTH-06 | Phase 1 | Pending |
 | AUTH-07 | Phase 1 | Pending |
-| AUTH-08 | Phase 1 | Pending |
+| AUTH-08 | Phase 1 | Complete |
 | AUTH-09 | Phase 1 | Pending |
 | LGPD-01 | Phase 1 | Pending |
 | LGPD-03 | Phase 1 | Pending |
