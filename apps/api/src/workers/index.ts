@@ -11,6 +11,8 @@ import { DatajudAdapter } from '../datajud/adapter.js';
 import { criarCircuitBreaker, CB_REDIS_KEY } from '../datajud/circuit-breaker.js';
 import { getDatajudQueue, DATAJUD_QUEUE_NAME } from '../queues/datajud-queue.js';
 import { processarSyncJob } from './datajud-sync.js';
+import { createTranslateWorker } from './translate-movimentacao.js';
+import { getTranslateQueue } from '../queues/translate-queue.js';
 
 const redis = new Redis(process.env.REDIS_URL ?? 'redis://localhost:6379', {
   maxRetriesPerRequest: null, // obrigatório para BullMQ
@@ -61,7 +63,19 @@ async function inicializar(): Promise<void> {
   });
 
   console.log('[worker] DataJud consumer iniciado — concurrency: 3');
+
+  // Consumer de Tradução (Phase 3) — concurrency 5 (per AI-08, D-01)
+  const translateWorker = createTranslateWorker(redis);
+
+  translateWorker.on('failed', (job, err) => {
+    console.error(`[translate-worker] Job ${job?.id} falhou:`, err.message);
+  });
+
+  console.log('[worker] Translate consumer iniciado — concurrency: 5');
 }
+
+// Exportar translateQueue para uso nas routes (registrado como plugin Fastify)
+export { getTranslateQueue };
 
 // Importar type para referência no Worker genérico
 type SyncJobData = Awaited<ReturnType<typeof import('../queues/datajud-queue.js').getDatajudQueue>> extends import('bullmq').Queue<infer T> ? T : never;
