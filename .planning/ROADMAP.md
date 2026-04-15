@@ -49,14 +49,14 @@ Decimal phases appear between their surrounding integers in numeric order.
   5. LGPD consent records table persists opt-in with timestamp and terms version; logs and outbound Claude payloads strip CPF/PII by construction
 **Plans**: 8 plans
 Plans:
-- [ ] 01-01-PLAN.md � Monorepo scaffold + Fastify project init + dev tooling
-- [ ] 01-02-PLAN.md � Supabase CLI setup + SQL migrations + RLS policies
-- [ ] 01-03-PLAN.md � Custom Access Token Hook (Edge Function)
-- [ ] 01-04-PLAN.md � Fastify server core � logger, Sentry, tenant middleware
-- [ ] 01-05-PLAN.md � Auth routes + LGPD consent endpoint
-- [ ] 01-06-PLAN.md � Health endpoint + BullMQ worker process
-- [ ] 01-07-PLAN.md � [BLOCKING] Schema push + CI/CD GitHub Actions
-- [ ] 01-08-PLAN.md � Cross-tenant integration gate + LGPD PII redaction test
+- [ ] 01-01-PLAN.md — Monorepo scaffold + Fastify project init + dev tooling
+- [ ] 01-02-PLAN.md — Supabase CLI setup + SQL migrations + RLS policies
+- [ ] 01-03-PLAN.md — Custom Access Token Hook (Edge Function)
+- [ ] 01-04-PLAN.md — Fastify server core — logger, Sentry, tenant middleware
+- [ ] 01-05-PLAN.md — Auth routes + LGPD consent endpoint
+- [ ] 01-06-PLAN.md — Health endpoint + BullMQ worker process
+- [ ] 01-07-PLAN.md — [BLOCKING] Schema push + CI/CD GitHub Actions
+- [ ] 01-08-PLAN.md — Cross-tenant integration gate + LGPD PII redaction test
 **UI hint**: no
 
 ### Phase 2: DataJud Integration & Sync Worker
@@ -69,7 +69,14 @@ Plans:
   3. New movimentações are detected by diffing on stable IDs — rerunning the sync produces zero duplicates
   4. Repeated DataJud failures trip a circuit breaker that suspends calls; `sync_errors` rows capture the context; subsequent job runs resume from the checkpoint after restart without reprocessing from zero
   5. When DataJud is unavailable, API responses still return cached data with a "última atualização" freshness stamp — UI is never blocked by a failed sync
-**Plans**: TBD
+**Plans**: 6 plans
+Plans:
+- [ ] 02-01-PLAN.md — CNJ validator (mod-97) + tribunal map + DataJud adapter (HTTP + Zod)
+- [ ] 02-02-PLAN.md — Supabase migration 002: processos, movimentacoes, sync_errors + RLS
+- [ ] 02-03-PLAN.md — [BLOCKING] supabase db push + verificação do schema no painel
+- [ ] 02-04-PLAN.md — BullMQ worker: circuit breaker Redis + step-job checkpoint + tier scheduler + diff idempotente
+- [ ] 02-05-PLAN.md — Fastify routes: GET /processos/:id (staleness 72h) + POST /processos + Bull Board /admin/queues
+- [ ] 02-06-PLAN.md — Testes completos: checkpoint, idempotência, circuit breaker Redis, staleness limites
 **UI hint**: no
 
 ### Phase 3: Claude AI Translation (Core Value Prop)
@@ -159,7 +166,7 @@ Phases execute in numeric order: 0 → 1 → 2 → 3 → 4 → 5 → 6 → 7 →
 |-------|----------------|--------|-----------|
 | 0. Android Bootstrap & Cleanup | 0/TBD | Not started | - |
 | 1. Backend Foundation | 0/8 | Not started | - |
-| 2. DataJud Integration & Sync Worker | 0/TBD | Not started | - |
+| 2. DataJud Integration & Sync Worker | 0/6 | Not started | - |
 | 3. Claude AI Translation | 0/TBD | Not started | - |
 | 4. app_escritorio | 0/TBD | Not started | - |
 | 5. app_cliente | 0/TBD | Not started | - |
