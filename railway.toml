@@ -1,0 +1,20 @@
+[build]
+  builder = "NIXPACKS"
+
+[[services]]
+  name = "api"
+  source = "apps/api"
+
+  [services.deploy]
+    startCommand = "node dist/server.js"
+    healthcheckPath = "/health"
+    healthcheckTimeout = 10
+    restartPolicyType = "ON_FAILURE"
+
+[[services]]
+  name = "worker"
+  source = "apps/worker"
+
+  [services.deploy]
+    startCommand = "node dist/worker.js"
+    restartPolicyType = "ON_FAILURE"
