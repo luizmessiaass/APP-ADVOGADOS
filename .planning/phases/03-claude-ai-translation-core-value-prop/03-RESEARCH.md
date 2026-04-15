@@ -678,22 +678,19 @@ A OAB publicou a **Recomendação 001/2024** (aprovada em Nov/2024) especificame
 
 ---
 
-## Open Questions
+## Open Questions (RESOLVED)
 
-1. **Threshold de tokens do glossário**
+1. **Threshold de tokens do glossário** — RESOLVED
    - O que sabemos: Haiku 4.5 exige ≥4.096 tokens antes do breakpoint de cache
-   - O que é incerto: Um glossário de 100 termos com definições detalhadas atinge ~2.000-4.000 tokens — pode ficar no limite
-   - Recomendação: Usar `client.messages.countTokens()` em Wave 0 para verificar e expandir glossário se necessário
+   - Resolução: `validateCacheThreshold()` em Wave 0 Task 1 chama `client.messages.countTokens()` e lança erro se o glossário estiver abaixo de 4.096 tokens. O glossário de 100+ termos com definições detalhadas foi estruturado para ter >= 200 linhas, garantindo o threshold. Se necessário, o executor expande o glossário até passar o gate.
 
-2. **Suporte a `oneOf` vs `anyOf` em Structured Outputs para `proxima_data: string | null`**
+2. **Suporte a `oneOf` vs `anyOf` em Structured Outputs para `proxima_data: string | null`** — RESOLVED
    - O que sabemos: `output_config.format` usa constrained decoding sobre JSON Schema
-   - O que é incerto: Se `oneOf` com `[{type: string}, {type: null}]` é suportado pelo constrained decoding
-   - Recomendação: Testar em dev antes de usar em produção; fallback: `type: ['string', 'null']` (JSON Schema draft-7)
+   - Resolução: O plano usa `anyOf` (não `oneOf`) no `OUTPUT_JSON_SCHEMA` para `proxima_data`. `anyOf` tem suporte confirmado no constrained decoding do Claude — `oneOf` pode falhar silenciosamente. Ver `translation-schema.ts` Wave 1 Task 1 (Pitfall 5 do RESEARCH.md).
 
-3. **Nível de alert deduplication**
+3. **Nível de alert deduplication e reset do ciclo** — RESOLVED
    - O que sabemos: Alertas de budget devem disparar apenas uma vez por threshold (50%, 80%, 100%)
-   - O que é incerto: A lógica de `ultimo_alerta_nivel` precisa de reset junto com o ciclo do budget
-   - Recomendação: Armazenar `ultimo_alerta_nivel` + `budget_cycle_start` em `escritorios` para reset coordenado
+   - Resolução: A lógica de reset de `ultimo_alerta_nivel` é detectada automaticamente dentro de `checkAndFireAlerts()`: se o percentual atual está abaixo de `ultimo_alerta_nivel` (indicando que o ciclo rolou), o campo é resetado para 0 antes de verificar novos thresholds. Isso elimina a necessidade de um scheduler externo. Ver Wave 3 Task 1 atualizado no plano 03-01-PLAN.md.
 
 ---
 
