@@ -8,10 +8,17 @@ import {
 } from '../../datajud/cnj-validator.js';
 import { resolverTribunal, TribunalNaoSuportadoError } from '../../datajud/tribunal-map.js';
 
+// CNJ válido: 0000001-45.2024.8.26.0001
+// Check-digit 45 calculado via mod-97 (Resolução CNJ 65/2008):
+// op1 = 0000001 % 97 = 1
+// op2 = (1_2024_8_26) % 97 = 27
+// opFinal = (27_0001_45) % 97 = 1 ✓
+const CNJ_VALIDO = '0000001-45.2024.8.26.0001';
+const CNJ_VALIDO_NORMALIZADO = '00000014520248260001';
+
 describe('validarNumeroCNJ', () => {
   it('deve retornar true para número CNJ válido', () => {
-    // CNJ com check-digit correto (TJSP)
-    expect(validarNumeroCNJ('0000001-47.2024.8.26.0001')).toBe(true);
+    expect(validarNumeroCNJ(CNJ_VALIDO)).toBe(true);
   });
 
   it('deve retornar false para check-digit incorreto', () => {
@@ -32,17 +39,17 @@ describe('validarNumeroCNJ', () => {
 
   it('deve aceitar número sem formatação (20 dígitos)', () => {
     // Mesmo número sem separadores
-    expect(validarNumeroCNJ('00000014720248260001')).toBe(true);
+    expect(validarNumeroCNJ(CNJ_VALIDO_NORMALIZADO)).toBe(true);
   });
 });
 
 describe('normalizarCNJ', () => {
   it('deve remover hífens e pontos', () => {
-    expect(normalizarCNJ('0000001-47.2024.8.26.0001')).toBe('00000014720248260001');
+    expect(normalizarCNJ(CNJ_VALIDO)).toBe(CNJ_VALIDO_NORMALIZADO);
   });
 
   it('deve remover espaços', () => {
-    expect(normalizarCNJ('0000001 47 2024 8 26 0001')).toBe('00000014720248260001');
+    expect(normalizarCNJ('0000001 45 2024 8 26 0001')).toBe(CNJ_VALIDO_NORMALIZADO);
   });
 });
 
@@ -60,13 +67,13 @@ describe('assertCNJValido', () => {
   });
 
   it('não deve lançar para CNJ válido', () => {
-    expect(() => assertCNJValido('0000001-47.2024.8.26.0001')).not.toThrow();
+    expect(() => assertCNJValido(CNJ_VALIDO)).not.toThrow();
   });
 });
 
 describe('extrairCodigoTribunal', () => {
   it('deve extrair J.TT corretamente (TJSP = 8.26)', () => {
-    expect(extrairCodigoTribunal('0000001-47.2024.8.26.0001')).toBe('8.26');
+    expect(extrairCodigoTribunal(CNJ_VALIDO)).toBe('8.26');
   });
 });
 
