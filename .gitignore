@@ -1,3 +1,29 @@
+# Node.js / Backend
+node_modules/
+dist/
+.env
+.env.local
+.env.*.local
+*.env
+apps/*/dist/
+apps/*/node_modules/
+
+# pnpm
+pnpm-debug.log*
+
+# Logs
+*.log
+logs/
+
+# Coverage
+coverage/
+.nyc_output/
+
+# Supabase local dev artifacts
+supabase/.branches/
+supabase/.temp/
+
+# Android (existing entries — do not remove)
 *.iml
 .gradle
 /local.properties
