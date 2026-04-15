@@ -6,6 +6,7 @@ import authPlugin from './plugins/auth.js'
 import sentryPlugin from './plugins/sentry.js'
 import { authRoutes } from './routes/auth/index.js'
 import { lgpdRoutes } from './routes/lgpd/index.js'
+import { healthRoutes } from './routes/health.js'
 
 export function buildApp(opts: FastifyServerOptions = {}): FastifyInstance {
   const app = Fastify({
@@ -65,6 +66,9 @@ export function buildApp(opts: FastifyServerOptions = {}): FastifyInstance {
   app.get('/', { config: { skipAuth: true } }, async (_req, reply) => {
     return reply.send({ service: 'portaljuridico-api', version: '0.1.0' })
   })
+
+  // Health check publico (sem autenticacao) — Railway health checks
+  app.register(healthRoutes)
 
   // Rotas de autenticacao e LGPD
   app.register(authRoutes, { prefix: '/api/v1/auth' })
