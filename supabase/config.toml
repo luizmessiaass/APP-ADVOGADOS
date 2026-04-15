@@ -24,7 +24,7 @@ port = 54322
 # Port used by db diff command to initialize the shadow database.
 shadow_port = 54320
 # The database major version to use. This has to be the same as your cloud database major version.
-major_version = 15
+major_version = 17
 
 [db.pooler]
 enabled = false
@@ -102,7 +102,7 @@ double_confirm_changes = true
 # If enabled, users need to confirm their email address before signing in.
 enable_confirmations = false
 # If enabled, users will need to reauthenticate or have logged in recently to change their password.
-password_min_length = 8
+# password_min_length = 8  # removed — not supported in this CLI version
 
 [auth.sms]
 enable_signup = false
