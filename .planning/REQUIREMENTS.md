@@ -43,14 +43,14 @@
 
 ### AI Translation (AI)
 
-- [ ] **AI-01**: Endpoint traduz movimentações jurídicas para português simples via Claude API
-- [ ] **AI-02**: Prompt usa caching de tokens (system prompt + glossário jurídico em blocos `cache_control`)
-- [ ] **AI-03**: Input de movimentação é delimitado por tags XML (`<movimentacao>...</movimentacao>`) para isolar de instruções do sistema
-- [ ] **AI-04**: Output é validado por schema antes de salvar (`{status, proxima_data, explicacao, impacto}`)
-- [ ] **AI-05**: Tradução já realizada é cacheada por hash do texto original (não reprocessa movimentação igual)
-- [ ] **AI-06**: Cada resposta da IA exibe disclaimer visível: "Explicação gerada por IA — confirme com seu advogado"
-- [ ] **AI-07**: Limites de tokens por tenant estão configurados com alertas de gasto em 50/80/100%
-- [ ] **AI-08**: Modelo Haiku é usado para tradução em lote; Sonnet para interações (v1.1)
+- [x] **AI-01**: Endpoint traduz movimentações jurídicas para português simples via Claude API
+- [x] **AI-02**: Prompt usa caching de tokens (system prompt + glossário jurídico em blocos `cache_control`)
+- [x] **AI-03**: Input de movimentação é delimitado por tags XML (`<movimentacao>...</movimentacao>`) para isolar de instruções do sistema
+- [x] **AI-04**: Output é validado por schema antes de salvar (`{status, proxima_data, explicacao, impacto}`)
+- [x] **AI-05**: Tradução já realizada é cacheada por hash do texto original (não reprocessa movimentação igual)
+- [x] **AI-06**: Cada resposta da IA exibe disclaimer visível: "Explicação gerada por IA — confirme com seu advogado"
+- [x] **AI-07**: Limites de tokens por tenant estão configurados com alertas de gasto em 50/80/100%
+- [x] **AI-08**: Modelo Haiku é usado para tradução em lote; Sonnet para interações (v1.1)
 
 ### Push Notifications (NOTIFY)
 
@@ -219,14 +219,14 @@ Full per-requirement mapping (updated 2026-04-14 after roadmap creation).
 | DATAJUD-07 | Phase 2 | Pending |
 | DATAJUD-08 | Phase 2 | Pending |
 | DATAJUD-09 | Phase 2 | Pending |
-| AI-01 | Phase 3 | Pending |
-| AI-02 | Phase 3 | Pending |
-| AI-03 | Phase 3 | Pending |
-| AI-04 | Phase 3 | Pending |
-| AI-05 | Phase 3 | Pending |
-| AI-06 | Phase 3 | Pending |
-| AI-07 | Phase 3 | Pending |
-| AI-08 | Phase 3 | Pending |
+| AI-01 | Phase 3 | Complete |
+| AI-02 | Phase 3 | Complete |
+| AI-03 | Phase 3 | Complete |
+| AI-04 | Phase 3 | Complete |
+| AI-05 | Phase 3 | Complete |
+| AI-06 | Phase 3 | Complete |
+| AI-07 | Phase 3 | Complete |
+| AI-08 | Phase 3 | Complete |
 | ESCR-01 | Phase 4 | Pending |
 | ESCR-02 | Phase 4 | Pending |
 | ESCR-03 | Phase 4 | Pending |
