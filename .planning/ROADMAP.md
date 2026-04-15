@@ -15,7 +15,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [ ] **Phase 0: Android Bootstrap & Cleanup** - Rename package, upgrade deps, modularize, configure Hilt & CI baseline
 - [ ] **Phase 1: Backend Foundation** - Supabase + Fastify + Auth + RLS + LGPD basics & observability
 - [ ] **Phase 2: DataJud Integration & Sync Worker** - CNJ validation, BullMQ worker, tiered refresh, circuit breaker, diffing
-- [ ] **Phase 3: Claude AI Translation** - Jargon-to-plain-PT translation with prompt caching, injection defense, token telemetry
+- [x] **Phase 3: Claude AI Translation** - Jargon-to-plain-PT translation with prompt caching, injection defense, token telemetry (completed 2026-04-15)
 - [ ] **Phase 4: Android App — Fluxo Advogado** - Role-based single app: advogado flow — client CRUD, preview "as cliente sees", manual messages
 - [ ] **Phase 5: Android App — Fluxo Cliente (MVP)** - Role-based single app: cliente flow — process list, plain-language status, timeline, onboarding, LGPD consent gate
 - [ ] **Phase 6: Push Notifications & In-app Center** - FCM high-priority dispatch + WorkManager fallback + notification center
@@ -97,7 +97,7 @@ Plans:
   5. Haiku is used for bulk translation per the model routing config, with the routing visible in logs/telemetry
 **Plans**: 1 plan
 Plans:
-- [ ] 03-01-PLAN.md — Servico completo: glossario juridico, translation-service (Claude Haiku 4.5), worker BullMQ dedup por hash, budget por tenant com alertas, endpoint assincrono 202, migration token_usage
+- [x] 03-01-PLAN.md — Servico completo: glossario juridico, translation-service (Claude Haiku 4.5), worker BullMQ dedup por hash, budget por tenant com alertas, endpoint assincrono 202, migration token_usage
 **UI hint**: no
 
 ### Phase 4: Android App — Fluxo Advogado
@@ -175,7 +175,7 @@ Phases execute in numeric order: 0 → 1 → 2 → 3 → 4 → 5 → 6 → 7 →
 | 0. Android Bootstrap & Cleanup | 0/5 | Not started | - |
 | 1. Backend Foundation | 3/8 | In Progress|  |
 | 2. DataJud Integration & Sync Worker | 0/6 | Not started | - |
-| 3. Claude AI Translation | 0/1 | Not started | - |
+| 3. Claude AI Translation | 1/1 | Complete   | 2026-04-15 |
 | 4. Android App — Fluxo Advogado | 0/TBD | Not started | - |
 | 5. Android App — Fluxo Cliente (MVP) | 0/TBD | Not started | - |
 | 6. Push Notifications & In-app Center | 0/TBD | Not started | - |
