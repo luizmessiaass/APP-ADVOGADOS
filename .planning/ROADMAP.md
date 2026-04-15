@@ -34,7 +34,13 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. Multi-module layout exists with `:core-common`, `:core-network`, `:core-data`, `:core-ui`, `:app-cliente`, `:app-escritorio` and each module compiles independently
   4. Hilt is wired and a trivial `@Inject` sample resolves at runtime in at least one module
   5. Gradle dependency catalog is upgraded (Compose BOM current, Kotlin/AGP current) and `./gradlew build` passes locally
-**Plans**: TBD
+**Plans**: 5 plans
+Plans:
+- [ ] 00-01-PLAN.md — Multi-module scaffold: 6 module build.gradle.kts files + settings.gradle.kts + root build.gradle.kts
+- [ ] 00-02-PLAN.md — Package rename + code migration: theme to :core-ui, MainActivity stubs, delete old :app
+- [ ] 00-03-PLAN.md — Dependency catalog upgrade: Compose BOM 2026.03.00, Hilt 2.57.1, KSP 2.2.10-1.0.31
+- [ ] 00-04-PLAN.md — Hilt DI wiring: @HiltAndroidApp Application classes + AppConfig @Inject sample + unit test
+- [ ] 00-05-PLAN.md — R8 ProGuard rules + GitHub Actions CI workflow + final package name verification
 **UI hint**: yes
 
 ### Phase 1: Backend Foundation (Supabase + Fastify + Auth + RLS + LGPD basics)
@@ -166,7 +172,7 @@ Phases execute in numeric order: 0 → 1 → 2 → 3 → 4 → 5 → 6 → 7 →
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 0. Android Bootstrap & Cleanup | 0/TBD | Not started | - |
+| 0. Android Bootstrap & Cleanup | 0/5 | Not started | - |
 | 1. Backend Foundation | 0/8 | Not started | - |
 | 2. DataJud Integration & Sync Worker | 0/6 | Not started | - |
 | 3. Claude AI Translation | 0/1 | Not started | - |
@@ -189,7 +195,7 @@ Phases flagged as needing extra research at the planning boundary (per research/
 | 4 | needs-research | supabase-kt 3.x, Ktor 3 client patterns in 2026 |
 | 5 | standard | — |
 | 6 | needs-research | Q8 FCM HTTP v1 API state + Android 13+ POST_NOTIFICATIONS flow; Q11 notification impact triage |
-| 7 | needs-research | Q9 Stripe API version pin + Customer Portal options; Q13 willingness-to-pay per escritório |
+| 7 | needs-research | Q9 Stripe API version pin + Customer Portal options; Q13 willingness-to-pay por escritório |
 | 8 | needs-research (LAUNCH BLOCKER) | Q4 LGPD enforcement precedents post-May 2025; Brazilian privacy lawyer review |
 
 ## Coverage Summary
