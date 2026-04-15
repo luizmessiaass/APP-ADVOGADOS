@@ -89,7 +89,9 @@ Plans:
   3. Per-tenant Claude token consumption is tracked and alerts fire at 50/80/100% of the configured budget
   4. Untrusted DataJud text is delimited by XML tags inside the prompt, output is schema-validated before persistence, and every translation carries the "Explicação gerada por IA — confirme com seu advogado" disclaimer field
   5. Haiku is used for bulk translation per the model routing config, with the routing visible in logs/telemetry
-**Plans**: TBD
+**Plans**: 1 plan
+Plans:
+- [ ] 03-01-PLAN.md — Servico completo: glossario juridico, translation-service (Claude Haiku 4.5), worker BullMQ dedup por hash, budget por tenant com alertas, endpoint assincrono 202, migration token_usage
 **UI hint**: no
 
 ### Phase 4: app_escritorio (Admin Android Client)
@@ -167,7 +169,7 @@ Phases execute in numeric order: 0 → 1 → 2 → 3 → 4 → 5 → 6 → 7 →
 | 0. Android Bootstrap & Cleanup | 0/TBD | Not started | - |
 | 1. Backend Foundation | 0/8 | Not started | - |
 | 2. DataJud Integration & Sync Worker | 0/6 | Not started | - |
-| 3. Claude AI Translation | 0/TBD | Not started | - |
+| 3. Claude AI Translation | 0/1 | Not started | - |
 | 4. app_escritorio | 0/TBD | Not started | - |
 | 5. app_cliente | 0/TBD | Not started | - |
 | 6. Push Notifications & In-app Center | 0/TBD | Not started | - |
