@@ -2,7 +2,9 @@
   "name": "api",
   "version": "0.1.0",
   "type": "module",
-  "engines": { "node": ">=22.0.0" },
+  "engines": {
+    "node": ">=22.0.0"
+  },
   "scripts": {
     "dev": "tsx watch src/server.ts",
     "build": "tsc --project tsconfig.json",
@@ -24,12 +26,13 @@
     "fastify-plugin": "5.0.1",
     "ioredis": "5.10.1",
     "jose": "6.2.2",
-    "pino": "10.3.1"
+    "pino": "10.3.1",
+    "zod": "4.3.6"
   },
   "devDependencies": {
+    "@types/node": "latest",
     "@typescript-eslint/eslint-plugin": "latest",
     "@typescript-eslint/parser": "latest",
-    "@types/node": "latest",
     "@vitest/coverage-v8": "latest",
     "eslint": "latest",
     "pino-pretty": "13.1.3",
