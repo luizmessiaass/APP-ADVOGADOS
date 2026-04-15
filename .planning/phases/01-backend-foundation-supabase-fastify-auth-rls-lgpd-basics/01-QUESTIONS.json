@@ -1,0 +1,1026 @@
+{
+  "phase": "01-backend-foundation-supabase-fastify-auth-rls-lgpd-basics",
+  "generated_at": "2026-04-14T23:45:00Z",
+  "stats": {
+    "total": 38,
+    "answered": 0,
+    "chat_more": 0,
+    "remaining": 38
+  },
+  "sections": [
+    {
+      "id": "project-structure",
+      "title": "Estrutura do Projeto",
+      "questions": [
+        {
+          "id": "Q-01",
+          "title": "Monorepo ou repos separados?",
+          "context": "O projeto tem 3 artefatos distintos: Node.js API, Node.js Worker (BullMQ), e o projeto Android (2 apps + módulos core). A pesquisa recomenda manter tudo junto para facilitar deploys e tipagem compartilhada entre API e Android via OpenAPI/types.",
+          "options": [
+            {
+              "id": "a",
+              "label": "Monorepo único (Recommended)",
+              "description": "Um repositório com packages/ ou apps/ separados. Facilita tipagem compartilhada, CI unificado, e pull requests que tocam backend + Android juntos."
+            },
+            {
+              "id": "b",
+              "label": "Repos separados por camada",
+              "description": "Repo backend (Node.js), repo android (Android). Mais simples de entender separadamente, mas dificulta contratos compartilhados e sincronização de versões."
+            },
+            {
+              "id": "c",
+              "label": "Repo único flat (sem monorepo tooling)",
+              "description": "Tudo no mesmo repo mas sem workspaces ou turborepo — pastas /backend, /android, /worker na raiz. Menor overhead de tooling, mas sem resolução de dependências entre packages."
+            }
+          ],
+          "answer": null,
+          "chat_more": "",
+          "status": "unanswered"
+        },
+        {
+          "id": "Q-02",
+          "title": "Gerenciador de pacotes Node.js",
+          "context": "Node.js 22 LTS vem com npm 10+. pnpm oferece installs mais rápidos e resolução estrita de dependências (evita phantom deps). A pesquisa recomenda pnpm para monorepo.",
+          "options": [
+            {
+              "id": "a",
+              "label": "pnpm (Recommended)",
+              "description": "Installs mais rápidos, melhor suporte a workspaces/monorepo, resolução estrita evita bugs de deps fantasmas."
+            },
+            {
+              "id": "b",
+              "label": "npm",
+              "description": "Já vem com Node.js 22, sem setup extra. Funciona bem para projeto simples mas workspaces são menos ergonômicos que pnpm."
+            },
+            {
+              "id": "c",
+              "label": "yarn berry",
+              "description": "PnP mode evita node_modules, mas tem curva de aprendizado e incompatibilidades com alguns pacotes nativos."
+            }
+          ],
+          "answer": null,
+          "chat_more": "",
+          "status": "unanswered"
+        },
+        {
+          "id": "Q-03",
+          "title": "Estrutura de pastas do backend",
+          "context": "A pesquisa recomenda arquitetura em camadas (controllers → services → repositories → adapters). Mas a granularidade pode variar bastante dependendo do tamanho do time e preferência de navegação.",
+          "options": [
+            {
+              "id": "a",
+              "label": "Layered por tipo (Recommended)",
+              "description": "src/controllers/, src/services/, src/repositories/, src/adapters/. Padrão clássico — fácil entender camadas de responsabilidade."
+            },
+            {
+              "id": "b",
+              "label": "Feature-first",
+              "description": "src/features/auth/, src/features/processos/, etc. Cada feature tem seu controller + service + repository junto. Mais fácil navegar por domínio, mas camadas menos claras."
+            },
+            {
+              "id": "c",
+              "label": "Flat (para começar simples)",
+              "description": "src/routes/, src/services/, src/db/. Menos overhead no início, pode refatorar para layered depois se o projeto crescer."
+            }
+          ],
+          "answer": null,
+          "chat_more": "",
+          "status": "unanswered"
+        },
+        {
+          "id": "Q-04",
+          "title": "API e Worker: mesmo package ou separados?",
+          "context": "A pesquisa deixa claro que o Worker BullMQ deve rodar como processo separado (não dentro do servidor HTTP). A questão é se compartilham o mesmo package com entry points diferentes, ou são packages distintos.",
+          "options": [
+            {
+              "id": "a",
+              "label": "Mesmo package, entry points diferentes (Recommended)",
+              "description": "packages/api/src/server.ts e packages/api/src/worker.ts. Compartilham services, repositories, adapters. Deploy via variável: NODE_ENV+START_MODE=worker | api."
+            },
+            {
+              "id": "b",
+              "label": "Packages separados no monorepo",
+              "description": "packages/api/ e packages/worker/. Isolamento total — worker não pode importar acidentalmente código HTTP. Maior overhead para manter em sync."
+            },
+            {
+              "id": "c",
+              "label": "Mesmo processo (somente para dev)",
+              "description": "Em dev, tudo no mesmo processo. Em produção, scriptar separação. Aumenta risco de acoplamento acidental."
+            }
+          ],
+          "answer": null,
+          "chat_more": "",
+          "status": "unanswered"
+        },
+        {
+          "id": "Q-05",
+          "title": "Plataforma de deploy inicial",
+          "context": "A pesquisa indica Railway como plataforma primária (deploy do GitHub, secrets, autoscale). Mas depende da preferência de custo/controle. O Worker BullMQ precisa rodar como processo separado — confirmar que a plataforma suporta isso.",
+          "options": [
+            {
+              "id": "a",
+              "label": "Railway (Recommended)",
+              "description": "Deploy de GitHub, variáveis de ambiente por serviço, suporte a múltiplos serviços (API + Worker como serviços Railway separados), Redis como add-on. Pricing por uso."
+            },
+            {
+              "id": "b",
+              "label": "Fly.io",
+              "description": "Bom para multi-região. Mais complexo de configurar (flyctl, Dockerfile obrigatório). Pricing por máquina — previsível mas potencialmente mais caro para o início."
+            },
+            {
+              "id": "c",
+              "label": "Render",
+              "description": "Similar ao Railway, mas com free tier mais generoso. Pode ter cold starts em planos gratuitos. Background workers suportados."
+            },
+            {
+              "id": "d",
+              "label": "Diferir — configurar deploy mais tarde",
+              "description": "Rodar localmente em Phase 1, decidir plataforma quando houver algo para deployar. Risco: discovery tardio de limitações da plataforma."
+            }
+          ],
+          "answer": null,
+          "chat_more": "",
+          "status": "unanswered"
+        }
+      ]
+    },
+    {
+      "id": "supabase-setup",
+      "title": "Supabase Setup",
+      "questions": [
+        {
+          "id": "Q-06",
+          "title": "Supabase: cloud ou self-hosted?",
+          "context": "Supabase cloud (supabase.com) tem free tier generoso para desenvolvimento. Self-hosted via Docker elimina custos mas adiciona overhead de manutenção. Para um SaaS B2B com dados jurídicos, considerar onde os dados ficam hospedados pode ter implicações LGPD.",
+          "options": [
+            {
+              "id": "a",
+              "label": "Supabase Cloud — São Paulo se disponível (Recommended)",
+              "description": "Menor overhead operacional. Verificar se há região no Brasil (LGPD prefere dados no país). Plano Free para dev, Pro ($25/mês) para produção."
+            },
+            {
+              "id": "b",
+              "label": "Supabase Cloud — us-east-1 com disclosures LGPD",
+              "description": "Mais regiões disponíveis. Documentar transferência internacional de dados na política de privacidade (Art. 33 LGPD). Mais rápido para começar."
+            },
+            {
+              "id": "c",
+              "label": "Self-hosted (Docker Compose)",
+              "description": "Controle total, dados ficam onde você quiser. Alto overhead de manutenção — Supabase self-hosted tem muitos serviços (Kong, PostgREST, GoTrue, Realtime, etc.)."
+            }
+          ],
+          "answer": null,
+          "chat_more": "",
+          "status": "unanswered"
+        },
+        {
+          "id": "Q-07",
+          "title": "Estratégia de migrations SQL",
+          "context": "Supabase CLI gerencia migrations versionadas. Alternativas incluem escrever SQL puro manualmente ou usar ORM com migrations (Drizzle ORM, Prisma). A pesquisa recomenda Supabase CLI + SQL puro para manter controle total sobre RLS policies.",
+          "options": [
+            {
+              "id": "a",
+              "label": "Supabase CLI + SQL puro (Recommended)",
+              "description": "supabase migration new, supabase db push. SQL explícito para RLS policies — nenhuma abstração esconde as políticas de segurança. Versionado em git."
+            },
+            {
+              "id": "b",
+              "label": "Drizzle ORM + drizzle-kit migrate",
+              "description": "Type-safe queries, migrations geradas do schema TypeScript. Mais produtivo para queries, mas RLS policies ainda precisam ser SQL manual. Drizzle é popular em 2025."
+            },
+            {
+              "id": "c",
+              "label": "Prisma + prisma migrate",
+              "description": "ORM mais completo, mas mais pesado. Prisma gera migrations mas não suporta RLS nativamente — precisaria de SQL manual em migrations extras."
+            }
+          ],
+          "answer": null,
+          "chat_more": "",
+          "status": "unanswered"
+        },
+        {
+          "id": "Q-08",
+          "title": "Quantos ambientes Supabase?",
+          "context": "Supabase free tier dá 2 projetos. Pro tier dá mais. Estratégia: um projeto dev (desenvolvimento local + testes), um projeto production (dados reais). Ou adicionar staging também.",
+          "options": [
+            {
+              "id": "a",
+              "label": "Dev + Prod (Recommended para começar)",
+              "description": "2 projetos Supabase. Dev para desenvolvimento e CI, Prod para clientes reais. Simples, dentro do free tier."
+            },
+            {
+              "id": "b",
+              "label": "Local (Docker) + Prod",
+              "description": "Supabase local via Docker para dev e CI (sem custo), um projeto cloud somente para produção. Melhor isolamento mas requer Docker funcionando no CI."
+            },
+            {
+              "id": "c",
+              "label": "Dev + Staging + Prod",
+              "description": "3 ambientes. Staging replica prod antes de release. Mais rigoroso mas requer plano pago desde o início (Pro tem mais projetos)."
+            }
+          ],
+          "answer": null,
+          "chat_more": "",
+          "status": "unanswered"
+        },
+        {
+          "id": "Q-09",
+          "title": "Supabase Realtime: habilitar agora?",
+          "context": "Supabase Realtime permite inscrições em mudanças do banco em tempo real. A pesquisa recomenda FCM + polling como mecanismo de notificação (Phase 6), com Realtime como optional para futuro. Habilitar agora pode gerar conexões desnecessárias.",
+          "options": [
+            {
+              "id": "a",
+              "label": "Desabilitar (não configurar) em Phase 1 (Recommended)",
+              "description": "Evitar complexidade prematura. As notificações serão FCM + WorkManager polling (Phase 6). Habilitar Realtime só se cliente Android precisar de updates em tempo real na mesma sessão."
+            },
+            {
+              "id": "b",
+              "label": "Habilitar mas sem usar nos apps",
+              "description": "Configurar a infra do Realtime agora para facilitar uso futuro. Baixo custo de setup, mas mantém a opção aberta."
+            },
+            {
+              "id": "c",
+              "label": "Usar Realtime para updates in-session",
+              "description": "Android abre uma subscription Realtime quando o app está aberto — recebe movimentações novas sem FCM enquanto em foreground. Aumenta complexidade mas melhora UX."
+            }
+          ],
+          "answer": null,
+          "chat_more": "",
+          "status": "unanswered"
+        }
+      ]
+    },
+    {
+      "id": "auth-multitenancy",
+      "title": "Autenticação & Multi-tenancy",
+      "questions": [
+        {
+          "id": "Q-10",
+          "title": "Custom Access Token Hook: onde hospedar?",
+          "context": "O JWT precisa ter tenant_id e role em app_metadata. Supabase injeta isso via Custom Access Token Hook — uma função que é chamada ao gerar JWTs. A pesquisa recomenda Supabase Edge Function para esse hook específico, com toda outra lógica no Node.js.",
+          "options": [
+            {
+              "id": "a",
+              "label": "Supabase Edge Function (Recommended)",
+              "description": "A Supabase chama automaticamente a Edge Function ao gerar tokens. Simples, sem latência de rede adicional, mantém a lógica de token dentro do ecossistema Supabase."
+            },
+            {
+              "id": "b",
+              "label": "Webhook para Node.js API",
+              "description": "Supabase chama um endpoint da API Node.js via webhook. Mais latência (network round-trip), mas toda lógica fica no backend Node.js. Requer endpoint exposto antes do deploy do Supabase."
+            },
+            {
+              "id": "c",
+              "label": "Pré-computar claims ao criar usuário (sem hook)",
+              "description": "Ao cadastrar um usuário, já setar app_metadata.tenant_id e role via Admin API do Supabase. Token carrega os claims sem hook. Mais simples, mas requer atualização manual se o role mudar."
+            }
+          ],
+          "answer": null,
+          "chat_more": "",
+          "status": "unanswered"
+        },
+        {
+          "id": "Q-11",
+          "title": "Fluxo de criação do tenant (escritório)",
+          "context": "Quando um escritório se registra, é preciso criar: (1) usuário Supabase Auth, (2) registro na tabela tenants, (3) atribuir role admin_escritorio. Esse fluxo pode ser self-service ou manual/admin.",
+          "options": [
+            {
+              "id": "a",
+              "label": "Self-service com aprovação automática (Recommended)",
+              "description": "Escritório faz signup → API cria tenant record automaticamente → email de confirmação. Escala sem intervenção manual. Ideal para SaaS. Stripe trial ou plano free como gate."
+            },
+            {
+              "id": "b",
+              "label": "Cadastro manual por admin",
+              "description": "Um admin (você) cria os tenants manualmente via script ou dashboard. Mais controle na fase inicial, mas não escala. Bom para os primeiros 5-10 clientes piloto."
+            },
+            {
+              "id": "c",
+              "label": "Self-service + review manual",
+              "description": "Escritório faz signup mas fica em status 'pendente' até aprovação manual. Útil para qualificar clientes mas adiciona fricção e overhead."
+            }
+          ],
+          "answer": null,
+          "chat_more": "",
+          "status": "unanswered"
+        },
+        {
+          "id": "Q-12",
+          "title": "Roles distintos: admin_escritorio vs advogado?",
+          "context": "O ROADMAP menciona roles admin_escritorio e advogado como roles distintos. Na prática, a diferença pode ser sutil: admin pode gerenciar a assinatura/billing, advogado só gerencia clientes. Ou podem ser o mesmo role inicialmente.",
+          "options": [
+            {
+              "id": "a",
+              "label": "Roles distintos desde Phase 1 (Recommended)",
+              "description": "admin_escritorio: gerencia assinatura, pode adicionar/remover advogados. advogado: gerencia clientes e processos. Implementar RLS distintos por role."
+            },
+            {
+              "id": "b",
+              "label": "Role único 'staff' por enquanto",
+              "description": "Todos usuários do escritório têm o mesmo role 'staff'. Distinguir admin/advogado em fase posterior quando a necessidade for validada com clientes reais."
+            },
+            {
+              "id": "c",
+              "label": "Roles distintos mas sem RLS diferenciado ainda",
+              "description": "Criar os roles no JWT mas usar as mesmas policies RLS por enquanto. Facilita refinar permissões depois sem redesenhar o schema."
+            }
+          ],
+          "answer": null,
+          "chat_more": "",
+          "status": "unanswered"
+        },
+        {
+          "id": "Q-13",
+          "title": "Como o cliente final é criado?",
+          "context": "O fluxo é: advogado cadastra cliente (nome, CPF, email, número CNJ) → cliente recebe email para baixar o app e acessar. A questão é como o usuário Supabase Auth do cliente é criado e como ele recebe as credenciais.",
+          "options": [
+            {
+              "id": "a",
+              "label": "Supabase Admin API inviteUserByEmail (Recommended)",
+              "description": "Backend chama supabase.auth.admin.inviteUserByEmail() — Supabase envia email de convite com magic link para o cliente criar senha. Simples, sem precisar gerar senha temporária."
+            },
+            {
+              "id": "b",
+              "label": "Criar usuário com senha temporária via Admin API",
+              "description": "Backend gera senha aleatória, cria usuário via Admin API, envia email customizado com credenciais. Mais controle sobre o email enviado, mas expõe senha em plaintext no email."
+            },
+            {
+              "id": "c",
+              "label": "Cliente cria própria conta com CPF como identificador",
+              "description": "App_cliente tem tela de 'primeiro acesso' onde cliente insere CPF para encontrar seus processos e cria senha. Mais fricção no onboarding mas não requer email válido."
+            }
+          ],
+          "answer": null,
+          "chat_more": "",
+          "status": "unanswered"
+        },
+        {
+          "id": "Q-14",
+          "title": "Serviço de email transacional",
+          "context": "Emails de convite, confirmação e recuperação de senha precisam de um serviço SMTP configurado. Supabase tem SMTP built-in (limitado), mas para produção é necessário um serviço externo. Também afeta o domínio do remetente (branding).",
+          "options": [
+            {
+              "id": "a",
+              "label": "Resend (Recommended)",
+              "description": "API moderna, DX excelente, free tier de 3000 emails/mês. Muito adotado em 2025 no ecossistema Node.js. Supabase suporta custom SMTP com Resend."
+            },
+            {
+              "id": "b",
+              "label": "SendGrid",
+              "description": "Mais estabelecido, free tier menor (100 emails/dia). Boa entregabilidade, mais burocrático para configurar."
+            },
+            {
+              "id": "c",
+              "label": "SMTP do Supabase (built-in) por enquanto",
+              "description": "Usar o SMTP padrão do Supabase para dev/early beta. Configurar serviço externo antes de ir para produção. Evita setup extra em Phase 1."
+            },
+            {
+              "id": "d",
+              "label": "Amazon SES",
+              "description": "Muito barato ($0.10/1000 emails), altíssima entregabilidade. Requer configuração de domínio (SPF/DKIM), mais complexo de setup inicial."
+            }
+          ],
+          "answer": null,
+          "chat_more": "",
+          "status": "unanswered"
+        }
+      ]
+    },
+    {
+      "id": "database-schema",
+      "title": "Schema do Banco de Dados",
+      "questions": [
+        {
+          "id": "Q-15",
+          "title": "Tipo de primary key nas tabelas",
+          "context": "UUID (uuid_generate_v4), ULID ou BIGSERIAL são as principais opções. UUID é o padrão do Supabase/PostgREST. ULID tem vantagem de ordenação temporal. BIGSERIAL é menor em bytes mas expõe contagem de registros.",
+          "options": [
+            {
+              "id": "a",
+              "label": "UUID v4 (Recommended)",
+              "description": "Padrão nativo do Supabase, sem configuração extra, funciona bem com PostgREST e Supabase Auth. Não expõe contagem. Seguro para IDs em URLs."
+            },
+            {
+              "id": "b",
+              "label": "ULID",
+              "description": "UUID-compatible mas lexicograficamente ordenável por tempo de criação. Útil para logs e debug, mas requer extensão ou função customizada no Postgres."
+            },
+            {
+              "id": "c",
+              "label": "UUID v7 (time-ordered)",
+              "description": "Novo padrão UUID com ordenação temporal. Suporte nativo no Postgres 17+. Melhor performance de index que UUID v4, mas verificar versão do Postgres no Supabase."
+            }
+          ],
+          "answer": null,
+          "chat_more": "",
+          "status": "unanswered"
+        },
+        {
+          "id": "Q-16",
+          "title": "Soft delete ou hard delete?",
+          "context": "Soft delete (deleted_at timestamp) permite 'desfazer' e mantém histórico. Hard delete remove fisicamente. LGPD Art. 18 exige poder deletar dados de um usuário — mas isso não significa soft delete em tudo; pode ser hard delete controlado.",
+          "options": [
+            {
+              "id": "a",
+              "label": "Hard delete com cascade (Recommended)",
+              "description": "Simples, sem necessidade de filtrar deleted_at em todas as queries. LGPD Art. 18 endpoint faz DELETE em cascade. Sem acúmulo de 'lixo' no banco. Usar backups para recuperação se necessário."
+            },
+            {
+              "id": "b",
+              "label": "Soft delete global (deleted_at em todas tabelas)",
+              "description": "Permite recuperar dados acidentalmente deletados. Mas requer WHERE deleted_at IS NULL em todas as queries — fácil de esquecer, RLS fica mais complexo."
+            },
+            {
+              "id": "c",
+              "label": "Hard delete para dados do usuário, soft delete para registros de auditoria",
+              "description": "PII (usuários, CPF, etc.) → hard delete. Audit logs, sync_errors, movimentações → soft delete para rastreabilidade. Híbrido mais complexo mas equilibrado."
+            }
+          ],
+          "answer": null,
+          "chat_more": "",
+          "status": "unanswered"
+        },
+        {
+          "id": "Q-17",
+          "title": "Tabela de perfis além do auth.users?",
+          "context": "Supabase Auth cria usuários em auth.users (não diretamente accessível via PostgREST). É comum criar uma tabela public.profiles ou public.users que espelha auth.users com campos adicionais, linked por ID.",
+          "options": [
+            {
+              "id": "a",
+              "label": "Tabela public.users sincronizada via trigger (Recommended)",
+              "description": "Trigger em auth.users inserts → cria registro em public.users. Permite adicionar campos customizados (cpf, tenant_id, role) e fazer queries via PostgREST/RLS normalmente."
+            },
+            {
+              "id": "b",
+              "label": "Usar auth.users diretamente via Admin API",
+              "description": "Guardar campos extras em auth.users.user_metadata ou app_metadata via Admin API. Mais simples mas app_metadata é gerenciado pela Supabase, user_metadata é editável pelo usuário."
+            },
+            {
+              "id": "c",
+              "label": "Tabela public.users completamente separada",
+              "description": "Criar usuários manualmente em public.users, sem trigger. Risco de inconsistência se auth.users e public.users saírem de sync."
+            }
+          ],
+          "answer": null,
+          "chat_more": "",
+          "status": "unanswered"
+        },
+        {
+          "id": "Q-18",
+          "title": "Nomenclatura no banco: PT-BR ou inglês?",
+          "context": "Tabelas e colunas em inglês (tenant_id, users, processes) vs português (escritorio_id, usuarios, processos). A pesquisa usa inglês nos exemplos. O domínio é brasileiro. A equipe é brasileira.",
+          "options": [
+            {
+              "id": "a",
+              "label": "Inglês para nomes de tabelas e colunas (Recommended)",
+              "description": "Consistente com frameworks, ORMs, e documentação técnica. Evita problemas com acentos/caracteres especiais em SQL. Ex: tenants, users, processes, movements."
+            },
+            {
+              "id": "b",
+              "label": "Português sem acentos",
+              "description": "Mais legível para equipe brasileira. Ex: escritorios, usuarios, processos, movimentacoes. Não tem acentos então SQL não tem problemas de encoding."
+            },
+            {
+              "id": "c",
+              "label": "Misto: termos de domínio em PT, termos técnicos em inglês",
+              "description": "processos, movimentacoes (domínio) mas id, created_at, tenant_id (técnico). Pode gerar inconsistência — evitar a menos que haja convenção clara."
+            }
+          ],
+          "answer": null,
+          "chat_more": "",
+          "status": "unanswered"
+        },
+        {
+          "id": "Q-19",
+          "title": "Timestamps: created_at/updated_at em todas tabelas?",
+          "context": "Best practice é adicionar created_at e updated_at em todas as tabelas. updated_at requer um trigger para atualizar automaticamente no Postgres. Vale o overhead de ter em todas as tabelas ou apenas nas mais importantes?",
+          "options": [
+            {
+              "id": "a",
+              "label": "Sim, em todas as tabelas com trigger automático (Recommended)",
+              "description": "Cria uma função update_updated_at_column() e um trigger em cada tabela. Overhead mínimo de setup, valor alto para debugging e auditorias."
+            },
+            {
+              "id": "b",
+              "label": "Apenas created_at (sem updated_at)",
+              "description": "Mais simples — sem triggers. Se precisar de última atualização, usar movimentações/logs. updated_at é raro de consultar na prática."
+            },
+            {
+              "id": "c",
+              "label": "Selecionar tabelas específicas",
+              "description": "created_at + updated_at apenas em tenants, users, processos. Tabelas de lookup/config sem timestamps. Equilíbrio entre overhead e utilidade."
+            }
+          ],
+          "answer": null,
+          "chat_more": "",
+          "status": "unanswered"
+        }
+      ]
+    },
+    {
+      "id": "api-design",
+      "title": "API Design",
+      "questions": [
+        {
+          "id": "Q-20",
+          "title": "Versionamento da API",
+          "context": "Prefix /api/v1/ desde o início facilita versionar breaking changes no futuro. Android apps consomem a API — mudar URLs depois força atualização do app. Mas versioning prematuro adiciona path nesting.",
+          "options": [
+            {
+              "id": "a",
+              "label": "/api/v1/ prefix desde Phase 1 (Recommended)",
+              "description": "Path: /api/v1/processos, /api/v1/auth/login. Pequeno overhead agora, evita problema sério depois quando Android apps não podem forçar atualização de todos os usuários."
+            },
+            {
+              "id": "b",
+              "label": "Sem versioning por enquanto",
+              "description": "Paths diretos: /processos, /auth/login. Mais simples. Adicionar versioning quando (se) houver necessidade real de breaking change. Risco: migração forçada depois."
+            },
+            {
+              "id": "c",
+              "label": "Versioning via header (Accept-Version)",
+              "description": "Header no request em vez de path. Mais flexível, mas menos visível em logs e mais difícil de testar com curl/ferramentas básicas."
+            }
+          ],
+          "answer": null,
+          "chat_more": "",
+          "status": "unanswered"
+        },
+        {
+          "id": "Q-21",
+          "title": "Formato padrão de resposta de erro",
+          "context": "Android apps precisam saber como tratar erros da API. Definir um formato padrão desde Phase 1 evita inconsistências. RFC 7807 (Problem Details) é o padrão HTTP para erros. Formato customizado pode ser mais simples.",
+          "options": [
+            {
+              "id": "a",
+              "label": "RFC 7807 Problem Details (Recommended)",
+              "description": "{ type, title, status, detail, instance }. Padrão HTTP oficial, tooling nativo, facilita debugging. Fastify tem plugins para isso."
+            },
+            {
+              "id": "b",
+              "label": "Shape customizado simples",
+              "description": "{ success: false, error: 'MESSAGE', code: 'ERROR_CODE' }. Mais simples de implementar e consumir no Android. Não é padrão mas consistente internamente."
+            },
+            {
+              "id": "c",
+              "label": "Diferir — decidir quando precisar",
+              "description": "Deixar cada rota retornar erros como precisar inicialmente, padronizar em uma iteração depois. Risco: Android precisa de handling inconsistente."
+            }
+          ],
+          "answer": null,
+          "chat_more": "",
+          "status": "unanswered"
+        },
+        {
+          "id": "Q-22",
+          "title": "Validação de schema no Fastify: TypeBox ou Zod?",
+          "context": "Fastify suporta validação nativa via JSON Schema. TypeBox gera JSON Schema de TypeScript types (zero-overhead em runtime). Zod é mais expressivo mas requer adapter para Fastify. Ambos são populares.",
+          "options": [
+            {
+              "id": "a",
+              "label": "TypeBox (Recommended para Fastify)",
+              "description": "Type.Object(), Type.String() — integração nativa com Fastify, zero overhead de runtime, TypeScript types inferidos automaticamente. Ideal para quem quer performance e simplicidade."
+            },
+            {
+              "id": "b",
+              "label": "Zod + fastify-type-provider-zod",
+              "description": "Schema mais expressivo (z.string().email().min(3)), validações mais ricas. Requer adapter. Popular no ecossistema TypeScript em 2025. Mais familiar para quem já usa Zod em outros contextos."
+            },
+            {
+              "id": "c",
+              "label": "JSON Schema puro (sem TypeBox/Zod)",
+              "description": "Escrever JSON Schema diretamente. Máxima compatibilidade com Fastify nativo, zero dependências extras. Mais verboso e sem type inference automática."
+            }
+          ],
+          "answer": null,
+          "chat_more": "",
+          "status": "unanswered"
+        },
+        {
+          "id": "Q-23",
+          "title": "Rate limiting: habilitar em Phase 1?",
+          "context": "A pesquisa recomenda @fastify/rate-limit para controle de custos (DataJud + Claude). Mas em Phase 1 ainda não existem esses endpoints. Vale configurar o plugin agora (mesmo que não use muito) ou apenas em Phase 2-3?",
+          "options": [
+            {
+              "id": "a",
+              "label": "Configurar @fastify/rate-limit agora com limites altos (Recommended)",
+              "description": "Instalar e configurar com limites conservadores (ex: 1000 req/min por tenant). Quando endpoints Claude/DataJud chegarem (Phase 2-3), os limites já estarão no lugar."
+            },
+            {
+              "id": "b",
+              "label": "Diferir para Phase 2/3 quando houver endpoints caros",
+              "description": "Adicionar rate limiting somente quando necessário. Reduz configuração em Phase 1. Risco: esquecer de adicionar antes de expor endpoints ao mundo."
+            },
+            {
+              "id": "c",
+              "label": "Rate limiting apenas nos endpoints da IA e DataJud",
+              "description": "Instalar em Phase 1 mas configurar somente nas rotas específicas em Phase 2/3. Melhor granularidade, mas requer adicionar manualmente em cada rota."
+            }
+          ],
+          "answer": null,
+          "chat_more": "",
+          "status": "unanswered"
+        }
+      ]
+    },
+    {
+      "id": "lgpd-compliance",
+      "title": "LGPD Compliance (Phase 1 scope)",
+      "questions": [
+        {
+          "id": "Q-24",
+          "title": "Tabela de consentimento LGPD: separada ou coluna?",
+          "context": "LGPD-01 requer registrar opt-in com timestamp e versão dos termos. Pode ser uma tabela separada lgpd_consents (permite múltiplos registros de consent por usuário, histórico) ou uma coluna em users (mais simples).",
+          "options": [
+            {
+              "id": "a",
+              "label": "Tabela separada lgpd_consents (Recommended)",
+              "description": "id, user_id, version, consented_at, ip_address, user_agent, revoked_at. Permite histórico completo, fácil de auditar, suporta revogação sem perder histórico."
+            },
+            {
+              "id": "b",
+              "label": "Colunas em users: lgpd_consent_at, lgpd_version",
+              "description": "Mais simples. Mas ao revogar ou atualizar termos, perde histórico. Inadequado se ANPD pedir evidência de quando o consentimento foi dado."
+            },
+            {
+              "id": "c",
+              "label": "Diferir para Phase 8 (LGPD hardening)",
+              "description": "Phase 1 é só backend — clientes finais só aparecem em Phase 5. LGPD consent pode ser implementado quando o app_cliente existir. Mas a tabela precisa existir antes dos dados."
+            }
+          ],
+          "answer": null,
+          "chat_more": "",
+          "status": "unanswered"
+        },
+        {
+          "id": "Q-25",
+          "title": "Versão dos termos de privacidade: como gerenciar?",
+          "context": "LGPD-01 guarda a versão dos termos junto com o consentimento. Quando os termos mudarem, usuários precisam consentir novamente. Como versionar?",
+          "options": [
+            {
+              "id": "a",
+              "label": "String semântica hardcoded (v1.0, v1.1)",
+              "description": "Versão definida como constante no código. Simples, visível no git diff quando mudar. Requer re-deploy ao atualizar termos."
+            },
+            {
+              "id": "b",
+              "label": "Data como versão (2026-04-14)",
+              "description": "ISO date string como versão. Auto-documenta quando foi a última atualização. Fácil de comparar se o consentimento está desatualizado."
+            },
+            {
+              "id": "c",
+              "label": "Variável de ambiente LGPD_TERMS_VERSION",
+              "description": "Configurável sem re-deploy. Útil para atualizações frequentes de termos. Mas a versão fica fora do git history."
+            }
+          ],
+          "answer": null,
+          "chat_more": "",
+          "status": "unanswered"
+        },
+        {
+          "id": "Q-26",
+          "title": "Redação de PII em logs: abordagem?",
+          "context": "LGPD-04 requer que logs não contenham CPF nem conteúdo bruto de prompts. Essa redação pode acontecer em um middleware global (redact em todos os logs) ou via sanitização manual por campo antes de logar.",
+          "options": [
+            {
+              "id": "a",
+              "label": "pino redact option (Recommended)",
+              "description": "pino({ redact: ['req.body.cpf', 'req.body.password', '*.cpf', '*.prompt'] }) — define caminhos que são automaticamente substituídos por [REDACTED]. Zero-overhead na maioria dos logs."
+            },
+            {
+              "id": "b",
+              "label": "Middleware de sanitização manual",
+              "description": "Antes de logar qualquer objeto, passar por uma função que remove campos sensíveis. Mais controle granular, mas fácil de esquecer novos campos."
+            },
+            {
+              "id": "c",
+              "label": "Não logar body de requests (somente metadata)",
+              "description": "Logar somente URL, method, status, latência, tenant_id — nunca o body. Mais seguro por padrão, mas perde contexto valioso para debugging."
+            }
+          ],
+          "answer": null,
+          "chat_more": "",
+          "status": "unanswered"
+        },
+        {
+          "id": "Q-27",
+          "title": "Política de privacidade: onde hospedar?",
+          "context": "LGPD-06 requer mencionar Anthropic como sub-processador na política. O app_cliente vai linkar para a política na primeira abertura. O documento pode ser uma página web ou texto embutido no app.",
+          "options": [
+            {
+              "id": "a",
+              "label": "URL web (landing page ou Notion/Google Docs)",
+              "description": "App linka para URL externa. Fácil de atualizar sem re-deploy do app. Pode ser Notion público ou futura landing page do produto."
+            },
+            {
+              "id": "b",
+              "label": "Texto embutido no app Android",
+              "description": "ScrollableText screen no app. Garantia que o usuário pode ler offline. Mas atualizar requer novo release do app."
+            },
+            {
+              "id": "c",
+              "label": "Documento servido pelo backend (/api/privacy-policy)",
+              "description": "Backend retorna o texto da política. Updatable sem re-deploy do app. Mas requer conexão para ler. Endpoint simples, sem auth."
+            }
+          ],
+          "answer": null,
+          "chat_more": "",
+          "status": "unanswered"
+        }
+      ]
+    },
+    {
+      "id": "observability",
+      "title": "Observabilidade & Monitoramento",
+      "questions": [
+        {
+          "id": "Q-28",
+          "title": "Log level padrão em produção",
+          "context": "pino suporta trace/debug/info/warn/error/fatal. Em produção, info captura todas as requisições (útil para debugging). warn só captura alertas e erros (menor volume mas perde contexto de requests normais).",
+          "options": [
+            {
+              "id": "a",
+              "label": "info em produção (Recommended)",
+              "description": "Captura cada request com tenant_id, user_id, latência. Volume maior mas rastreabilidade excelente. Configurar log drain (Betterstack, Logtail) para não lotar disco."
+            },
+            {
+              "id": "b",
+              "label": "warn em produção",
+              "description": "Só captura warnings e erros. Menos volume de logs, mais barato. Mas perde contexto de requests que eventualmente causam erros."
+            },
+            {
+              "id": "c",
+              "label": "Configurável por env LOG_LEVEL",
+              "description": "Default info mas sobrescrito por LOG_LEVEL env var. Flexível — pode trocar sem re-deploy. Útil para aumentar para debug temporariamente em produção."
+            }
+          ],
+          "answer": null,
+          "chat_more": "",
+          "status": "unanswered"
+        },
+        {
+          "id": "Q-29",
+          "title": "Serviço de log agregado",
+          "context": "pino gera logs JSON estruturados. Em produção, esses logs precisam ir para algum lugar para serem consultados. Railway tem logs básicos embutidos. Para busca avançada, um serviço externo é necessário.",
+          "options": [
+            {
+              "id": "a",
+              "label": "Betterstack (Logtail) — Recommended",
+              "description": "Free tier 1GB/mês, excelente DX, integração nativa com pino via pino-logtail. Interface de busca moderna. Popular no ecossistema Railway/Fly."
+            },
+            {
+              "id": "b",
+              "label": "Railway logs built-in por enquanto",
+              "description": "Railway retém logs por alguns dias. Suficiente para MVP early stage. Configurar serviço externo quando tiver clientes reais."
+            },
+            {
+              "id": "c",
+              "label": "Axiom",
+              "description": "Free tier 500GB ingestão, busca muito rápida. Bom para quando o volume crescer."
+            }
+          ],
+          "answer": null,
+          "chat_more": "",
+          "status": "unanswered"
+        },
+        {
+          "id": "Q-30",
+          "title": "Sentry: configuração por Phase 1",
+          "context": "Sentry captura erros com contexto (stack trace, user, tenant). A pesquisa menciona Sentry para API e Worker. A questão é o escopo da configuração em Phase 1.",
+          "options": [
+            {
+              "id": "a",
+              "label": "Um DSN compartilhado para API + Worker (Recommended para começar)",
+              "description": "Sentry free tier tem 1 projeto por organização. Diferenciar API vs Worker via tags (environment: 'api' | 'worker'). Simples de configurar."
+            },
+            {
+              "id": "b",
+              "label": "DSNs separados (projetos Sentry separados)",
+              "description": "Melhor separação de alertas. API errors != Worker errors. Mas usa 2 projetos do Sentry free tier (limitado)."
+            },
+            {
+              "id": "c",
+              "label": "Diferir Sentry para Phase 3+",
+              "description": "Em Phase 1 sem usuários reais, erros são pegos em desenvolvimento. Adicionar Sentry quando houver primeiros clientes piloto."
+            }
+          ],
+          "answer": null,
+          "chat_more": "",
+          "status": "unanswered"
+        },
+        {
+          "id": "Q-31",
+          "title": "OpenTelemetry: configurar em Phase 1?",
+          "context": "OpenTelemetry adiciona distributed tracing (spans, traces) além de logs. Útil para entender latência end-to-end (request → Supabase → resposta). Mas adiciona complexidade e um collector para hospedar.",
+          "options": [
+            {
+              "id": "a",
+              "label": "Não — diferir para Phase 8 (hardening) (Recommended)",
+              "description": "pino logs + Sentry são suficientes para as primeiras fases. OpenTelemetry é premium de observabilidade, não baseline. Adicionar quando tiver clientes reais e latência para otimizar."
+            },
+            {
+              "id": "b",
+              "label": "Sim — configurar agora (sem collector local)",
+              "description": "Instrumentar código agora, exportar para Honeycomb/Grafana Cloud desde o início. Dá visibilidade early mas adiciona setup e custo."
+            },
+            {
+              "id": "c",
+              "label": "Instrumentar código mas não exportar (feature flag)",
+              "description": "Adicionar spans ao código mas só ativar exportação em produção quando necessário. Overhead de instrumentação sem benefício imediato."
+            }
+          ],
+          "answer": null,
+          "chat_more": "",
+          "status": "unanswered"
+        }
+      ]
+    },
+    {
+      "id": "bullmq-worker",
+      "title": "Worker & BullMQ",
+      "questions": [
+        {
+          "id": "Q-32",
+          "title": "Worker entry point: único ou por tipo de job?",
+          "context": "Phase 1 cria o Worker process mas ainda sem jobs reais (DataJud vem na Phase 2). Vale estruturar o worker de forma que seja fácil adicionar consumers depois.",
+          "options": [
+            {
+              "id": "a",
+              "label": "Single worker.ts com múltiplos Worker consumers (Recommended)",
+              "description": "Um processo que instancia múltiplos BullMQ Worker consumers (datajudSync, notificationFanout, stripeReconcile). Simples de deployar como um único serviço."
+            },
+            {
+              "id": "b",
+              "label": "Entry point por tipo de job",
+              "description": "worker-datajud.ts, worker-notifications.ts, worker-stripe.ts. Escala independentemente mas requer mais serviços Railway e config mais complexa."
+            },
+            {
+              "id": "c",
+              "label": "Placeholder apenas (implementar em Phase 2)",
+              "description": "Criar worker.ts vazio com health check. Adicionar consumers em Phase 2 quando DataJud chegar. Menos over-engineering em Phase 1."
+            }
+          ],
+          "answer": null,
+          "chat_more": "",
+          "status": "unanswered"
+        },
+        {
+          "id": "Q-33",
+          "title": "Redis para dev: Docker local ou Upstash?",
+          "context": "BullMQ precisa de Redis. Para desenvolvimento local, pode rodar Redis via Docker Compose. Para CI e produção, Upstash Redis (serverless, pay-per-use) é a recomendação da pesquisa.",
+          "options": [
+            {
+              "id": "a",
+              "label": "Docker Compose para dev + Upstash para CI/prod (Recommended)",
+              "description": "docker-compose.yml com redis:alpine para dev local. Upstash para CI (GitHub Actions) e produção. Máxima compatibilidade com dev environment."
+            },
+            {
+              "id": "b",
+              "label": "Upstash desde o início (dev + prod)",
+              "description": "Sem Docker, sem gestão local. Usar mesma instância Upstash (ou branch separada) para dev e prod. Mais simples mas dev fica dependente de internet."
+            },
+            {
+              "id": "c",
+              "label": "Redis como add-on da Railway (dev + prod)",
+              "description": "Railway tem Redis add-on. Conveniente — tudo no mesmo provider. Mas fica acoplado ao Railway — migração para outro provider requer mudar Redis também."
+            }
+          ],
+          "answer": null,
+          "chat_more": "",
+          "status": "unanswered"
+        },
+        {
+          "id": "Q-34",
+          "title": "Bull Board (dashboard de filas): Phase 1?",
+          "context": "Bull Board é um dashboard web para visualizar filas BullMQ — jobs pendentes, ativos, falhos, completados. Útil para debugging. Em Phase 1 sem jobs reais, tem valor limitado.",
+          "options": [
+            {
+              "id": "a",
+              "label": "Diferir para Phase 2 (quando tiver jobs DataJud) (Recommended)",
+              "description": "Instalar @bull-board/fastify em Phase 2 quando os jobs reais aparecerem. Sem custo de setup extra em Phase 1."
+            },
+            {
+              "id": "b",
+              "label": "Configurar em Phase 1 com rota protegida por basicAuth",
+              "description": "Instalar agora, proteger com basic auth (admin:senha). Pronto para quando Phase 2 chegar. Pequeno overhead de setup."
+            },
+            {
+              "id": "c",
+              "label": "Não usar (Sentry + logs suficientes para monitorar jobs)",
+              "description": "Monitorar jobs via Sentry errors + pino logs em vez de dashboard visual. Menos dependência, mais simples."
+            }
+          ],
+          "answer": null,
+          "chat_more": "",
+          "status": "unanswered"
+        }
+      ]
+    },
+    {
+      "id": "ci-cd",
+      "title": "CI/CD & Testes",
+      "questions": [
+        {
+          "id": "Q-35",
+          "title": "Framework de testes para integração",
+          "context": "O teste mais crítico de Phase 1 é o cross-tenant integration test. Precisa de um framework de testes Node.js. Vitest é mais moderno e rápido. Jest é mais estabelecido.",
+          "options": [
+            {
+              "id": "a",
+              "label": "Vitest (Recommended)",
+              "description": "Mais rápido que Jest, compatível com Jest API, suporte nativo a TypeScript sem babel, excelente DX. Padrão moderno em 2025."
+            },
+            {
+              "id": "b",
+              "label": "Jest",
+              "description": "Mais estabelecido, mais material na internet. Mais lento, requer ts-jest ou swc para TypeScript. Ainda amplamente usado."
+            },
+            {
+              "id": "c",
+              "label": "Node.js test runner nativo (node:test)",
+              "description": "Builtin no Node.js 22, zero dependências. Mais limitado que Vitest/Jest mas suficiente para integration tests simples."
+            }
+          ],
+          "answer": null,
+          "chat_more": "",
+          "status": "unanswered"
+        },
+        {
+          "id": "Q-36",
+          "title": "Coverage mínimo obrigatório no CI?",
+          "context": "Exigir coverage mínimo (ex: 70%) impede merges com código não testado. Mas em um projeto novo, coverage mínimo pode ser frustrante se as primeiras fases tiverem muito código de setup.",
+          "options": [
+            {
+              "id": "a",
+              "label": "Sem cobertura mínima agora, gates específicos (Recommended)",
+              "description": "Não bloquear por % de coverage. Em vez disso, exigir que o cross-tenant integration test passe. Coverage tracking como metric, não blocker, nos primeiros meses."
+            },
+            {
+              "id": "b",
+              "label": "60% coverage mínimo desde Phase 1",
+              "description": "Gate de cobertura no CI. Garante disciplina de testes desde o início. Pode ser frustrante nas primeiras fases mas garante qualidade."
+            },
+            {
+              "id": "c",
+              "label": "Sem cobertura mínima (testes opcionais)",
+              "description": "Escrever testes quando fizer sentido, sem pressão de % mínimo. Mais velocidade de desenvolvimento, maior risco de regressões."
+            }
+          ],
+          "answer": null,
+          "chat_more": "",
+          "status": "unanswered"
+        },
+        {
+          "id": "Q-37",
+          "title": "Commit hooks: Husky + lint-staged?",
+          "context": "Husky permite executar scripts antes de commits (eslint, prettier, testes rápidos). lint-staged roda linters apenas em arquivos staged. Garante código limpo mas adiciona overhead no commit.",
+          "options": [
+            {
+              "id": "a",
+              "label": "Husky + lint-staged com eslint + prettier (Recommended)",
+              "description": "Pre-commit: lint + format nos arquivos staged. Fast — só toca arquivos modificados. Impede commits de código com erros de lint."
+            },
+            {
+              "id": "b",
+              "label": "Sem commit hooks (só CI verifica)",
+              "description": "CI faz o lint check. Commits podem ter erros de lint mas o PR falhará. Menos atrito no desenvolvimento local."
+            },
+            {
+              "id": "c",
+              "label": "Apenas prettier (sem eslint no hook)",
+              "description": "Pre-commit só formata código automaticamente. Lint roda no CI. Equilíbrio entre velocidade de commit e consistência."
+            }
+          ],
+          "answer": null,
+          "chat_more": "",
+          "status": "unanswered"
+        },
+        {
+          "id": "Q-38",
+          "title": "Branching strategy",
+          "context": "GitHub Flow (main + feature branches + PRs) é o padrão para a maioria dos projetos. Trunk-based é mais radical (commits direto na main, feature flags). Para um projeto solo ou pequeno time, a estratégia importa.",
+          "options": [
+            {
+              "id": "a",
+              "label": "GitHub Flow (main + feature branches) (Recommended)",
+              "description": "Branch por feature/fix → PR → merge para main. CI roda em todos os PRs. Simples e amplamente entendido."
+            },
+            {
+              "id": "b",
+              "label": "Trunk-based (commits direto na main)",
+              "description": "Tudo vai direto para main com feature flags para código incompleto. Mais rápido para times pequenos, mas requer disciplina de feature flags."
+            },
+            {
+              "id": "c",
+              "label": "Gitflow (main + develop + release branches)",
+              "description": "Mais estruturado com branch develop e releases. Overkill para um projeto early-stage mas familiar para times vindos de outros contextos."
+            }
+          ],
+          "answer": null,
+          "chat_more": "",
+          "status": "unanswered"
+        }
+      ]
+    }
+  ]
+}

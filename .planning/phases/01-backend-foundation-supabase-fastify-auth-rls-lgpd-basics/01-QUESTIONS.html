@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Phase 1: Backend Foundation — Perguntas de Discussão</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f8fafc; color: #1e293b; font-size: 14px; }
+  header { background: #0f172a; color: white; padding: 16px 24px; position: sticky; top: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+  header h1 { font-size: 16px; font-weight: 600; }
+  header .phase-badge { background: #3b82f6; color: white; padding: 2px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; }
+  .stats-bar { background: white; border-bottom: 1px solid #e2e8f0; padding: 12px 24px; display: flex; align-items: center; gap: 24px; flex-wrap: wrap; position: sticky; top: 57px; z-index: 99; }
+  .stat { display: flex; flex-direction: column; gap: 2px; }
+  .stat-label { font-size: 11px; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; }
+  .stat-value { font-size: 20px; font-weight: 700; color: #0f172a; }
+  .stat-value.green { color: #16a34a; }
+  .stat-value.orange { color: #ea580c; }
+  .progress-wrap { flex: 1; min-width: 200px; }
+  .progress-bg { background: #e2e8f0; border-radius: 999px; height: 8px; overflow: hidden; }
+  .progress-fill { background: #22c55e; height: 100%; border-radius: 999px; transition: width 0.3s ease; }
+  .progress-label { font-size: 11px; color: #64748b; margin-top: 4px; }
+  .save-btn { background: #3b82f6; color: white; border: none; padding: 8px 18px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; transition: background 0.15s; }
+  .save-btn:hover { background: #2563eb; }
+  .save-btn.saved { background: #16a34a; }
+  main { max-width: 1400px; margin: 0 auto; padding: 24px; }
+  .instructions { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 12px 16px; margin-bottom: 20px; font-size: 13px; color: #1d4ed8; line-height: 1.5; }
+  .instructions code { background: #dbeafe; padding: 1px 5px; border-radius: 3px; font-family: monospace; }
+  .section { margin-bottom: 28px; }
+  .section-header { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: white; border: 1px solid #e2e8f0; border-radius: 8px; cursor: pointer; user-select: none; margin-bottom: 12px; }
+  .section-header:hover { background: #f8fafc; }
+  .section-toggle { font-size: 16px; color: #64748b; transition: transform 0.2s; }
+  .section-toggle.open { transform: rotate(0deg); }
+  .section-toggle.closed { transform: rotate(-90deg); }
+  .section-title { font-weight: 600; font-size: 14px; flex: 1; }
+  .section-progress { font-size: 12px; color: #64748b; background: #f1f5f9; padding: 2px 8px; border-radius: 999px; }
+  .section-progress.complete { background: #dcfce7; color: #16a34a; }
+  .questions-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 14px; }
+  .card { background: white; border: 1px solid #e2e8f0; border-radius: 10px; padding: 16px; transition: border-color 0.2s, background 0.2s; }
+  .card.answered { border: 2px solid #22c55e; background: #f0fdf4; }
+  .card.chat-more-only { border: 2px solid #f97316; }
+  .card-header { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 10px; }
+  .qid { background: #e2e8f0; color: #475569; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; font-family: monospace; white-space: nowrap; }
+  .card.answered .qid { background: #bbf7d0; color: #15803d; }
+  .card-title { font-weight: 600; font-size: 13px; line-height: 1.4; }
+  .card-context { font-size: 12px; color: #64748b; font-style: italic; margin-bottom: 12px; line-height: 1.4; background: #f8fafc; padding: 8px 10px; border-radius: 6px; border-left: 3px solid #cbd5e1; }
+  .options { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
+  .option { display: flex; gap: 8px; align-items: flex-start; padding: 8px 10px; border-radius: 6px; cursor: pointer; border: 1px solid #e2e8f0; transition: background 0.1s, border-color 0.1s; }
+  .option:hover { background: #f8fafc; border-color: #cbd5e1; }
+  .option input[type="radio"] { margin-top: 2px; accent-color: #3b82f6; flex-shrink: 0; }
+  .option-text { flex: 1; }
+  .option-label { font-weight: 600; font-size: 12px; color: #0f172a; }
+  .option-desc { font-size: 11px; color: #64748b; margin-top: 2px; line-height: 1.4; }
+  .option input[type="radio"]:checked ~ .option-text .option-label { color: #1d4ed8; }
+  .chat-more-wrap { margin-top: 4px; }
+  .chat-more-label { font-size: 11px; color: #64748b; margin-bottom: 4px; }
+  .chat-more-area { width: 100%; padding: 8px 10px; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 12px; font-family: inherit; resize: vertical; min-height: 60px; color: #374151; transition: border-color 0.15s; }
+  .chat-more-area:focus { outline: none; border-color: #3b82f6; }
+  .chat-more-area.has-content { border: 2px solid #f97316; }
+  .chat-more-area::placeholder { color: #94a3b8; }
+  footer { background: white; border-top: 1px solid #e2e8f0; padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-top: 40px; }
+  .footer-instructions { font-size: 12px; color: #64748b; }
+  .footer-instructions code { background: #f1f5f9; padding: 1px 5px; border-radius: 3px; font-family: monospace; }
+</style>
+</head>
+<body>
+
+<header>
+  <div style="display:flex;align-items:center;gap:10px;">
+    <span class="phase-badge">Phase 1</span>
+    <h1>Backend Foundation — Perguntas de Discussão</h1>
+  </div>
+  <button class="save-btn" onclick="saveAnswers()" id="saveBtn">Salvar respostas</button>
+</header>
+
+<div class="stats-bar">
+  <div class="stat">
+    <span class="stat-label">Total</span>
+    <span class="stat-value" id="statTotal">38</span>
+  </div>
+  <div class="stat">
+    <span class="stat-label">Respondidas</span>
+    <span class="stat-value green" id="statAnswered">0</span>
+  </div>
+  <div class="stat">
+    <span class="stat-label">Restantes</span>
+    <span class="stat-value" id="statRemaining">38</span>
+  </div>
+  <div class="stat">
+    <span class="stat-label">Chat-more</span>
+    <span class="stat-value orange" id="statChatMore">0</span>
+  </div>
+  <div class="progress-wrap">
+    <div class="progress-bg"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+    <div class="progress-label" id="progressLabel">0 de 38 respondidas</div>
+  </div>
+  <button class="save-btn" onclick="saveAnswers()" style="margin-left:auto">Salvar</button>
+</div>
+
+<main>
+  <div class="instructions">
+    <strong>Como usar:</strong> Responda as perguntas abaixo escolhendo uma opção. Use o campo "Adicionar contexto" para nuances ou observações. Quando terminar, clique <strong>Salvar respostas</strong> — o JSON será baixado. Substitua o arquivo <code>01-QUESTIONS.json</code> original e diga <code>refresh</code> para Claude processar. Quando estiver satisfeito, diga <code>finalize</code> para gerar o CONTEXT.md.
+  </div>
+
+  <div id="sections-container"></div>
+</main>
+
+<footer>
+  <div class="footer-instructions">
+    Após salvar: substitua <code>01-QUESTIONS.json</code> e diga ao Claude: <code>refresh</code> (atualizar) ou <code>finalize</code> (gerar CONTEXT.md)
+  </div>
+  <button class="save-btn" onclick="saveAnswers()">Salvar respostas</button>
+</footer>
+
+<script>
+const DATA_PATH = '.planning/phases/01-backend-foundation-supabase-fastify-auth-rls-lgpd-basics/01-QUESTIONS.json';
+
+const sections = [
+  {
+    id: 'project-structure', title: 'Estrutura do Projeto',
+    questions: [
+      { id: 'Q-01', title: 'Monorepo ou repos separados?', context: 'O projeto tem 3 artefatos distintos: Node.js API, Node.js Worker (BullMQ), e o projeto Android (2 apps + módulos core). A pesquisa recomenda manter tudo junto para facilitar deploys e tipagem compartilhada.', options: [ { id: 'a', label: 'Monorepo único (Recommended)', desc: 'Um repositório com packages/ separados. Facilita tipagem compartilhada, CI unificado, PRs que tocam backend + Android juntos.' }, { id: 'b', label: 'Repos separados por camada', desc: 'Repo backend + repo android. Mais simples de entender separadamente, mas dificulta contratos compartilhados.' }, { id: 'c', label: 'Repo único flat (sem monorepo tooling)', desc: 'Tudo no mesmo repo mas sem workspaces — pastas /backend, /android, /worker na raiz.' } ] },
+      { id: 'Q-02', title: 'Gerenciador de pacotes Node.js', context: 'Node.js 22 LTS vem com npm 10+. pnpm oferece installs mais rápidos e resolução estrita de dependências.', options: [ { id: 'a', label: 'pnpm (Recommended)', desc: 'Installs mais rápidos, melhor suporte a workspaces/monorepo, resolução estrita.' }, { id: 'b', label: 'npm', desc: 'Já vem com Node.js 22, sem setup extra. Workspaces menos ergonômicos que pnpm.' }, { id: 'c', label: 'yarn berry', desc: 'PnP mode evita node_modules, mas tem curva de aprendizado e incompatibilidades.' } ] },
+      { id: 'Q-03', title: 'Estrutura de pastas do backend', context: 'A pesquisa recomenda arquitetura em camadas (controllers → services → repositories → adapters).', options: [ { id: 'a', label: 'Layered por tipo (Recommended)', desc: 'src/controllers/, src/services/, src/repositories/, src/adapters/. Padrão clássico — camadas claras.' }, { id: 'b', label: 'Feature-first', desc: 'src/features/auth/, src/features/processos/. Cada feature tem tudo junto. Mais fácil navegar por domínio.' }, { id: 'c', label: 'Flat (simples para começar)', desc: 'src/routes/, src/services/, src/db/. Menor overhead, pode refatorar depois.' } ] },
+      { id: 'Q-04', title: 'API e Worker: mesmo package ou separados?', context: 'O Worker BullMQ deve rodar como processo separado do servidor HTTP. A questão é se compartilham o mesmo package ou são packages distintos.', options: [ { id: 'a', label: 'Mesmo package, entry points diferentes (Recommended)', desc: 'src/server.ts e src/worker.ts. Compartilham services e repositories. Deploy via variável START_MODE.' }, { id: 'b', label: 'Packages separados no monorepo', desc: 'packages/api/ e packages/worker/. Isolamento total mas maior overhead de manutenção.' }, { id: 'c', label: 'Mesmo processo (somente para dev)', desc: 'Em dev tudo junto, em produção separado via script. Risco de acoplamento acidental.' } ] },
+      { id: 'Q-05', title: 'Plataforma de deploy inicial', context: 'A pesquisa indica Railway como plataforma primária. Worker precisa rodar como processo separado — confirmar suporte na plataforma.', options: [ { id: 'a', label: 'Railway (Recommended)', desc: 'Deploy de GitHub, variáveis por serviço, múltiplos serviços (API + Worker), Redis add-on. Pricing por uso.' }, { id: 'b', label: 'Fly.io', desc: 'Bom para multi-região. Mais complexo (flyctl, Dockerfile obrigatório). Pricing por máquina.' }, { id: 'c', label: 'Render', desc: 'Similar ao Railway, free tier mais generoso. Cold starts em planos gratuitos.' }, { id: 'd', label: 'Diferir — configurar mais tarde', desc: 'Rodar localmente em Phase 1. Risco: discovery tardio de limitações da plataforma.' } ] }
+    ]
+  },
+  {
+    id: 'supabase-setup', title: 'Supabase Setup',
+    questions: [
+      { id: 'Q-06', title: 'Supabase: cloud ou self-hosted?', context: 'Supabase cloud tem free tier generoso. Self-hosted via Docker elimina custos mas adiciona overhead. Para dados jurídicos, onde os dados ficam tem implicações LGPD.', options: [ { id: 'a', label: 'Supabase Cloud — São Paulo se disponível (Recommended)', desc: 'Menor overhead operacional. Verificar se há região no Brasil. Plano Free para dev, Pro para produção.' }, { id: 'b', label: 'Supabase Cloud — us-east-1 com disclosures LGPD', desc: 'Mais regiões disponíveis. Documentar transferência internacional na política de privacidade (Art. 33).' }, { id: 'c', label: 'Self-hosted (Docker Compose)', desc: 'Controle total, dados ficam onde quiser. Alto overhead de manutenção (Kong, PostgREST, GoTrue, Realtime...).' } ] },
+      { id: 'Q-07', title: 'Estratégia de migrations SQL', context: 'Supabase CLI gerencia migrations versionadas. Alternativas incluem Drizzle ORM (type-safe queries) ou Prisma. A pesquisa recomenda SQL puro para controle total de RLS.', options: [ { id: 'a', label: 'Supabase CLI + SQL puro (Recommended)', desc: 'supabase migration new, supabase db push. SQL explícito para RLS — nenhuma abstração esconde as políticas.' }, { id: 'b', label: 'Drizzle ORM + drizzle-kit migrate', desc: 'Type-safe queries, migrations geradas de TypeScript. RLS ainda precisa de SQL manual.' }, { id: 'c', label: 'Prisma + prisma migrate', desc: 'ORM mais completo mas mais pesado. Não suporta RLS nativamente.' } ] },
+      { id: 'Q-08', title: 'Quantos ambientes Supabase?', context: 'Supabase free tier dá 2 projetos. Estratégia: dev + prod, ou local Docker + prod cloud, ou dev + staging + prod.', options: [ { id: 'a', label: 'Dev + Prod (Recommended para começar)', desc: '2 projetos Supabase. Dev para desenvolvimento e CI, Prod para clientes reais. Dentro do free tier.' }, { id: 'b', label: 'Local (Docker) + Prod', desc: 'Supabase local para dev e CI (sem custo), um projeto cloud somente para produção.' }, { id: 'c', label: 'Dev + Staging + Prod', desc: '3 ambientes. Mais rigoroso mas requer plano pago desde o início.' } ] },
+      { id: 'Q-09', title: 'Supabase Realtime: habilitar agora?', context: 'Realtime permite inscrições em mudanças do banco. A pesquisa recomenda FCM + polling como mecanismo de notificação (Phase 6). Habilitar agora pode gerar conexões desnecessárias.', options: [ { id: 'a', label: 'Não configurar em Phase 1 (Recommended)', desc: 'Evitar complexidade prematura. Notificações serão FCM + WorkManager (Phase 6).' }, { id: 'b', label: 'Habilitar infra mas sem usar nos apps', desc: 'Configurar o Realtime agora para facilitar uso futuro. Baixo custo de setup.' }, { id: 'c', label: 'Usar Realtime para updates in-session', desc: 'Android subscription quando app aberto — recebe movimentações novas sem FCM no foreground. Melhor UX mas mais complexo.' } ] }
+    ]
+  },
+  {
+    id: 'auth-multitenancy', title: 'Autenticação & Multi-tenancy',
+    questions: [
+      { id: 'Q-10', title: 'Custom Access Token Hook: onde hospedar?', context: 'O JWT precisa ter tenant_id e role em app_metadata. Supabase injeta isso via Custom Access Token Hook — função chamada ao gerar JWTs.', options: [ { id: 'a', label: 'Supabase Edge Function (Recommended)', desc: 'Supabase chama automaticamente ao gerar tokens. Simples, sem latência extra, mantém lógica no ecossistema Supabase.' }, { id: 'b', label: 'Webhook para Node.js API', desc: 'Supabase chama endpoint da API via webhook. Mais latência, mas toda lógica fica no backend Node.js.' }, { id: 'c', label: 'Pré-computar claims ao criar usuário', desc: 'Setar app_metadata.tenant_id e role via Admin API ao cadastrar. Mais simples, mas requer atualização manual se role mudar.' } ] },
+      { id: 'Q-11', title: 'Fluxo de criação do tenant (escritório)', context: 'Quando escritório se registra: precisa criar (1) usuário Supabase Auth, (2) registro em tenants, (3) atribuir role admin_escritorio.', options: [ { id: 'a', label: 'Self-service com aprovação automática (Recommended)', desc: 'Escritório faz signup → API cria tenant automaticamente → email de confirmação. Escala sem intervenção manual.' }, { id: 'b', label: 'Cadastro manual por admin', desc: 'Admin cria os tenants manualmente via script. Mais controle inicial, não escala. Bom para primeiros 5-10 clientes piloto.' }, { id: 'c', label: 'Self-service + review manual', desc: 'Signup → status pendente até aprovação manual. Útil para qualificar clientes mas adiciona fricção.' } ] },
+      { id: 'Q-12', title: 'Roles: admin_escritorio vs advogado são distintos?', context: 'ROADMAP menciona roles admin_escritorio e advogado. Na prática, admin pode gerenciar billing, advogado só gerencia clientes. Podem ser o mesmo role inicialmente.', options: [ { id: 'a', label: 'Roles distintos desde Phase 1 (Recommended)', desc: 'admin_escritorio: gerencia assinatura + adiciona advogados. advogado: gerencia clientes e processos. RLS distintos.' }, { id: 'b', label: "Role único 'staff' por enquanto", desc: "Todos usuários do escritório têm o mesmo role. Distinguir admin/advogado em fase posterior quando validado com clientes." }, { id: 'c', label: 'Roles distintos mas RLS unificado', desc: 'Criar roles no JWT mas usar mesmas policies RLS por enquanto. Facilita refinar depois.' } ] },
+      { id: 'Q-13', title: 'Como o cliente final é criado?', context: 'Fluxo: advogado cadastra cliente (nome, CPF, email, CNJ) → cliente recebe email para baixar o app e acessar.', options: [ { id: 'a', label: 'Supabase Admin API inviteUserByEmail (Recommended)', desc: 'Backend chama supabase.auth.admin.inviteUserByEmail() — Supabase envia email de convite com magic link para cliente criar senha.' }, { id: 'b', label: 'Criar usuário com senha temporária', desc: 'Backend gera senha aleatória, cria via Admin API, envia email customizado com credenciais. Mais controle mas expõe senha em plaintext.' }, { id: 'c', label: 'Cliente cria conta com CPF como identificador', desc: "App_cliente tem tela de 'primeiro acesso' onde cliente insere CPF para encontrar processos e cria senha. Mais fricção, não requer email válido." } ] },
+      { id: 'Q-14', title: 'Serviço de email transacional', context: 'Emails de convite e recuperação de senha precisam de SMTP configurado. Supabase tem SMTP built-in limitado — para produção, serviço externo é necessário.', options: [ { id: 'a', label: 'Resend (Recommended)', desc: 'API moderna, DX excelente, free tier 3000 emails/mês. Muito adotado em 2025 no ecossistema Node.js.' }, { id: 'b', label: 'SendGrid', desc: 'Mais estabelecido, free tier 100 emails/dia. Boa entregabilidade, mais burocrático para configurar.' }, { id: 'c', label: 'SMTP do Supabase por enquanto', desc: 'Usar SMTP padrão para dev/early beta. Configurar externo antes de produção. Evita setup extra em Phase 1.' }, { id: 'd', label: 'Amazon SES', desc: 'Muito barato ($0.10/1000 emails). Requer configuração de domínio (SPF/DKIM), mais complexo de setup.' } ] }
+    ]
+  },
+  {
+    id: 'database-schema', title: 'Schema do Banco de Dados',
+    questions: [
+      { id: 'Q-15', title: 'Tipo de primary key nas tabelas', context: 'UUID v4 (padrão Supabase), ULID (time-ordered) ou UUID v7 (novo padrão com ordenação temporal). Afeta performance de index e debug.', options: [ { id: 'a', label: 'UUID v4 (Recommended)', desc: 'Padrão nativo do Supabase, sem configuração extra, funciona bem com PostgREST. Não expõe contagem de registros.' }, { id: 'b', label: 'ULID', desc: 'Lexicograficamente ordenável por tempo. Útil para logs e debug, mas requer extensão ou função no Postgres.' }, { id: 'c', label: 'UUID v7 (time-ordered)', desc: 'Novo padrão UUID com ordenação temporal. Melhor performance de index. Verificar versão Postgres do Supabase.' } ] },
+      { id: 'Q-16', title: 'Soft delete ou hard delete?', context: 'Soft delete (deleted_at timestamp) permite reverter. Hard delete remove fisicamente. LGPD Art. 18 exige poder deletar dados — não precisa ser soft delete.', options: [ { id: 'a', label: 'Hard delete com cascade (Recommended)', desc: 'Simples, sem filtrar deleted_at em queries. LGPD Art. 18 endpoint faz DELETE cascade. Sem acúmulo de lixo no banco.' }, { id: 'b', label: 'Soft delete global', desc: 'deleted_at em todas tabelas. Permite recuperar dados acidentais. Mas requer WHERE deleted_at IS NULL em todas as queries.' }, { id: 'c', label: 'Hard delete para PII, soft delete para auditoria', desc: 'PII e dados de usuário → hard delete. Logs e sync_errors → soft delete para rastreabilidade.' } ] },
+      { id: 'Q-17', title: 'Tabela de perfis além do auth.users?', context: 'Supabase Auth cria usuários em auth.users (não acessível via PostgREST). É comum criar public.users com campos customizados, linked por ID.', options: [ { id: 'a', label: 'public.users sincronizada via trigger (Recommended)', desc: 'Trigger em auth.users inserts → cria registro em public.users. Permite adicionar CPF, tenant_id, role e fazer queries via RLS.' }, { id: 'b', label: 'Usar auth.users diretamente via Admin API', desc: 'Guardar campos extras em app_metadata via Admin API. Mais simples mas app_metadata é gerenciado pelo Supabase.' }, { id: 'c', label: 'Tabela public.users completamente separada', desc: 'Criar usuários manualmente sem trigger. Risco de inconsistência entre auth.users e public.users.' } ] },
+      { id: 'Q-18', title: 'Nomenclatura: PT-BR ou inglês?', context: 'Tabelas e colunas em inglês (tenant_id, users, processes) vs português (escritorio_id, usuarios, processos). A equipe é brasileira, o domínio é jurídico brasileiro.', options: [ { id: 'a', label: 'Inglês (Recommended)', desc: 'Consistente com frameworks, ORMs e docs técnicas. Sem problemas com acentos/caracteres em SQL. Ex: tenants, users, processes.' }, { id: 'b', label: 'Português sem acentos', desc: 'Mais legível para equipe brasileira. Ex: escritorios, usuarios, processos, movimentacoes. Sem encoding issues.' }, { id: 'c', label: 'Misto: domínio em PT, técnico em inglês', desc: 'processos, movimentacoes (domínio) + id, created_at, tenant_id (técnico). Risco de inconsistência.' } ] },
+      { id: 'Q-19', title: 'Timestamps: created_at/updated_at em todas tabelas?', context: 'Best practice é timestamps em todas as tabelas. updated_at requer trigger automático no Postgres. Vale o overhead em todas?', options: [ { id: 'a', label: 'Sim, em todas com trigger automático (Recommended)', desc: 'Cria função update_updated_at_column() e trigger em cada tabela. Overhead mínimo, valor alto para debugging.' }, { id: 'b', label: 'Apenas created_at (sem updated_at)', desc: 'Mais simples — sem triggers. updated_at raramente consultado na prática.' }, { id: 'c', label: 'Só nas tabelas principais', desc: 'created_at + updated_at em tenants, users, processos. Tabelas de lookup sem timestamps.' } ] }
+    ]
+  },
+  {
+    id: 'api-design', title: 'API Design',
+    questions: [
+      { id: 'Q-20', title: 'Versionamento da API', context: 'Prefix /api/v1/ facilita versionar breaking changes. Android apps consomem a API — mudar URLs depois força atualização forçada do app.', options: [ { id: 'a', label: '/api/v1/ prefix desde Phase 1 (Recommended)', desc: 'Ex: /api/v1/processos. Pequeno overhead agora, evita problema sério quando Android não pode forçar atualização de todos os usuários.' }, { id: 'b', label: 'Sem versioning por enquanto', desc: 'Paths diretos: /processos, /auth/login. Mais simples. Adicionar se/quando houver breaking change real.' }, { id: 'c', label: 'Versioning via header (Accept-Version)', desc: 'Header em vez de path. Mais flexível, mas menos visível em logs e mais difícil de testar.' } ] },
+      { id: 'Q-21', title: 'Formato padrão de erro da API', context: 'Android precisa saber como tratar erros. Definir formato padrão evita inconsistências. RFC 7807 (Problem Details) é padrão HTTP.', options: [ { id: 'a', label: 'RFC 7807 Problem Details (Recommended)', desc: '{ type, title, status, detail, instance }. Padrão HTTP oficial. Fastify tem plugins para isso.' }, { id: 'b', label: 'Shape customizado simples', desc: '{ success: false, error: "MESSAGE", code: "ERROR_CODE" }. Mais simples de implementar e consumir no Android.' }, { id: 'c', label: 'Diferir — padronizar quando precisar', desc: 'Cada rota retorna erros como precisar inicialmente. Risco: Android precisa de handling inconsistente.' } ] },
+      { id: 'Q-22', title: 'Validação de schema no Fastify: TypeBox ou Zod?', context: 'Fastify suporta validação nativa via JSON Schema. TypeBox integra nativamente (zero-overhead). Zod é mais expressivo mas requer adapter.', options: [ { id: 'a', label: 'TypeBox (Recommended para Fastify)', desc: 'Type.Object(), Type.String() — integração nativa, zero overhead, TypeScript types inferidos automaticamente.' }, { id: 'b', label: 'Zod + fastify-type-provider-zod', desc: 'Schema mais expressivo (z.string().email()). Popular no ecossistema TypeScript em 2025. Requer adapter.' }, { id: 'c', label: 'JSON Schema puro', desc: 'Máxima compatibilidade nativa, zero dependências. Mais verboso e sem type inference.' } ] },
+      { id: 'Q-23', title: 'Rate limiting: configurar em Phase 1?', context: 'A pesquisa recomenda @fastify/rate-limit para controle de custos (DataJud + Claude). Mas em Phase 1 ainda não existem esses endpoints.', options: [ { id: 'a', label: 'Configurar agora com limites altos (Recommended)', desc: 'Instalar com limites conservadores (ex: 1000 req/min por tenant). Quando endpoints Claude/DataJud chegarem, já está no lugar.' }, { id: 'b', label: 'Diferir para Phase 2/3', desc: 'Adicionar rate limiting quando necessário. Reduz setup em Phase 1. Risco: esquecer antes de expor endpoints ao mundo.' }, { id: 'c', label: 'Só nos endpoints caros (IA e DataJud)', desc: 'Instalar agora mas configurar somente nas rotas específicas em Phase 2/3.' } ] }
+    ]
+  },
+  {
+    id: 'lgpd-compliance', title: 'LGPD Compliance (Phase 1)',
+    questions: [
+      { id: 'Q-24', title: 'Tabela de consentimento LGPD', context: 'LGPD-01 requer registrar opt-in com timestamp e versão dos termos. Tabela separada ou colunas em users?', options: [ { id: 'a', label: 'Tabela lgpd_consents separada (Recommended)', desc: 'id, user_id, version, consented_at, ip_address, revoked_at. Histórico completo, suporta revogação sem perder dados.' }, { id: 'b', label: 'Colunas em users: lgpd_consent_at, lgpd_version', desc: 'Mais simples. Mas perde histórico ao revogar ou atualizar termos. Inadequado para evidência de auditoria ANPD.' }, { id: 'c', label: 'Diferir para Phase 8', desc: 'Phase 1 é só backend sem clientes finais. LGPD consent pode esperar o app_cliente existir. Mas tabela precisa existir antes dos dados.' } ] },
+      { id: 'Q-25', title: 'Versão dos termos: como gerenciar?', context: 'LGPD-01 guarda a versão dos termos com o consentimento. Quando termos mudarem, usuários precisam consentir novamente.', options: [ { id: 'a', label: 'String semântica hardcoded (v1.0, v1.1)', desc: 'Versão como constante no código. Visível no git diff quando mudar. Requer re-deploy para atualizar termos.' }, { id: 'b', label: 'Data como versão (2026-04-14)', desc: 'ISO date string como versão. Auto-documenta quando foi a última atualização. Fácil de comparar com consentimento armazenado.' }, { id: 'c', label: 'Variável de ambiente LGPD_TERMS_VERSION', desc: 'Configurável sem re-deploy. Mas a versão fica fora do git history.' } ] },
+      { id: 'Q-26', title: 'Redação de PII em logs', context: 'LGPD-04 requer que logs não contenham CPF nem conteúdo bruto de prompts. Abordagem: middleware global vs sanitização manual.', options: [ { id: 'a', label: 'pino redact option (Recommended)', desc: "pino({ redact: ['req.body.cpf', '*.prompt'] }) — caminhos automaticamente substituídos por [REDACTED]. Zero-overhead na maioria dos logs." }, { id: 'b', label: 'Middleware de sanitização manual', desc: 'Antes de logar, passar por função que remove campos sensíveis. Mais controle, mas fácil de esquecer novos campos.' }, { id: 'c', label: 'Não logar body de requests', desc: 'Logar somente URL, method, status, latência, tenant_id — nunca o body. Mais seguro por padrão, menos contexto para debug.' } ] },
+      { id: 'Q-27', title: 'Política de privacidade: onde hospedar?', context: 'LGPD-06 requer mencionar Anthropic como sub-processador. App_cliente vai linkar para a política na primeira abertura.', options: [ { id: 'a', label: 'URL web (landing page ou Notion)', desc: 'App linka para URL externa. Fácil de atualizar sem re-deploy. Pode ser Notion público ou futura landing page.' }, { id: 'b', label: 'Texto embutido no app Android', desc: 'ScrollableText screen no app. Funciona offline. Atualizar requer novo release do app.' }, { id: 'c', label: 'Servido pelo backend (/api/privacy-policy)', desc: 'Backend retorna o texto. Updatable sem re-deploy do app. Requer conexão para ler.' } ] }
+    ]
+  },
+  {
+    id: 'observability', title: 'Observabilidade & Monitoramento',
+    questions: [
+      { id: 'Q-28', title: 'Log level padrão em produção', context: 'pino suporta trace/debug/info/warn/error/fatal. info captura todos os requests. warn captura só alertas e erros.', options: [ { id: 'a', label: 'info em produção (Recommended)', desc: 'Captura cada request com tenant_id, user_id, latência. Volume maior mas rastreabilidade excelente.' }, { id: 'b', label: 'warn em produção', desc: 'Só warnings e erros. Menos volume, mais barato. Perde contexto de requests normais.' }, { id: 'c', label: 'Configurável por env LOG_LEVEL', desc: 'Default info, sobrescrito por env var. Flexível — pode aumentar para debug temporariamente em produção.' } ] },
+      { id: 'Q-29', title: 'Serviço de log agregado', context: 'pino gera logs JSON. Em produção, precisam ir para algum lugar para busca. Railway tem logs básicos embutidos. Para busca avançada, serviço externo é necessário.', options: [ { id: 'a', label: 'Betterstack (Logtail) (Recommended)', desc: 'Free tier 1GB/mês, excelente DX, integração nativa com pino via pino-logtail. Interface de busca moderna.' }, { id: 'b', label: 'Railway logs built-in por enquanto', desc: 'Railway retém logs por alguns dias. Suficiente para MVP early stage. Configurar externo com primeiros clientes.' }, { id: 'c', label: 'Axiom', desc: 'Free tier 500GB ingestão, busca muito rápida. Bom quando volume crescer.' } ] },
+      { id: 'Q-30', title: 'Sentry: um ou múltiplos projetos?', context: 'Sentry captura erros com contexto (stack trace, tenant, user). A questão é separar API e Worker em projetos Sentry distintos ou não.', options: [ { id: 'a', label: 'Um DSN compartilhado (Recommended)', desc: 'Sentry free tier tem 1 projeto por organização. Diferenciar via tags (source: "api" | "worker"). Simples.' }, { id: 'b', label: 'DSNs separados por serviço', desc: 'Melhor separação de alertas. Mas usa múltiplos projetos do Sentry free tier.' }, { id: 'c', label: 'Diferir Sentry para Phase 3+', desc: 'Em Phase 1 sem usuários reais, erros são pegos em dev. Adicionar Sentry com primeiros clientes piloto.' } ] },
+      { id: 'Q-31', title: 'OpenTelemetry: configurar agora?', context: 'OpenTelemetry adiciona distributed tracing além de logs. Útil para entender latência end-to-end. Mas adiciona complexidade e um collector.', options: [ { id: 'a', label: 'Não — diferir para hardening (Recommended)', desc: 'pino logs + Sentry são suficientes nas primeiras fases. OTel é premium de observabilidade, não baseline.' }, { id: 'b', label: 'Sim — configurar agora', desc: 'Instrumentar desde o início, exportar para Honeycomb/Grafana Cloud. Mais visibilidade early mas mais setup e custo.' }, { id: 'c', label: 'Instrumentar código mas não exportar', desc: 'Adicionar spans ao código mas só ativar exportação quando necessário. Overhead sem benefício imediato.' } ] }
+    ]
+  },
+  {
+    id: 'bullmq-worker', title: 'Worker & BullMQ',
+    questions: [
+      { id: 'Q-32', title: 'Worker entry point: único ou por tipo de job?', context: 'Phase 1 cria o Worker process mas ainda sem jobs reais (DataJud vem na Phase 2). Estruturar de forma que seja fácil adicionar consumers depois.', options: [ { id: 'a', label: 'Single worker.ts com múltiplos consumers (Recommended)', desc: 'Um processo que instancia múltiplos BullMQ Worker consumers. Simples de deployar como único serviço Railway.' }, { id: 'b', label: 'Entry point por tipo de job', desc: 'worker-datajud.ts, worker-notifications.ts. Escala independentemente mas requer mais serviços e config complexa.' }, { id: 'c', label: 'Placeholder apenas em Phase 1', desc: 'Criar worker.ts vazio com health check. Adicionar consumers em Phase 2. Menos over-engineering agora.' } ] },
+      { id: 'Q-33', title: 'Redis para desenvolvimento: Docker ou Upstash?', context: 'BullMQ precisa de Redis. Dev local pode usar Docker Compose. CI e produção usariam Upstash Redis (serverless).', options: [ { id: 'a', label: 'Docker Compose para dev + Upstash para CI/prod (Recommended)', desc: 'docker-compose.yml com redis:alpine para dev local. Upstash para CI e produção. Máxima compatibilidade.' }, { id: 'b', label: 'Upstash desde o início', desc: 'Sem Docker. Mesma instância Upstash para dev e prod. Mais simples mas dev fica dependente de internet.' }, { id: 'c', label: 'Redis add-on da Railway', desc: 'Tudo no mesmo provider. Conveniente mas fica acoplado ao Railway.' } ] },
+      { id: 'Q-34', title: 'Bull Board (dashboard de filas): Phase 1?', context: 'Bull Board é um dashboard para visualizar filas BullMQ. Em Phase 1 sem jobs reais, tem valor limitado.', options: [ { id: 'a', label: 'Diferir para Phase 2 (Recommended)', desc: 'Instalar @bull-board/fastify quando jobs DataJud chegarem. Sem custo de setup extra em Phase 1.' }, { id: 'b', label: 'Configurar agora com rota basicAuth', desc: 'Instalar agora, proteger com basic auth. Pronto para Phase 2. Pequeno overhead de setup.' }, { id: 'c', label: 'Não usar (logs suficientes)', desc: 'Monitorar jobs via Sentry + pino logs. Sem dashboard visual. Menos dependência.' } ] }
+    ]
+  },
+  {
+    id: 'ci-cd', title: 'CI/CD & Testes',
+    questions: [
+      { id: 'Q-35', title: 'Framework de testes para integração', context: 'O teste mais crítico de Phase 1 é o cross-tenant integration test. Vitest é mais moderno e rápido. Jest é mais estabelecido.', options: [ { id: 'a', label: 'Vitest (Recommended)', desc: 'Mais rápido que Jest, compatível com Jest API, suporte nativo a TypeScript. Padrão moderno em 2025.' }, { id: 'b', label: 'Jest', desc: 'Mais estabelecido, mais material disponível. Mais lento, requer ts-jest para TypeScript.' }, { id: 'c', label: 'Node.js test runner nativo (node:test)', desc: 'Builtin no Node.js 22, zero dependências. Mais limitado mas suficiente para tests simples.' } ] },
+      { id: 'Q-36', title: 'Coverage mínimo obrigatório no CI?', context: 'Exigir coverage mínimo impede merges com código não testado. Em projeto novo, pode ser frustrante com muito código de setup.', options: [ { id: 'a', label: 'Sem cobertura mínima — gates específicos (Recommended)', desc: 'Não bloquear por %. Exigir que cross-tenant integration test passe. Coverage como metric, não blocker.' }, { id: 'b', label: '60% coverage mínimo desde Phase 1', desc: 'Gate no CI. Garante disciplina de testes. Pode ser frustrante nas primeiras fases.' }, { id: 'c', label: 'Sem cobertura mínima (opcional)', desc: 'Escrever testes quando fizer sentido. Mais velocidade, maior risco de regressões.' } ] },
+      { id: 'Q-37', title: 'Commit hooks: Husky + lint-staged?', context: 'Husky executa scripts antes de commits (eslint, prettier). lint-staged roda linters apenas em arquivos staged. Garante código limpo mas adiciona overhead no commit.', options: [ { id: 'a', label: 'Husky + lint-staged com eslint + prettier (Recommended)', desc: 'Pre-commit: lint + format nos arquivos staged. Fast — só toca arquivos modificados.' }, { id: 'b', label: 'Sem commit hooks (só CI verifica)', desc: 'CI faz o lint check. Menos atrito no desenvolvimento local.' }, { id: 'c', label: 'Apenas prettier (sem eslint no hook)', desc: 'Pre-commit só formata código. Lint roda no CI. Equilíbrio entre velocidade e consistência.' } ] },
+      { id: 'Q-38', title: 'Branching strategy', context: 'GitHub Flow (main + feature branches + PRs) é padrão para maioria dos projetos. Trunk-based é mais radical (commits direto na main com feature flags).', options: [ { id: 'a', label: 'GitHub Flow (main + feature branches) (Recommended)', desc: 'Branch por feature/fix → PR → merge para main. CI em todos os PRs. Simples e amplamente entendido.' }, { id: 'b', label: 'Trunk-based (commits direto na main)', desc: 'Tudo vai para main com feature flags. Mais rápido para times pequenos, requer disciplina.' }, { id: 'c', label: 'Gitflow (main + develop + release)', desc: 'Mais estruturado. Overkill para projeto early-stage.' } ] }
+    ]
+  }
+];
+
+const state = {};
+sections.forEach(s => s.questions.forEach(q => {
+  state[q.id] = { answer: null, chat_more: '' };
+}));
+
+function updateStats() {
+  let answered = 0, chatMore = 0;
+  Object.values(state).forEach(v => {
+    if (v.answer) answered++;
+    if (v.chat_more && v.chat_more.trim()) chatMore++;
+  });
+  const total = 38;
+  const remaining = total - answered;
+  document.getElementById('statAnswered').textContent = answered;
+  document.getElementById('statRemaining').textContent = remaining;
+  document.getElementById('statChatMore').textContent = chatMore;
+  const pct = Math.round((answered / total) * 100);
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressLabel').textContent = answered + ' de ' + total + ' respondidas (' + pct + '%)';
+  sections.forEach(s => {
+    const sAnswered = s.questions.filter(q => state[q.id] && state[q.id].answer).length;
+    const el = document.getElementById('section-progress-' + s.id);
+    if (el) {
+      el.textContent = sAnswered + '/' + s.questions.length + ' respondidas';
+      el.className = 'section-progress' + (sAnswered === s.questions.length ? ' complete' : '');
+    }
+  });
+}
+
+function renderSections() {
+  const container = document.getElementById('sections-container');
+  container.innerHTML = '';
+  sections.forEach(s => {
+    const div = document.createElement('div');
+    div.className = 'section';
+    div.innerHTML = `
+      <div class="section-header" onclick="toggleSection('${s.id}')">
+        <span class="section-toggle open" id="toggle-${s.id}">▼</span>
+        <span class="section-title">${s.title}</span>
+        <span class="section-progress" id="section-progress-${s.id}">0/${s.questions.length} respondidas</span>
+      </div>
+      <div class="questions-grid" id="grid-${s.id}">
+        ${s.questions.map(q => renderCard(q)).join('')}
+      </div>`;
+    container.appendChild(div);
+  });
+  updateStats();
+}
+
+function renderCard(q) {
+  return `<div class="card" id="card-${q.id}">
+    <div class="card-header">
+      <span class="qid">${q.id}</span>
+      <span class="card-title">${q.title}</span>
+    </div>
+    <div class="card-context">${q.context}</div>
+    <div class="options">
+      ${q.options.map(o => `
+        <label class="option">
+          <input type="radio" name="${q.id}" value="${o.id}" onchange="selectOption('${q.id}', '${o.id}')">
+          <div class="option-text">
+            <div class="option-label">${o.label}</div>
+            <div class="option-desc">${o.desc}</div>
+          </div>
+        </label>`).join('')}
+    </div>
+    <div class="chat-more-wrap">
+      <div class="chat-more-label">Adicionar contexto ou nuance (opcional):</div>
+      <textarea class="chat-more-area" id="chat-${q.id}" placeholder="Adicionar contexto, nuance, ou clarificação para essa pergunta..." oninput="updateChatMore('${q.id}', this.value)"></textarea>
+    </div>
+  </div>`;
+}
+
+function selectOption(qid, oid) {
+  state[qid].answer = oid;
+  const card = document.getElementById('card-' + qid);
+  card.className = 'card answered';
+  const qidEl = card.querySelector('.qid');
+  if (qidEl) qidEl.className = 'qid';
+  updateStats();
+}
+
+function updateChatMore(qid, value) {
+  state[qid].chat_more = value;
+  const area = document.getElementById('chat-' + qid);
+  area.className = 'chat-more-area' + (value.trim() ? ' has-content' : '');
+  updateStats();
+}
+
+function toggleSection(sid) {
+  const grid = document.getElementById('grid-' + sid);
+  const toggle = document.getElementById('toggle-' + sid);
+  if (grid.style.display === 'none') {
+    grid.style.display = 'grid';
+    toggle.textContent = '▼';
+    toggle.className = 'section-toggle open';
+  } else {
+    grid.style.display = 'none';
+    toggle.textContent = '▶';
+    toggle.className = 'section-toggle closed';
+  }
+}
+
+function buildJSON() {
+  let answeredCount = 0, chatMoreCount = 0;
+  const sectionsOut = sections.map(s => ({
+    id: s.id,
+    title: s.title,
+    questions: s.questions.map(q => {
+      const st = state[q.id];
+      const answer = st.answer;
+      const chat_more = st.chat_more || '';
+      if (answer) answeredCount++;
+      if (chat_more.trim()) chatMoreCount++;
+      const status = answer ? 'answered' : (chat_more.trim() ? 'chat-more' : 'unanswered');
+      return {
+        id: q.id,
+        title: q.title,
+        context: q.context,
+        options: q.options.map(o => ({ id: o.id, label: o.label, description: o.desc })),
+        answer: answer,
+        chat_more: chat_more,
+        status: status
+      };
+    })
+  }));
+  return {
+    phase: '01-backend-foundation-supabase-fastify-auth-rls-lgpd-basics',
+    generated_at: '2026-04-14T23:45:00Z',
+    stats: { total: 38, answered: answeredCount, chat_more: chatMoreCount, remaining: 38 - answeredCount },
+    sections: sectionsOut
+  };
+}
+
+async function saveAnswers() {
+  const json = buildJSON();
+  const jsonStr = JSON.stringify(json, null, 2);
+  const btn = document.getElementById('saveBtn');
+  if (window.showSaveFilePicker) {
+    try {
+      const handle = await window.showSaveFilePicker({
+        suggestedName: '01-QUESTIONS.json',
+        types: [{ description: 'JSON', accept: { 'application/json': ['.json'] } }]
+      });
+      const writable = await handle.createWritable();
+      await writable.write(jsonStr);
+      await writable.close();
+      btn.textContent = 'Salvo ✓';
+      btn.className = 'save-btn saved';
+      setTimeout(() => { btn.textContent = 'Salvar respostas'; btn.className = 'save-btn'; }, 2000);
+      return;
+    } catch (e) { /* fallthrough to download */ }
+  }
+  const blob = new Blob([jsonStr], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = '01-QUESTIONS.json';
+  a.click();
+  URL.revokeObjectURL(url);
+  btn.textContent = 'Baixado ✓ — substitua o arquivo original';
+  btn.className = 'save-btn saved';
+  setTimeout(() => { btn.textContent = 'Salvar respostas'; btn.className = 'save-btn'; }, 3000);
+}
+
+renderSections();
+</script>
+</body>
+</html>
