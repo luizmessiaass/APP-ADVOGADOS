@@ -6,6 +6,7 @@ import authPlugin from './plugins/auth.js'
 import sentryPlugin from './plugins/sentry.js'
 import { authRoutes } from './routes/auth/index.js'
 import { lgpdRoutes } from './routes/lgpd/index.js'
+import { clientesRoutes } from './routes/clientes/index.js'
 import { healthRoutes } from './routes/health.js'
 
 export function buildApp(opts: FastifyServerOptions = {}): FastifyInstance {
@@ -73,6 +74,7 @@ export function buildApp(opts: FastifyServerOptions = {}): FastifyInstance {
   // Rotas de autenticacao e LGPD
   app.register(authRoutes, { prefix: '/api/v1/auth' })
   app.register(lgpdRoutes, { prefix: '/api/v1/lgpd' })
+  app.register(clientesRoutes, { prefix: '/api/v1/clientes' })
 
   return app
 }
