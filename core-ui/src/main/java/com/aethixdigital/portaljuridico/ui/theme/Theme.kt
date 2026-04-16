@@ -1,47 +1,49 @@
 package com.aethixdigital.portaljuridico.ui.theme
 
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 
-private val DarkColorScheme = darkColorScheme(
-    primary = PrimaryDark,
-    onPrimary = OnPrimary,
-    primaryContainer = PrimaryContainerDark,
-    background = BackgroundDark,
-    surface = SurfaceDark,
-    surfaceVariant = SurfaceVariantDark,
-    error = DestructiveDark,
-    onSurface = OnSurfaceDark,
-    outline = OutlineDark
-)
-
-private val LightColorScheme = lightColorScheme(
-    primary = Primary,
-    onPrimary = OnPrimary,
-    primaryContainer = PrimaryContainer,
-    background = Background,
-    surface = Surface,
-    surfaceVariant = SurfaceVariant,
-    error = Destructive,
-    onSurface = OnSurface,
-    outline = Outline
+private val EditorialJurisColorScheme = lightColorScheme(
+    primary                = EjPrimary,
+    onPrimary              = EjOnPrimary,
+    primaryContainer       = EjPrimaryContainer,
+    onPrimaryContainer     = EjOnPrimaryContainer,
+    inversePrimary         = EjInversePrimary,
+    secondary              = EjSecondary,
+    onSecondary            = EjOnSecondaryFixed,
+    secondaryContainer     = EjSecondaryContainer,
+    onSecondaryContainer   = EjOnSecondaryContainer,
+    background             = EjBackground,
+    onBackground           = EjOnSurface,
+    surface                = EjSurface,
+    onSurface              = EjOnSurface,
+    surfaceVariant         = EjSurfaceVariant,
+    onSurfaceVariant       = EjOnSurfaceVariant,
+    surfaceContainerLowest = EjSurfaceContainerLowest,
+    surfaceContainerLow    = EjSurfaceContainerLow,
+    surfaceContainer       = EjSurfaceContainer,
+    surfaceContainerHigh   = EjSurfaceContainerHigh,
+    surfaceContainerHighest= EjSurfaceContainerHighest,
+    outline                = EjOutline,
+    outlineVariant         = EjOutlineVariant,
+    error                  = EjError,
+    onError                = EjOnError,
+    errorContainer         = EjErrorContainer,
+    onErrorContainer       = EjOnErrorContainer,
+    inverseSurface         = EjInverseSurface,
+    inverseOnSurface       = EjInverseOnSurface,
 )
 
 @Composable
 fun PortalJuridicoTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color disabled — white-label requires stable brand colors
+    darkTheme: Boolean = false,   // app-cliente e light-only; parametro mantido para compatibilidade
     dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
-    val colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme
-
     MaterialTheme(
-        colorScheme = colorScheme,
-        typography = Typography,
-        content = content
+        colorScheme = EditorialJurisColorScheme,
+        typography  = Typography,
+        content     = content
     )
 }
