@@ -61,9 +61,10 @@ fun ProcessoListCard(
             )
             Spacer(modifier = Modifier.height(4.dp))
             // Linha 3: tribunal
-            if (!processo.tribunal.isNullOrBlank()) {
+            val tribunalText = processo.tribunal
+            if (!tribunalText.isNullOrBlank()) {
                 Text(
-                    text = processo.tribunal,
+                    text = tribunalText,
                     style = MaterialTheme.typography.labelLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )

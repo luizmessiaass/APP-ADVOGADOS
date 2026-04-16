@@ -52,9 +52,10 @@ fun MovimentacaoCard(
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
-                if (movimentacao.explicacao != null) {
+                val explicacaoText = movimentacao.explicacao
+                if (explicacaoText != null) {
                     ExpandableText(
-                        text = movimentacao.explicacao,
+                        text = explicacaoText,
                         collapsedMaxLines = 3
                     )
                 } else {

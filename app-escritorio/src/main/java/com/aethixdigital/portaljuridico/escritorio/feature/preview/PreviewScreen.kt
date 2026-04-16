@@ -28,6 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.aethixdigital.portaljuridico.common.model.Movimentacao
 import com.aethixdigital.portaljuridico.ui.components.MovimentacaoCard
 import com.aethixdigital.portaljuridico.ui.components.ProcessoStatusCard
 
@@ -107,9 +108,9 @@ fun PreviewScreen(
                         )
                         Spacer(Modifier.height(4.dp))
                         ProcessoStatusCard(
-                            numeroCnj = "—",
-                            statusAtual = state.movimentacoes.firstOrNull()?.status ?: "—",
-                            ultimaSincronizacao = state.ultimaSincronizacao
+                            status = state.movimentacoes.firstOrNull()?.status,
+                            impacto = state.ultimaSincronizacao?.let { "Última sync: $it" },
+                            isLoading = false
                         )
                         Spacer(Modifier.height(8.dp))
                         Text("Movimentações", style = MaterialTheme.typography.titleMedium)
@@ -117,11 +118,17 @@ fun PreviewScreen(
                     // D-10: MovimentacaoCard com disclaimer no TOPO de cada card (implementado em core-ui 04-02)
                     items(state.movimentacoes, key = { it.id }) { mov ->
                         MovimentacaoCard(
-                            status = mov.status,
-                            explicacao = mov.explicacao,
-                            impacto = mov.impacto,
-                            proximaData = mov.proximaData,
-                            disclaimer = mov.disclaimer
+                            movimentacao = Movimentacao(
+                                id = mov.id,
+                                dataHora = mov.proximaData ?: "",
+                                descricaoOriginal = mov.explicacao,
+                                status = mov.status,
+                                explicacao = mov.explicacao,
+                                proximaData = mov.proximaData,
+                                impacto = mov.impacto
+                            ),
+                            onExpandToggle = {},
+                            isExpanded = false
                         )
                     }
                 }

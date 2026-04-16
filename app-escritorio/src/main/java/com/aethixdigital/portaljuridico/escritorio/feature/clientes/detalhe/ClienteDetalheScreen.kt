@@ -110,9 +110,9 @@ fun ClienteDetalheScreen(
                     )
                     // ESCR-08: status de sync DataJud — usando ProcessoStatusCard de :core-ui
                     ProcessoStatusCard(
-                        numeroCnj = "—",
-                        statusAtual = cliente.statusProcesso ?: "Status desconhecido",
-                        ultimaSincronizacao = cliente.ultimaSincronizacao
+                        status = cliente.statusProcesso,
+                        impacto = cliente.ultimaSincronizacao?.let { "Última sync: $it" },
+                        isLoading = cliente.statusProcesso == null
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     // Ações
