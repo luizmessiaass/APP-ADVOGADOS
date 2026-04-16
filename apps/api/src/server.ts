@@ -13,6 +13,8 @@ import { lgpdRoutes } from './routes/lgpd/index.js'
 import { healthRoutes } from './routes/health.js'
 import { processosRoutes } from './routes/processos.js'
 import { movimentacoesRoutes } from './routes/processos/movimentacoes.js'
+import { adminTenantsRoutes } from './routes/admin/tenants.js'
+import { webhookBillingRoutes } from './routes/webhooks/billing.js'
 import { getDatajudQueue } from './queues/datajud-queue.js'
 import { createBullMQRedisClient } from './lib/redis.js'
 
@@ -132,6 +134,14 @@ export function buildApp(opts: FastifyServerOptions = {}): FastifyInstance {
 
   // Rotas de movimentacoes (Phase 5 — GET /api/v1/processos/:id/movimentacoes)
   app.register(movimentacoesRoutes, { prefix: '/api/v1/processos' })
+
+  // Webhook de billing — server-to-server, skipAuth: true, autenticado por X-Webhook-Secret
+  // T-7-08: secret validado por timingSafeEqual dentro da rota
+  app.register(webhookBillingRoutes, { prefix: '/api/webhooks', redis: entitlementRedis })
+
+  // Endpoints de administracao de tenants — super_admin only, usa supabaseAdmin
+  // T-7-10: guard super_admin explícito em cada handler
+  app.register(adminTenantsRoutes, { prefix: '/api/v1/admin', redis: entitlementRedis })
 
   return app
 }
