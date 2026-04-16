@@ -1,8 +1,20 @@
 package com.aethixdigital.portaljuridico.ui.theme
 
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.staticCompositionLocalOf
+
+/**
+ * CompositionLocal that carries the active brand color scheme.
+ * Defaults to the Editorial Juris scheme so previews and non-flavor
+ * contexts work without explicit injection.
+ */
+val LocalBrandColorScheme = staticCompositionLocalOf<ColorScheme> {
+    EditorialJurisColorScheme
+}
 
 private val EditorialJurisColorScheme = lightColorScheme(
     primary                = EjPrimary,
@@ -35,15 +47,25 @@ private val EditorialJurisColorScheme = lightColorScheme(
     inverseOnSurface       = EjInverseOnSurface,
 )
 
+/**
+ * Main theme composable. Accepts an optional [colorScheme] override so that
+ * each flavor's Activity/BrandConfig can inject its own palette. Callers in
+ * app-cliente should pass BrandConfig.toColorScheme(); callers in app-escritorio
+ * continue to pass null (gets Editorial Juris default).
+ */
 @Composable
 fun PortalJuridicoTheme(
-    darkTheme: Boolean = false,   // app-cliente e light-only; parametro mantido para compatibilidade
+    colorScheme: ColorScheme? = null,
+    darkTheme: Boolean = false,
     dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
-    MaterialTheme(
-        colorScheme = EditorialJurisColorScheme,
-        typography  = Typography,
-        content     = content
-    )
+    val resolvedScheme = colorScheme ?: EditorialJurisColorScheme
+    CompositionLocalProvider(LocalBrandColorScheme provides resolvedScheme) {
+        MaterialTheme(
+            colorScheme = resolvedScheme,
+            typography  = Typography,
+            content     = content
+        )
+    }
 }
