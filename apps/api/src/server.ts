@@ -15,6 +15,7 @@ import { healthRoutes } from './routes/health.js'
 import { processosRoutes } from './routes/processos.js'
 import { movimentacoesRoutes } from './routes/processos/movimentacoes.js'
 import { adminTenantsRoutes } from './routes/admin/tenants.js'
+import { tenantRoutes } from './routes/tenant/index.js'
 import { webhookBillingRoutes } from './routes/webhooks/billing.js'
 import { getDatajudQueue } from './queues/datajud-queue.js'
 import { createBullMQRedisClient } from './lib/redis.js'
@@ -140,6 +141,11 @@ export function buildApp(opts: FastifyServerOptions = {}): FastifyInstance {
   // Webhook de billing — server-to-server, skipAuth: true, autenticado por X-Webhook-Secret
   // T-7-08: secret validado por timingSafeEqual dentro da rota
   app.register(webhookBillingRoutes, { prefix: '/api/webhooks', redis: entitlementRedis })
+
+  // Endpoint de status do tenant — consultado pelo app no login e em background
+  // D-11 (Phase 7): tenant_status + grace_banner
+  // D-07 (Phase 8): + termos_versao_atual para consent re-gate
+  app.register(tenantRoutes, { prefix: '/api/v1/tenant' })
 
   // Endpoints de administracao de tenants — super_admin only, usa supabaseAdmin
   // T-7-10: guard super_admin explícito em cada handler

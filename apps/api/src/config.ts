@@ -12,5 +12,8 @@ export const env = cleanEnv(process.env, {
   PRIVACY_POLICY_URL: str({ default: 'https://notion.so/portaljuridico-privacidade' }),
   // T-7-08: segredo compartilhado para autenticar chamadas de webhook do provider de pagamento
   BILLING_WEBHOOK_SECRET: str({ default: '' }),
+  // D-07 (Phase 8): versão atual dos termos de uso — ISO date string
+  // Atualizar aqui + re-deploy força re-gate de consentimento em todos os clientes
+  TERMS_VERSION: str({ default: '2026-04-16' }),
 })
 // cleanEnv lanca EnvVarError se variavel obrigatoria ausente — processo termina imediatamente
