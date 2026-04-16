@@ -25,7 +25,7 @@ const BillingWebhookPayloadSchema = z.object({
   event_id: z.string().min(1),
   occurred_at: z.string(),
   provider: z.string().optional(),
-  metadata: z.record(z.unknown()).optional(),
+  payload: z.record(z.unknown()).optional(),
 })
 
 export async function webhookBillingRoutes(app: FastifyInstance, opts: { redis: Redis }): Promise<void> {
@@ -74,7 +74,7 @@ export async function webhookBillingRoutes(app: FastifyInstance, opts: { redis: 
         })
       }
 
-      const { event, tenant_id, event_id, occurred_at, provider, metadata } = parseResult.data
+      const { event, tenant_id, event_id, occurred_at, provider, payload } = parseResult.data
 
       // T-7-09: Idempotent insert — ON CONFLICT (event_id) DO NOTHING
       // If RETURNING is empty, the event was already processed (duplicate)
@@ -84,9 +84,8 @@ export async function webhookBillingRoutes(app: FastifyInstance, opts: { redis: 
           event_id,
           event,
           tenant_id,
-          occurred_at,
           provider: provider ?? 'unknown',
-          metadata: metadata ?? {},
+          payload: payload ?? {},
         })
         .select('id')
 
