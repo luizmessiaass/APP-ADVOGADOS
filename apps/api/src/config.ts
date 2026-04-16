@@ -10,5 +10,6 @@ export const env = cleanEnv(process.env, {
   SENTRY_DSN: str({ default: '' }),
   BETTERSTACK_SOURCE_TOKEN: str({ default: '' }),
   PRIVACY_POLICY_URL: str({ default: 'https://notion.so/portaljuridico-privacidade' }),
+  BILLING_WEBHOOK_SECRET: str({ default: '' }),
 })
 // cleanEnv lanca EnvVarError se variavel obrigatoria ausente — processo termina imediatamente

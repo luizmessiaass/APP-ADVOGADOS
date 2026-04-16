@@ -1,12 +1,24 @@
 import Fastify, { type FastifyInstance, type FastifyServerOptions } from 'fastify'
 import helmet from '@fastify/helmet'
 import rateLimit from '@fastify/rate-limit'
+import { createBullBoard } from '@bull-board/api'
+import { BullMQAdapter } from '@bull-board/api/bullMQAdapter'
+import { FastifyAdapter } from '@bull-board/fastify'
 import { env } from './config.js'
 import authPlugin from './plugins/auth.js'
+import entitlementPlugin from './plugins/entitlement.js'
 import sentryPlugin from './plugins/sentry.js'
 import { authRoutes } from './routes/auth/index.js'
 import { lgpdRoutes } from './routes/lgpd/index.js'
+import { clientesRoutes } from './routes/clientes/index.js'
 import { healthRoutes } from './routes/health.js'
+import { processosRoutes } from './routes/processos.js'
+import { movimentacoesRoutes } from './routes/processos/movimentacoes.js'
+import { adminTenantsRoutes } from './routes/admin/tenants.js'
+import { tenantRoutes } from './routes/tenant/index.js'
+import { webhookBillingRoutes } from './routes/webhooks/billing.js'
+import { getDatajudQueue } from './queues/datajud-queue.js'
+import { createBullMQRedisClient } from './lib/redis.js'
 
 export function buildApp(opts: FastifyServerOptions = {}): FastifyInstance {
   const app = Fastify({
@@ -62,6 +74,51 @@ export function buildApp(opts: FastifyServerOptions = {}): FastifyInstance {
   app.register(sentryPlugin)
   app.register(authPlugin)
 
+  // Entitlement gate: MUST register after authPlugin (declares dependencies: ['auth'])
+  // T-7-04: Redis cache 30s TTL + explicit invalidation on status changes
+  // T-7-06: super_admin still checked — no bypass for admin role
+  const entitlementRedis = createBullMQRedisClient()
+  app.register(entitlementPlugin, { redis: entitlementRedis })
+
+  // -------------------------------------------------------------------------
+  // Bull Board em /admin/queues com guard Bearer token (D-10/D-11/D-12)
+  // T-02-19: token de 32 bytes (openssl rand -hex 32) em ADMIN_TOKEN env var
+  // T-02-20: admin-only, não exposto externamente sem token forte
+  // -------------------------------------------------------------------------
+  app.addHook('onRequest', async (request, reply) => {
+    if (!request.url.startsWith('/admin/queues')) return
+
+    const authHeader = request.headers.authorization ?? ''
+    const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : ''
+    const adminToken = process.env.ADMIN_TOKEN
+
+    if (!adminToken || token !== adminToken) {
+      return reply.status(401).send({
+        success: false,
+        error: 'Unauthorized',
+        code: 'UNAUTHORIZED',
+      })
+    }
+  })
+
+  // Registrar Bull Board (D-12 — roteado pelo servico API)
+  if (env.NODE_ENV !== 'test') {
+    // Apenas inicializa Bull Board fora de testes para evitar conexão Redis desnecessária
+    const redis = createBullMQRedisClient()
+    const bullBoardAdapter = new FastifyAdapter()
+
+    createBullBoard({
+      queues: [new BullMQAdapter(getDatajudQueue(redis))],
+      serverAdapter: bullBoardAdapter,
+    })
+
+    bullBoardAdapter.setBasePath('/admin/queues')
+
+    app.register(bullBoardAdapter.registerPlugin(), {
+      prefix: '/admin/queues',
+    })
+  }
+
   // Rota de health publica (sem autenticacao)
   app.get('/', { config: { skipAuth: true } }, async (_req, reply) => {
     return reply.send({ service: 'portaljuridico-api', version: '0.1.0' })
@@ -73,6 +130,26 @@ export function buildApp(opts: FastifyServerOptions = {}): FastifyInstance {
   // Rotas de autenticacao e LGPD
   app.register(authRoutes, { prefix: '/api/v1/auth' })
   app.register(lgpdRoutes, { prefix: '/api/v1/lgpd' })
+  app.register(clientesRoutes, { prefix: '/api/v1/clientes' })
+
+  // Rotas de processos (DATAJUD-01, DATAJUD-02, DATAJUD-09)
+  app.register(processosRoutes, { prefix: '/api/v1' })
+
+  // Rotas de movimentacoes (Phase 5 — GET /api/v1/processos/:id/movimentacoes)
+  app.register(movimentacoesRoutes, { prefix: '/api/v1/processos' })
+
+  // Webhook de billing — server-to-server, skipAuth: true, autenticado por X-Webhook-Secret
+  // T-7-08: secret validado por timingSafeEqual dentro da rota
+  app.register(webhookBillingRoutes, { prefix: '/api/webhooks', redis: entitlementRedis })
+
+  // Endpoint de status do tenant — consultado pelo app no login e em background
+  // D-11 (Phase 7): tenant_status + grace_banner
+  // D-07 (Phase 8): + termos_versao_atual para consent re-gate
+  app.register(tenantRoutes, { prefix: '/api/v1/tenant' })
+
+  // Endpoints de administracao de tenants — super_admin only, usa supabaseAdmin
+  // T-7-10: guard super_admin explícito em cada handler
+  app.register(adminTenantsRoutes, { prefix: '/api/v1/admin', redis: entitlementRedis })
 
   return app
 }
