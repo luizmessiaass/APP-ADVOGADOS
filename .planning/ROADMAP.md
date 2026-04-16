@@ -184,19 +184,20 @@ Plans:
 ### Phase 8: LGPD Hardening & Production Readiness
 **Goal**: The platform closes the LGPD compliance loop — Art. 18 data deletion, Art. 33 sub-processor disclosure, consent lifecycle, and production launch gates — so Portal Jurídico can be safely offered to Brazilian law offices without exposing the company to ANPD sanctions or OAB ethics violations.
 **Depends on**: Phase 7
-**Requirements**: LGPD-05
+**Requirements**: LGPD-05, LGPD-06
 **Success Criteria** (what must be TRUE):
   1. An escritório admin can invoke an Art. 18 "delete client" endpoint that cascades deletion across processos, movimentações, chat, consent records, and notifications, leaving no orphaned PII
   2. The privacy policy served in-app explicitly names Anthropic as an international sub-processor (Art. 33) and the LGPD consent screen versioning matches the stored `lgpd_consent` row
   3. Cross-tenant leak test, PII-redaction log test, and webhook idempotency replay drill all pass in CI before any production deploy is accepted
   4. Production monitoring dashboards (error rates, Claude spend, DataJud circuit state, FCM delivery rate) are live with on-call-safe alert thresholds
   5. A launch readiness checklist is signed off: backup/restore rehearsed, Supabase Pro tier active, secrets split between API and worker environments, and the "launch blockers" list (DataJud quota verified, Claude ZDR verified, Brazilian privacy lawyer review) is either green or explicitly accepted with mitigation
-**Plans**: 4 plans
+**Plans**: 5 plans
 Plans:
 - [ ] 08-01-PLAN.md — Art. 18 backend: DELETE /api/v1/clientes/:clienteId + cancelarJobsDoCliente BullMQ + supabase db push [BLOCKING] + TDD tests (Wave 1)
 - [ ] 08-02-PLAN.md — Consent re-gate: termos_versao_atual in GET /api/v1/tenant/status + TERMS_VERSION config + TDD tests (Wave 1)
 - [ ] 08-03-PLAN.md — CI production gates: webhook idempotency test impl + production-gates blocking CI job (Wave 2)
 - [ ] 08-04-PLAN.md — Art. 18 Android UX: AlertDialog in ClienteDetalheScreen + DELETE Retrofit endpoint + LAUNCH-CHECKLIST.md (Wave 2)
+- [ ] 08-05-PLAN.md — app_cliente consent re-gate: SplashViewModel checks termos_versao_atual vs DataStore on every launch, routes to LGPDConsentScreen if mismatch (Wave 2)
 **UI hint**: no
 
 ## Progress

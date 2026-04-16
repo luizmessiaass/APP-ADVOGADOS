@@ -736,22 +736,16 @@ production-gates:
 
 ---
 
-## Open Questions
+## Open Questions (RESOLVED)
 
-1. **Is ZDR active on the Portal Jurídico Anthropic account?**
-   - What we know: ZDR is available for the Messages API under a contract arrangement with Anthropic
-   - What's unclear: Whether Portal Jurídico has or will get this arrangement before launch
-   - Recommendation: Contact Anthropic sales team BEFORE writing the final Art. 33 text. Add to launch checklist D-15.
+1. **[RESOLVED] Is ZDR active on the Portal Jurídico Anthropic account?**
+   - Resolution: ZDR is NOT automatically active on standard API keys. As of September 2025, Anthropic's default retention is 7 days for API inputs/outputs. The Art. 33 text in LAUNCH-CHECKLIST.md provides conditional language for both ZDR-contracted and non-contracted cases. ZDR negotiation is listed as a near-term action item in the launch checklist. No code changes needed — the privacy policy text handles both scenarios.
 
-2. **What is the exact BullMQ job payload structure for DataJud sync jobs?**
-   - What we know: The scheduler in `apps/api/src/workers/scheduler.ts` adds jobs; the payload presumably contains `processoId`, `tenantId`, possibly `clienteId`
-   - What's unclear: Whether `clienteId` is in the payload directly (it may only have `processoId`)
-   - Recommendation: Planner should read `apps/api/src/workers/scheduler.ts` and confirm the payload structure before finalizing the BullMQ cancellation implementation. Alternative: cancel jobs by looking up the client's `processoId`s first, then filter by `processoId`.
+2. **[RESOLVED] What is the exact BullMQ job payload structure for DataJud sync jobs?**
+   - Resolution: The `SyncJobData` interface in `apps/api/src/queues/datajud-queue.ts` was verified — jobs are keyed by `processoId`, NOT `clienteId` directly. The correct cancellation strategy (implemented in Plan 08-01 `cancelarJobsDoCliente`) is: (1) query `public.processos WHERE cliente_usuario_id = clienteId` to get all `processoId`s for the client, (2) fetch `getWaiting() + getDelayed()` from the queue, (3) filter by `job.data.processoId in processoIds`. The RESEARCH.md BullMQ code example using `job.data?.clienteId` was incorrect — Plan 08-01 Task 2 implementation (which queries processos first) is the correct approach.
 
-3. **Does app_cliente have a `clientes` route endpoint pattern yet?**
-   - What we know: `ClienteApi.kt` has `GET /api/v1/clientes/{id}` but NOT `DELETE`
-   - What's unclear: Whether the backend has a `/api/v1/clientes` route handler (vs. inline in server.ts)
-   - Recommendation: The planner should check `apps/api/src/server.ts` to find where clientes routes are registered.
+3. **[RESOLVED] Does app_cliente have a `clientes` route endpoint pattern yet?**
+   - Resolution: The backend `/api/v1/clientes` route handler does NOT exist prior to Phase 8 — it is created from scratch in Plan 08-01 as `apps/api/src/routes/clientes/index.ts` and registered in `server.ts`. The existing `ClienteApi.kt` (Android) has GET methods but not DELETE — the DELETE method is added in Plan 08-04 Task 1.
 
 ---
 
