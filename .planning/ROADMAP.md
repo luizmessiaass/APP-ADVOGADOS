@@ -138,7 +138,7 @@ Plans:
   5. Restarting the app with a saved "cliente" token goes to the correct cliente destination (PROCESSO_LIST or LGPD gate)
 **Plans**: 2 plans
 Plans:
-- [ ] 05.1-01-PLAN.md — Restore: git checkout cb083fb~1 for 69 deleted files + build.gradle.kts deps
+- [x] 05.1-01-PLAN.md — Restore: git checkout cb083fb~1 for 69 deleted files + build.gradle.kts deps
 - [ ] 05.1-02-PLAN.md — Unify: convert app-escritorio to library, single entry point in app-cliente with role routing
 **UI hint**: yes
 
