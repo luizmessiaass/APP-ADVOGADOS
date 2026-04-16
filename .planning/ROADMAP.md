@@ -110,7 +110,15 @@ Plans:
   3. Tapping a client opens the read-only "as client sees" preview showing AI-translated movimentações exactly as app_cliente will render them
   4. The advogado can send a manual message/aviso to a specific client, and the message is persisted for eventual delivery
   5. The "gerenciar assinatura" button opens the Stripe Customer Portal via Chrome Custom Tabs (portal session acquired from backend), and CI runs lint + unit + UI tests on every commit to the app_escritorio module
-**Plans**: TBD
+**Plans**: 7 plans
+Plans:
+- [ ] 04-01-PLAN.md — Version catalog + core-network Kotlin plugin fix + AuthInterceptor + ClienteApi + NetworkModule + TokenDataStore + JwtDecoder
+- [ ] 04-02-PLAN.md — CPF/CNJ validators com testes unitários (:core-common) + MovimentacaoCard + ProcessoStatusCard (:core-ui)
+- [ ] 04-03-PLAN.md — Auth flow: LoginScreen + LoginViewModel + EscritorioNavGraph (5 rotas @Serializable) + ClienteListScreen com search
+- [ ] 04-04-PLAN.md — CadastroClienteScreen + CadastroClienteViewModel com validação CPF/CNJ inline
+- [ ] 04-05-PLAN.md — ClienteDetalheScreen (sync status) + PreviewScreen (MovimentacaoCard + disclaimer)
+- [ ] 04-06-PLAN.md — MensagemBottomSheet (fire-and-forget) + Stripe Customer Portal via Chrome Custom Tabs
+- [ ] 04-07-PLAN.md — HiltTestRunner + 5 UI tests instrumentados + CI workflow app-escritorio lint+test+assemble
 **UI hint**: yes
 
 ### Phase 5: app_cliente (End-user MVP)
@@ -176,7 +184,7 @@ Phases execute in numeric order: 0 → 1 → 2 → 3 → 4 → 5 → 6 → 7 →
 | 1. Backend Foundation | 3/8 | In Progress|  |
 | 2. DataJud Integration & Sync Worker | 0/6 | Not started | - |
 | 3. Claude AI Translation | 0/1 | Not started | - |
-| 4. app_escritorio | 0/TBD | Not started | - |
+| 4. app_escritorio | 0/7 | Not started | - |
 | 5. app_cliente | 0/TBD | Not started | - |
 | 6. Push Notifications & In-app Center | 0/TBD | Not started | - |
 | 7. Stripe Billing & Grace Period | 0/TBD | Not started | - |
@@ -192,7 +200,7 @@ Phases flagged as needing extra research at the planning boundary (per research/
 | 1 | needs-research | Q6 Supabase RLS syntax, Supavisor config, Auth Hook docs (2026 state) |
 | 2 | needs-research (CRITICAL) | Q1 DataJud 2026 rate limits, auth, response schema, tribunal coverage; Q10 segredo de justiça visibility |
 | 3 | needs-research | Q2 Claude PT-BR legal jargon quality (50-100 real samples); Q3 Anthropic Zero Data Retention; Q5 OAB ethics on AI explicação vs aconselhamento |
-| 4 | needs-research | supabase-kt 3.x, Ktor 3 client patterns in 2026 |
+| 4 | planned | stack verified: Retrofit 3.0.0, Navigation Compose 2.9.7, DataStore 1.2.1, jwtdecode 2.0.2, browser 1.10.0 |
 | 5 | standard | — |
 | 6 | needs-research | Q8 FCM HTTP v1 API state + Android 13+ POST_NOTIFICATIONS flow; Q11 notification impact triage |
 | 7 | needs-research | Q9 Stripe API version pin + Customer Portal options; Q13 willingness-to-pay por escritório |
