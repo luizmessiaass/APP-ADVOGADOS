@@ -3,8 +3,11 @@
 
 import * as Sentry from '@sentry/node'
 import pino from 'pino'
+import { Worker } from 'bullmq'
 import { env } from './config.js'
 import { createHealthCheckWorker, HEALTH_CHECK_QUEUE } from './queues/health-check.js'
+import { getGracePeriodQueue, GRACE_PERIOD_QUEUE, type GracePeriodJobData } from './queues/grace-period.js'
+import { processarGracePeriodCheck } from './workers/grace-period-check.js'
 import Redis from 'ioredis'
 
 // Logger do worker
@@ -35,15 +38,31 @@ const redisConnection = new Redis(env.REDIS_URL, {
 // Instanciar workers
 const healthCheckWorker = createHealthCheckWorker(redisConnection)
 
+// Grace period — cron diario 09:00 BRT (12:00 UTC)
+// 0 12 * * * = 09:00 BRT (UTC-3). Brazil abolished BRST summer time in 2019 (Decreto 9.772/2019). UTC offset permanently -03:00.
+const gracePeriodQueue = getGracePeriodQueue(redisConnection)
+await gracePeriodQueue.upsertJobScheduler(
+  'daily-grace-period-check',
+  { pattern: '0 12 * * *' },
+  { name: 'grace-period-check', data: { triggered_at: new Date().toISOString() } }
+)
+
+const gracePeriodWorker = new Worker<GracePeriodJobData>(
+  GRACE_PERIOD_QUEUE,
+  processarGracePeriodCheck,
+  { connection: redisConnection, concurrency: 1 }
+)
+
 logger.info(
-  { queue: HEALTH_CHECK_QUEUE },
-  '[worker] BullMQ worker iniciado. Aguardando jobs...'
+  { queues: [HEALTH_CHECK_QUEUE, GRACE_PERIOD_QUEUE] },
+  '[worker] BullMQ workers iniciados. Aguardando jobs...'
 )
 
 // Graceful shutdown
 async function shutdown(signal: string): Promise<void> {
   logger.info(`[worker] Recebeu ${signal}. Encerrando graciosamente...`)
   await healthCheckWorker.close()
+  await gracePeriodWorker.close()
   await redisConnection.quit()
   logger.info('[worker] Encerrado.')
   process.exit(0)
