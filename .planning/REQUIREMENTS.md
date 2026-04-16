@@ -83,16 +83,16 @@
 
 ### app_escritorio (ESCR)
 
-- [ ] **ESCR-01**: Advogado/admin consegue fazer login com email/senha
-- [ ] **ESCR-02**: Advogado consegue cadastrar novo cliente (nome, CPF, email, número CNJ)
-- [ ] **ESCR-03**: Validação de CPF e número CNJ acontece no formulário de cadastro antes de submeter
-- [ ] **ESCR-04**: Advogado consegue visualizar lista de clientes com status resumido dos processos
-- [ ] **ESCR-05**: Advogado consegue buscar cliente por nome, CPF ou número de processo
+- [x] **ESCR-01**: Advogado/admin consegue fazer login com email/senha
+- [x] **ESCR-02**: Advogado consegue cadastrar novo cliente (nome, CPF, email, número CNJ)
+- [x] **ESCR-03**: Validação de CPF e número CNJ acontece no formulário de cadastro antes de submeter
+- [x] **ESCR-04**: Advogado consegue visualizar lista de clientes com status resumido dos processos
+- [x] **ESCR-05**: Advogado consegue buscar cliente por nome, CPF ou número de processo
 - [ ] **ESCR-06**: Advogado consegue visualizar o processo "como o cliente vê" (preview read-only das movimentações traduzidas)
 - [ ] **ESCR-07**: Advogado consegue enviar mensagem/aviso manual para o cliente via app
 - [ ] **ESCR-08**: Tela do cliente mostra status da última sincronização DataJud de cada processo
 - [ ] **ESCR-09**: Advogado consegue acessar Stripe Customer Portal para gerenciar assinatura via Chrome Custom Tabs
-- [ ] **ESCR-10**: App_escritorio usa arquitetura Clean Architecture + MVVM + Compose com módulos `:core-*` compartilhados
+- [x] **ESCR-10**: App_escritorio usa arquitetura Clean Architecture + MVVM + Compose com módulos `:core-*` compartilhados
 - [ ] **ESCR-11**: App_escritorio passa linting, testes unitários e UI tests no CI antes de qualquer release
 
 ### app_cliente (APP)
@@ -227,16 +227,16 @@ Full per-requirement mapping (updated 2026-04-14 after roadmap creation).
 | AI-06 | Phase 3 | Complete |
 | AI-07 | Phase 3 | Complete |
 | AI-08 | Phase 3 | Complete |
-| ESCR-01 | Phase 4 | Pending |
-| ESCR-02 | Phase 4 | Pending |
-| ESCR-03 | Phase 4 | Pending |
-| ESCR-04 | Phase 4 | Pending |
-| ESCR-05 | Phase 4 | Pending |
+| ESCR-01 | Phase 4 | Complete |
+| ESCR-02 | Phase 4 | Complete |
+| ESCR-03 | Phase 4 | Complete |
+| ESCR-04 | Phase 4 | Complete |
+| ESCR-05 | Phase 4 | Complete |
 | ESCR-06 | Phase 4 | Pending |
 | ESCR-07 | Phase 4 | Pending |
 | ESCR-08 | Phase 4 | Pending |
 | ESCR-09 | Phase 4 | Pending |
-| ESCR-10 | Phase 4 | Pending |
+| ESCR-10 | Phase 4 | Complete |
 | ESCR-11 | Phase 4 | Pending |
 | APP-01 | Phase 5 | Pending |
 | APP-02 | Phase 5 | Pending |
