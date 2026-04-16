@@ -124,14 +124,20 @@ Plans:
 ### Phase 5: app_cliente (End-user MVP)
 **Goal**: The end-user Android app delivers the MVP experience — login, a list of their own processes, plain-language status, translated timeline, next important date, process cadastral data, "last update" freshness indicator, onboarding, LGPD consent gate, and WhatsApp fallback to their advogado — so a leigo can understand their case without calling their lawyer.
 **Depends on**: Phase 4
-**Requirements**: APP-01, APP-02, APP-03, APP-04, APP-05, APP-06, APP-07, APP-08, APP-11, APP-12, APP-13, APP-14, APP-15, APP-16, LGPD-02
+**Requirements**: APP-01, APP-02, APP-03, APP-04, APP-05, APP-06, APP-07, APP-08, APP-11, APP-12, APP-13, APP-15, APP-16, LGPD-02
 **Success Criteria** (what must be TRUE):
   1. A cliente logs in and immediately sees a list of their own processes, bound to their CPF, with nothing from other tenants leaking through
-  2. Opening a process shows: plain-language current status, translated movimentação timeline, next important date in a prominent card, and cadastral data (CNJ, vara, comarca, partes), all labeled with "Explicação gerada por IA" disclaimers where applicable
+  2. Opening a process shows: plain-language current status, translated movimentação timeline, next important date in a prominent card, and cadastral data (CNJ, vara, comarca, partes) with plain-language labels
   3. "Última sincronização há X horas" is visible on the process screen, and the "sem movimentação recente" state renders a reassuring message instead of a blank screen
-  4. The 3-4 step onboarding appears on first open and the LGPD consent screen must be accepted before any process data is shown (consent gate)
-  5. A "Falar com meu advogado" button opens WhatsApp or email via deep-link, and CI runs lint + unit + UI tests on every commit to the app_cliente module
-**Plans**: TBD
+  4. The 4-screen onboarding appears on first open (no skip) and the LGPD consent screen must be accepted before any process data is shown (consent gate; D-06: no AI disclaimers)
+  5. A "Falar com meu advogado" button opens WhatsApp via deep-link with tel: fallback, and CI runs lint + unit tests on every commit to the app_cliente module
+**Plans**: 5 plans
+Plans:
+- [ ] 05-01-PLAN.md — Backend gaps: migration cliente_usuario_id + RLS update + GET /processos list + GET /processos/:id/movimentacoes + telefone_whatsapp
+- [ ] 05-02-PLAN.md — Foundation: libs.versions.toml deps + app-cliente build config + PortalJuridicoTheme + 8 core-ui components + nav graph + SplashViewModel + LoginScreen
+- [ ] 05-03-PLAN.md — Process screens: ProcessoListScreen + ProcessoDetailScreen (single LazyColumn, D-01 to D-07) + repository + unit tests
+- [ ] 05-04-PLAN.md — Onboarding (4 pages, no skip, D-09) + LGPD consent gate (scroll-detect, D-11 to D-13) + Compose UI tests
+- [ ] 05-05-PLAN.md — HiltTestRunner + empty timeline test + CI workflow app-cliente lint+test+assembleDemoDebug
 **UI hint**: yes
 
 ### Phase 6: Push Notifications & In-app Center
@@ -185,7 +191,7 @@ Phases execute in numeric order: 0 → 1 → 2 → 3 → 4 → 5 → 6 → 7 →
 | 2. DataJud Integration & Sync Worker | 0/6 | Not started | - |
 | 3. Claude AI Translation | 0/1 | Not started | - |
 | 4. app_escritorio | 0/7 | Not started | - |
-| 5. app_cliente | 0/TBD | Not started | - |
+| 5. app_cliente | 0/5 | Not started | - |
 | 6. Push Notifications & In-app Center | 0/TBD | Not started | - |
 | 7. Stripe Billing & Grace Period | 0/TBD | Not started | - |
 | 8. LGPD Hardening & Production Readiness | 0/TBD | Not started | - |
@@ -222,7 +228,7 @@ Phases flagged as needing extra research at the planning boundary (per research/
 - DATAJUD-01..09 → Phase 2 (all 9)
 - AI-01..08 → Phase 3 (all 8)
 - ESCR-01..11 → Phase 4 (all 11)
-- APP-01..08, APP-11..16 → Phase 5 (14)
+- APP-01..08, APP-11..16 → Phase 5 (14, note: APP-14 removed by user D-06)
 - APP-09, APP-10 → Phase 6 (2)
 - NOTIFY-01..07 → Phase 6 (all 7)
 - BILLING-01..07 → Phase 7 (all 7)
