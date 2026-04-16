@@ -11,7 +11,8 @@ const SignupEscritorioBody = Type.Object({
 
 const LoginBody = Type.Object({
   email: Type.String({ format: 'email' }),
-  senha: Type.String({ minLength: 1 }),
+  senha: Type.Optional(Type.String({ minLength: 1 })),
+  password: Type.Optional(Type.String({ minLength: 1 })),
 })
 
 const InviteBody = Type.Object({
@@ -89,7 +90,8 @@ export async function authRoutes(app: FastifyInstance): Promise<void> {
     config: { skipAuth: true },
     schema: { body: LoginBody },
   }, async (req, reply) => {
-    const { email, senha } = req.body as { email: string; senha: string }
+    const body = req.body as { email: string; senha?: string; password?: string }
+    const senha = body.senha ?? body.password ?? ''
 
     const { data, error } = await supabaseAdmin.auth.signInWithPassword({ email, password: senha })
 
@@ -103,16 +105,16 @@ export async function authRoutes(app: FastifyInstance): Promise<void> {
       })
     }
 
+    // Buscar role diretamente de public.usuarios (nao depende do hook JWT custom-access-token)
+    const { data: usuario } = await supabaseAdmin
+      .from('usuarios')
+      .select('role_local, tenant_id')
+      .eq('id', data.user.id)
+      .single()
+
     return reply.send({
-      success: true,
-      access_token: data.session.access_token,
-      refresh_token: data.session.refresh_token,
-      user: {
-        id: data.user.id,
-        email: data.user.email,
-        role: data.user.app_metadata?.role ?? null,
-        tenant_id: data.user.app_metadata?.tenant_id ?? null,
-      },
+      token: data.session.access_token,
+      role: usuario?.role_local ?? data.user.app_metadata?.role ?? null,
     })
   })
 
