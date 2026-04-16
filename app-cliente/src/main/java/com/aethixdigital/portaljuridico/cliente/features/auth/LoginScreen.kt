@@ -90,7 +90,11 @@ fun LoginScreen(
 
     LaunchedEffect(uiState) {
         if (uiState is LoginUiState.Success) {
-            navController.navigate(Routes.PROCESSO_LIST) {
+            val destination = when (uiState.role) {
+                "advogado", "admin_escritorio" -> Routes.ADMIN_HOME
+                else -> Routes.PROCESSO_LIST
+            }
+            navController.navigate(destination) {
                 popUpTo(Routes.LOGIN) { inclusive = true }
             }
         }
