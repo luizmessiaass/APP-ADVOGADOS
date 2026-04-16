@@ -12,6 +12,13 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+sealed class DeletarClienteState {
+    object Idle : DeletarClienteState()
+    object Loading : DeletarClienteState()
+    object Success : DeletarClienteState()
+    data class Error(val message: String) : DeletarClienteState()
+}
+
 sealed class ClienteDetalheUiState {
     object Loading : ClienteDetalheUiState()
     data class Success(val cliente: ClienteItem) : ClienteDetalheUiState()
@@ -36,6 +43,9 @@ class ClienteDetalheViewModel @Inject constructor(
     private val _portalError = MutableStateFlow<String?>(null)
     val portalError: StateFlow<String?> = _portalError.asStateFlow()
 
+    private val _deletarState = MutableStateFlow<DeletarClienteState>(DeletarClienteState.Idle)
+    val deletarState: StateFlow<DeletarClienteState> = _deletarState.asStateFlow()
+
     init {
         loadCliente()
     }
@@ -59,4 +69,14 @@ class ClienteDetalheViewModel @Inject constructor(
     }
 
     fun getClienteId(): String = clienteId
+
+    fun deletarCliente() {
+        viewModelScope.launch {
+            _deletarState.value = DeletarClienteState.Loading
+            clienteRepository.deletarCliente(clienteId).fold(
+                onSuccess = { _deletarState.value = DeletarClienteState.Success },
+                onFailure = { _deletarState.value = DeletarClienteState.Error(it.message ?: "Erro ao deletar cliente") }
+            )
+        }
+    }
 }

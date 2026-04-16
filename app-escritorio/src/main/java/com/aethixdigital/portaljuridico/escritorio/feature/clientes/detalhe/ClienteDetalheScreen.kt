@@ -1,5 +1,6 @@
 package com.aethixdigital.portaljuridico.escritorio.feature.clientes.detalhe
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,7 +11,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -18,6 +21,9 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -45,13 +51,33 @@ fun ClienteDetalheScreen(
     val uiState by viewModel.uiState.collectAsState()
     val portalUrl by viewModel.portalUrl.collectAsState()
     val portalError by viewModel.portalError.collectAsState()
+    val deletarState by viewModel.deletarState.collectAsState()
     var showMensagemSheet by remember { mutableStateOf(false) }
+    var showDeleteDialog by remember { mutableStateOf(false) }
+    val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
 
     // Abrir CCT quando URL estiver disponível (ESCR-09)
     LaunchedEffect(portalUrl) {
         portalUrl?.let { url ->
             openStripePortal(context, url)
+        }
+    }
+
+    // Navigate back on successful deletion
+    LaunchedEffect(deletarState) {
+        if (deletarState is DeletarClienteState.Success) {
+            onBack()
+        }
+    }
+
+    // Show snackbar on deletion error (D-02)
+    LaunchedEffect(deletarState) {
+        if (deletarState is DeletarClienteState.Error) {
+            snackbarHostState.showSnackbar(
+                message = "Erro ao deletar cliente. Tente novamente.",
+                duration = SnackbarDuration.Long
+            )
         }
     }
 
@@ -65,7 +91,8 @@ fun ClienteDetalheScreen(
                     }
                 }
             )
-        }
+        },
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
     ) { innerPadding ->
         when (val state = uiState) {
             is ClienteDetalheUiState.Loading -> {
@@ -144,6 +171,18 @@ fun ClienteDetalheScreen(
                             style = MaterialTheme.typography.bodySmall
                         )
                     }
+                    Spacer(modifier = Modifier.height(8.dp))
+                    // Art. 18 LGPD: botão de deleção destrutiva (D-02)
+                    OutlinedButton(
+                        onClick = { showDeleteDialog = true },
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = ButtonDefaults.outlinedButtonColors(
+                            contentColor = MaterialTheme.colorScheme.error
+                        ),
+                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.error)
+                    ) {
+                        Text("Deletar cliente")
+                    }
                 }
 
                 // ModalBottomSheet condicional (ESCR-07)
@@ -156,5 +195,35 @@ fun ClienteDetalheScreen(
                 }
             }
         }
+    }
+
+    // AlertDialog de confirmação de deleção destrutiva (D-02, T-8-11)
+    if (showDeleteDialog) {
+        val clienteNome = (uiState as? ClienteDetalheUiState.Success)?.cliente?.nome ?: "este cliente"
+        AlertDialog(
+            onDismissRequest = { showDeleteDialog = false },
+            title = { Text("Deletar cliente?") },
+            text = {
+                Text("Todos os dados de $clienteNome serão removidos permanentemente e não podem ser recuperados.")
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        viewModel.deletarCliente()
+                        showDeleteDialog = false
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.error
+                    )
+                ) {
+                    Text("Deletar")
+                }
+            },
+            dismissButton = {
+                OutlinedButton(onClick = { showDeleteDialog = false }) {
+                    Text("Cancelar")
+                }
+            }
+        )
     }
 }

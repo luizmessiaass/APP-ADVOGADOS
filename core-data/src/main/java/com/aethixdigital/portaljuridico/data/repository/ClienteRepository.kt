@@ -20,6 +20,7 @@ interface ClienteRepository {
     suspend fun previewCliente(clienteId: String): Result<PreviewResponse>
     suspend fun enviarMensagem(clienteId: String, texto: String): Result<String>
     suspend fun getPortalSessionUrl(): Result<String>
+    suspend fun deletarCliente(clienteId: String): Result<Unit>
 }
 
 @Singleton
@@ -57,5 +58,12 @@ class ClienteRepositoryImpl @Inject constructor(
 
     override suspend fun getPortalSessionUrl(): Result<String> = runCatching {
         clienteApi.getPortalSession().url
+    }
+
+    override suspend fun deletarCliente(clienteId: String): Result<Unit> = runCatching {
+        val response = clienteApi.deletarCliente(clienteId)
+        if (!response.isSuccessful) {
+            throw Exception("Erro ao deletar cliente: HTTP ${response.code()}")
+        }
     }
 }
