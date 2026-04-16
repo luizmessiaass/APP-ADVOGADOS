@@ -657,27 +657,27 @@ Phase 5 is Android-only. No external services are needed beyond what the backend
 
 ---
 
-## Open Questions
+## Open Questions (RESOLVED)
 
-1. **Did Phase 4 add Retrofit, Navigation, DataStore to `libs.versions.toml`?**
+1. **Did Phase 4 add Retrofit, Navigation, DataStore to `libs.versions.toml`?** — RESOLVED
    - What we know: Phase 4 CONTEXT D-03/D-04/D-05 required these additions.
    - What's unclear: Phase 4 status is "Not started" per STATE.md — these libraries may not yet be in the version catalog.
-   - Recommendation: Wave 0 of Phase 5 plan must include a task to add all missing library entries to `libs.versions.toml` and to `:app-cliente/build.gradle.kts`.
+   - Resolution: Plan 05-02 Task 1 adds all missing library entries (navigationCompose, retrofit, okhttp, datastore, gson) to `libs.versions.toml` and wires them in `app-cliente/build.gradle.kts`.
 
-2. **What is the `escritorios` table's WhatsApp field name?**
+2. **What is the `escritorios` table's WhatsApp field name?** — RESOLVED
    - What we know: The `escritorios` table has `nome`, `email`, `status`. No `telefone_whatsapp` confirmed.
    - What's unclear: Whether a phone field was added in Phase 1 or needs to be added now.
-   - Recommendation: Wave 0 includes a migration task to add `telefone_whatsapp TEXT` to `escritorios` if not present.
+   - Resolution: Plan 05-01 Task 1 adds `telefone_whatsapp TEXT` to `escritorios` via migration 0008. Plan 05-01 Task 2 includes it in the GET /processos/:id response via JOIN.
 
-3. **Does Phase 4's `core-ui` contain `ProcessoStatusCard` and `MovimentacaoCard`?**
+3. **Does Phase 4's `core-ui` contain `ProcessoStatusCard` and `MovimentacaoCard`?** — RESOLVED
    - What we know: Phase 4 CONTEXT D-08 stated these components should be in `:core-ui` for reuse by Phase 5.
    - What's unclear: Phase 4 is not yet started — these components don't exist yet.
-   - Recommendation: The first UI wave in Phase 5 should either build on Phase 4's components OR define them here if Phase 4 is not yet done. Make Phase 4 a hard dependency.
+   - Resolution: Plan 05-02 Tasks 2a creates all 8 :core-ui components (ProcessoStatusCard, MovimentacaoCard, and 6 others) directly in this phase. Phase 4 is NOT a prerequisite for these components.
 
-4. **Onboarding illustration assets — SVG or Lottie?**
+4. **Onboarding illustration assets — SVG or Lottie?** — RESOLVED
    - What we know: D-08 says "SVG/Lottie".
    - What's unclear: No design assets exist yet. Lottie requires the `com.airbnb.android:lottie-compose` dependency; static vector drawables do not.
-   - Recommendation: Use static `VectorDrawable` XML assets for v1 (no extra dependency, works offline, no animator needed for MVP). Lottie can be added in Phase 6+ if animated illustrations are prioritized.
+   - Resolution: Plan 05-04 Task 1 uses static VectorDrawable XML assets (4 files in `app-cliente/src/main/res/drawable/`). No Lottie dependency added for MVP.
 
 ---
 
