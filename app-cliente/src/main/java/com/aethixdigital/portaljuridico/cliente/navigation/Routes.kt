@@ -8,4 +8,5 @@ object Routes {
     const val PROCESSO_LIST = "processo_list"
     const val PROCESSO_DETAIL = "processo_detail"
     const val PROCESSO_DETAIL_WITH_ID = "processo_detail/{processoId}"
+    const val ADMIN_HOME = "admin_home"
 }
