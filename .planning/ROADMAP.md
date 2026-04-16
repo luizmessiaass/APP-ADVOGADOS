@@ -150,7 +150,14 @@ Plans:
   3. The in-app notification center loads unread notifications from the backend and surfaces anything the FCM push may have missed
   4. WorkManager runs a periodic fallback poll for unread notifications, and the onboarding screen guides the user through disabling battery optimization on Xiaomi/Samsung/Motorola
   5. FCM 404 responses for invalid device tokens cause the backend to clean up the token so it is never retried
-**Plans**: TBD
+**Plans**: 6 plans
+Plans:
+- [ ] 06-01-PLAN.md — Migration SQL (device_tokens + notifications + RLS) + version catalog (Firebase BOM 34.12.0, WorkManager 2.11.2, hilt-work 1.2.0)
+- [ ] 06-02-PLAN.md — Backend FCM: firebase.ts + FcmDispatchService (data-only, high-priority, token cleanup) + rotas /api/devices e /api/notifications
+- [ ] 06-03-PLAN.md — [BLOCKING] supabase db push migration 007 + setup Firebase Console (google-services.json + service account)
+- [ ] 06-04-PLAN.md — Android FCM: PortalMessagingService + ClienteApplication (HiltWorkerFactory + NotificationChannel) + NotificationPollWorker (@HiltWorker, 15min)
+- [ ] 06-05-PLAN.md — Central de notificações: NotificationsViewModel + NotificationCenterScreen (BadgedBox, seções Não lidas/Lidas) + NavGraph integration
+- [ ] 06-06-PLAN.md — Onboarding 4→5 telas: tela 3 POST_NOTIFICATIONS + tela 5 BatteryOptimizationScreen (OEM Xiaomi/Samsung/Motorola + botão Pular)
 **UI hint**: yes
 
 ### Phase 7: Stripe Billing & Grace Period
@@ -192,7 +199,7 @@ Phases execute in numeric order: 0 → 1 → 2 → 3 → 4 → 5 → 6 → 7 →
 | 3. Claude AI Translation | 0/1 | Not started | - |
 | 4. app_escritorio | 0/7 | Not started | - |
 | 5. app_cliente | 0/5 | Not started | - |
-| 6. Push Notifications & In-app Center | 0/TBD | Not started | - |
+| 6. Push Notifications & In-app Center | 0/6 | Not started | - |
 | 7. Stripe Billing & Grace Period | 0/TBD | Not started | - |
 | 8. LGPD Hardening & Production Readiness | 0/TBD | Not started | - |
 
@@ -208,7 +215,7 @@ Phases flagged as needing extra research at the planning boundary (per research/
 | 3 | needs-research | Q2 Claude PT-BR legal jargon quality (50-100 real samples); Q3 Anthropic Zero Data Retention; Q5 OAB ethics on AI explicação vs aconselhamento |
 | 4 | planned | stack verified: Retrofit 3.0.0, Navigation Compose 2.9.7, DataStore 1.2.1, jwtdecode 2.0.2, browser 1.10.0 |
 | 5 | standard | — |
-| 6 | needs-research | Q8 FCM HTTP v1 API state + Android 13+ POST_NOTIFICATIONS flow; Q11 notification impact triage |
+| 6 | planned | stack verified: Firebase BOM 34.12.0, firebase-admin 13.8.0, WorkManager 2.11.2, hilt-work 1.2.0 |
 | 7 | needs-research | Q9 Stripe API version pin + Customer Portal options; Q13 willingness-to-pay por escritório |
 | 8 | needs-research (LAUNCH BLOCKER) | Q4 LGPD enforcement precedents post-May 2025; Brazilian privacy lawyer review |
 
