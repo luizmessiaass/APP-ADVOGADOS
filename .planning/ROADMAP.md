@@ -139,7 +139,7 @@ Plans:
 **Plans**: 2 plans
 Plans:
 - [x] 05.1-01-PLAN.md — Restore: git checkout cb083fb~1 for 69 deleted files + build.gradle.kts deps
-- [ ] 05.1-02-PLAN.md — Unify: convert app-escritorio to library, single entry point in app-cliente with role routing
+- [x] 05.1-02-PLAN.md — Unify: convert app-escritorio to library, single entry point in app-cliente with role routing
 **UI hint**: yes
 
 ### Phase 6: Push Notifications & In-app Center
