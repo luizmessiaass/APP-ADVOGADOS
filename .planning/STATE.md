@@ -3,8 +3,8 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 07-03-PLAN.md
-last_updated: "2026-04-16T17:33:06.816Z"
+stopped_at: Completed 07-04-PLAN.md
+last_updated: "2026-04-16T17:33:29.682Z"
 last_activity: 2026-04-16
 progress:
   total_phases: 10
@@ -85,6 +85,7 @@ Recent decisions affecting current work:
 - [Phase 04-07]: Testes instrumentados excluídos do CI job (sem emulator — D-20); UI tests rodam manualmente ou em CI com emulator dedicado
 - [Phase 07]: UUID nos testes deve ser RFC 4122 válido — Zod z.string().uuid() rejeita UUIDs com octetos fora do padrão hex
 - [Phase 07]: resolveGracePeriod() sempre retorna conjunto completo de reset — pagamento bem-sucedido sempre reseta completamente
+- [Phase 07]: Usar 'supabase db push' (nunca 'db reset') para migrations em banco com dados de tenants — db reset destruiria todos os dados
 
 ### Roadmap Evolution
 
@@ -108,6 +109,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-16T16:52:28.977Z
-Stopped at: Completed 07-03-PLAN.md
+Last session: 2026-04-16T17:33:29.675Z
+Stopped at: Completed 07-04-PLAN.md
 Resume file: None

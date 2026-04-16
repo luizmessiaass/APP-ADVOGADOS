@@ -134,9 +134,9 @@ Plans:
   5. A "Falar com meu advogado" button opens WhatsApp via deep-link with tel: fallback, and CI runs lint + unit tests on every commit to the app_cliente module
 **Plans**: 5 plans
 Plans:
-- [ ] 05-01-PLAN.md — Backend gaps: migration cliente_usuario_id + RLS update + GET /processos list + GET /processos/:id/movimentacoes + telefone_whatsapp
-- [ ] 05-02-PLAN.md — Foundation: libs.versions.toml deps + app-cliente build config + PortalJuridicoTheme + 8 core-ui components + nav graph + SplashViewModel + LoginScreen
-- [ ] 05-03-PLAN.md — Process screens: ProcessoListScreen + ProcessoDetailScreen (single LazyColumn, D-01 to D-07) + repository + unit tests
+- [x] 05-01-PLAN.md — Backend gaps: migration cliente_usuario_id + RLS update + GET /processos list + GET /processos/:id/movimentacoes + telefone_whatsapp
+- [x] 05-02-PLAN.md — Foundation: libs.versions.toml deps + app-cliente build config + PortalJuridicoTheme + 8 core-ui components + nav graph + SplashViewModel + LoginScreen
+- [x] 05-03-PLAN.md — Process screens: ProcessoListScreen + ProcessoDetailScreen (single LazyColumn, D-01 to D-07) + repository + unit tests
 - [ ] 05-04-PLAN.md — Onboarding (4 pages, no skip, D-09) + LGPD consent gate (scroll-detect, D-11 to D-13) + Compose UI tests
 - [ ] 05-05-PLAN.md — HiltTestRunner + empty timeline test + CI workflow app-cliente lint+test+assembleDemoDebug
 **UI hint**: yes
@@ -176,7 +176,7 @@ Plans:
 - [x] 07-01-PLAN.md — SQL migration 0009 (schema extension) + 4 Vitest test scaffolds (Wave 0 / TDD Red phase)
 - [x] 07-02-PLAN.md — Entitlement middleware (HTTP 402 gate, Redis cache, fail-closed) + super_admin role extension
 - [x] 07-03-PLAN.md — Webhook receiver (BILLING-03/04) + grace-period pure service + admin tenant endpoints
-- [ ] 07-04-PLAN.md — [BLOCKING] supabase db push migration 0009 + Studio verification
+- [x] 07-04-PLAN.md — [BLOCKING] supabase db push migration 0009 + Studio verification
 - [ ] 07-05-PLAN.md — BullMQ daily cron grace period worker (Resend emails, idempotent transitions)
 - [ ] 07-06-PLAN.md — GET /api/v1/tenant/status + Android billing UX (banner + suspension screens + WorkManager poll)
 **UI hint**: no
@@ -214,7 +214,7 @@ Phases execute in numeric order: 0 → 1 → 2 → 3 → 4 → 5 → 6 → 7 →
 | 4. app_escritorio | 7/7 | Complete   | 2026-04-16 |
 | 5. app_cliente | 0/5 | Not started | - |
 | 6. Push Notifications & In-app Center | 0/6 | Not started | - |
-| 7. Stripe Billing & Grace Period | 3/6 | In Progress|  |
+| 7. Stripe Billing & Grace Period | 4/6 | In Progress|  |
 | 8. LGPD Hardening & Production Readiness | 0/4 | Not started | - |
 
 ## Research Flags
@@ -261,7 +261,7 @@ Phases flagged as needing extra research at the planning boundary (per research/
 **Goal:** [To be planned]
 **Requirements**: TBD
 **Depends on:** Phase 8
-**Plans:** 3/6 plans executed
+**Plans:** 4/6 plans executed
 
 Plans:
 - [ ] TBD (run /gsd-plan-phase 9 to break down)

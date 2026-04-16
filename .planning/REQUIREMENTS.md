@@ -70,7 +70,7 @@
 - [x] **BILLING-04**: Todos os eventos Stripe são registrados em tabela `stripe_events` para idempotência (replay-safe)
 - [ ] **BILLING-05**: Middleware de entitlement verifica `subscription_status` do tenant antes de liberar endpoints protegidos
 - [ ] **BILLING-06**: State machine de grace period: Dia 0 (email) → Dia 3 (banner in-app) → Dia 7 (painel escritório somente leitura) → Dia 14 (suspensão total)
-- [ ] **BILLING-07**: Tenant nunca tem dados deletados por falta de pagamento (apenas `status` desativado)
+- [x] **BILLING-07**: Tenant nunca tem dados deletados por falta de pagamento (apenas `status` desativado)
 
 ### LGPD Compliance (LGPD)
 
@@ -268,7 +268,7 @@ Full per-requirement mapping (updated 2026-04-14 after roadmap creation).
 | BILLING-04 | Phase 7 | Complete |
 | BILLING-05 | Phase 7 | Pending |
 | BILLING-06 | Phase 7 | Pending |
-| BILLING-07 | Phase 7 | Pending |
+| BILLING-07 | Phase 7 | Complete |
 | LGPD-05 | Phase 8 | Pending |
 
 ---
