@@ -78,10 +78,10 @@ Plans:
 **Plans**: 6 plans
 Plans:
 - [ ] 02-01-PLAN.md — CNJ validator (mod-97) + tribunal map + DataJud adapter (HTTP + Zod)
-- [ ] 02-02-PLAN.md — Supabase migration 002: processos, movimentacoes, sync_errors + RLS
+- [x] 02-02-PLAN.md — Supabase migration 002: processos, movimentacoes, sync_errors + RLS
 - [ ] 02-03-PLAN.md — [BLOCKING] supabase db push + verificação do schema no painel
 - [ ] 02-04-PLAN.md — BullMQ worker: circuit breaker Redis + step-job checkpoint + tier scheduler + diff idempotente
-- [ ] 02-05-PLAN.md — Fastify routes: GET /processos/:id (staleness 72h) + POST /processos + Bull Board /admin/queues
+- [x] 02-05-PLAN.md — Fastify routes: GET /processos/:id (staleness 72h) + POST /processos + Bull Board /admin/queues
 - [ ] 02-06-PLAN.md — Testes completos: checkpoint, idempotência, circuit breaker Redis, staleness limites
 **UI hint**: no
 
