@@ -18,8 +18,10 @@ sealed class LoginUiState {
     object Idle : LoginUiState()
     object Loading : LoginUiState()
     data class Error(val message: String) : LoginUiState()
-    object Success : LoginUiState()
+    data class Success(val role: String) : LoginUiState()
 }
+
+private val VALID_ROLES = setOf("cliente", "advogado", "admin_escritorio")
 
 @HiltViewModel
 open class LoginViewModel @Inject constructor(
@@ -40,14 +42,15 @@ open class LoginViewModel @Inject constructor(
             try {
                 val response = authApi.login(LoginRequest(email, password))
                 val role = response.role
-                if (role != "cliente") {
-                    _uiState.value = LoginUiState.Error("Esta conta não é de um cliente.")
+                if (role !in VALID_ROLES) {
+                    _uiState.value = LoginUiState.Error("Conta não autorizada.")
                     return@launch
                 }
                 context.clienteDataStore.edit { prefs ->
                     prefs[TOKEN_KEY] = response.token
+                    prefs[ROLE_KEY] = role
                 }
-                _uiState.value = LoginUiState.Success
+                _uiState.value = LoginUiState.Success(role)
             } catch (e: retrofit2.HttpException) {
                 if (e.code() == 401) {
                     _uiState.value = LoginUiState.Error("Email ou senha incorretos. Tente novamente.")

@@ -20,6 +20,7 @@ android {
         versionCode = 1
         versionName = "1.0"
         testInstrumentationRunner = "com.aethixdigital.portaljuridico.cliente.HiltTestRunner"
+        buildConfigField("String", "API_BASE_URL", "\"http://10.0.2.2:3000\"")
     }
 
     flavorDimensions += "tenant"
@@ -41,6 +42,10 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            buildConfigField("String", "API_BASE_URL", "\"https://api.portaljuridico.com.br\"")
+        }
+        debug {
+            buildConfigField("String", "API_BASE_URL", "\"http://10.0.2.2:3000\"")
         }
     }
     compileOptions {
@@ -56,6 +61,7 @@ android {
 dependencies {
     implementation(project(":core-common"))
     implementation(project(":core-network"))
+    implementation(project(":app-escritorio"))
     implementation(project(":core-data"))
     implementation(project(":core-ui"))
     implementation(libs.hilt.android)
