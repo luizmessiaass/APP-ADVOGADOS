@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 04-04-PLAN.md
-last_updated: "2026-04-16T13:20:50.915Z"
+stopped_at: Completed 04-05-PLAN.md
+last_updated: "2026-04-16T13:29:43.133Z"
 last_activity: 2026-04-16
 progress:
   total_phases: 9
   completed_phases: 1
   total_plans: 38
-  completed_plans: 19
-  percent: 50
+  completed_plans: 20
+  percent: 53
 ---
 
 # Project State
@@ -27,7 +27,7 @@ See: .planning/PROJECT.md (updated 2026-04-14)
 ## Current Position
 
 Phase: 04 (android-app-fluxo-advogado) — EXECUTING
-Plan: 3 of 7
+Plan: 4 of 7
 Status: Ready to execute
 Last activity: 2026-04-16
 
@@ -56,6 +56,7 @@ Progress: [░░░░░░░░░░] 0%
 *Updated after each plan completion*
 | Phase 04 P03 | 9 | 2 tasks | 17 files |
 | Phase 04 P04 | 25 | 1 tasks | 6 files |
+| Phase 04 P05 | 25 | 1 tasks | 10 files |
 
 ## Accumulated Context
 
@@ -72,6 +73,8 @@ Recent decisions affecting current work:
 - [Phase 04-03]: TokenProvider interface em core-network elimina dependência circular core-network → core-data via AuthInterceptor
 - [Phase 04-03]: getTokenFlow() (Flow) e getToken() (suspend) separados em TokenDataStore para suportar tanto observação como leitura pontual
 - [Phase 04-04]: EMAIL_REGEX Kotlin pura em vez de android.util.Patterns — compatível com unit tests JVM sem Robolectric
+- [Phase 04-05]: ProcessoStatusCard reutilizado de :core-ui para exibir sync DataJud em ClienteDetalheScreen (ESCR-08)
+- [Phase 04-05]: clienteId extraído via SavedStateHandle em ViewModels para compatibilidade com Navigation Compose type-safe 2.9
 
 ### Pending Todos
 
@@ -85,6 +88,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-16T13:20:50.909Z
-Stopped at: Completed 04-04-PLAN.md
+Last session: 2026-04-16T13:29:43.128Z
+Stopped at: Completed 04-05-PLAN.md
 Resume file: None
