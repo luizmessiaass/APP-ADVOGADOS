@@ -1,6 +1,7 @@
 package com.aethixdigital.portaljuridico.cliente.features.auth
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -58,6 +59,8 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextDecoration
 import androidx.compose.ui.text.buildAnnotatedString
@@ -71,20 +74,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.aethixdigital.portaljuridico.cliente.brand.BrandConfig
 import com.aethixdigital.portaljuridico.cliente.navigation.Routes
-import com.aethixdigital.portaljuridico.ui.theme.EjBackground
-import com.aethixdigital.portaljuridico.ui.theme.EjError
-import com.aethixdigital.portaljuridico.ui.theme.EjErrorContainer
-import com.aethixdigital.portaljuridico.ui.theme.EjOnError
-import com.aethixdigital.portaljuridico.ui.theme.EjOnErrorContainer
-import com.aethixdigital.portaljuridico.ui.theme.EjOnSurface
-import com.aethixdigital.portaljuridico.ui.theme.EjOnSurfaceVariant
-import com.aethixdigital.portaljuridico.ui.theme.EjOutlineVariant
-import com.aethixdigital.portaljuridico.ui.theme.EjPrimary
-import com.aethixdigital.portaljuridico.ui.theme.EjSecondary
-import com.aethixdigital.portaljuridico.ui.theme.EjSecondaryFixed
-import com.aethixdigital.portaljuridico.ui.theme.EjSurfaceContainerHigh
-import com.aethixdigital.portaljuridico.ui.theme.EjSurfaceContainerLow
 
 @Composable
 fun LoginScreen(
@@ -106,14 +97,14 @@ fun LoginScreen(
     }
 
     val navyGradient = Brush.linearGradient(
-        colors = listOf(Color(0xFF041631), Color(0xFF1B2B47)),
+        colors = listOf(BrandConfig.gradientStart, BrandConfig.gradientEnd),
         start = Offset(0f, 0f),
         end = Offset(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY)
     )
     val isLoading = uiState is LoginUiState.Loading
     val canSubmit = email.isNotBlank() && password.isNotBlank() && !isLoading
 
-    Scaffold(containerColor = EjBackground) { innerPadding ->
+    Scaffold(containerColor = BrandConfig.background) { innerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -125,28 +116,54 @@ fun LoginScreen(
 
             // Logo card
             Box(modifier = Modifier.align(Alignment.CenterHorizontally)) {
-                Box(
-                    modifier = Modifier
-                        .size(64.dp)
-                        .clip(RoundedCornerShape(16.dp))
-                        .background(navyGradient),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        imageVector = Icons.Outlined.Gavel,
-                        contentDescription = null,
-                        tint = Color.White,
-                        modifier = Modifier.size(32.dp)
-                    )
+                val logoRes = BrandConfig.logoResId
+                if (logoRes != null) {
+                    Box(
+                        modifier = Modifier
+                            .size(64.dp)
+                            .clip(RoundedCornerShape(16.dp))
+                            .background(Color.White),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Image(
+                            painter = painterResource(id = logoRes),
+                            contentDescription = BrandConfig.appDisplayName,
+                            modifier = Modifier
+                                .size(52.dp)
+                                .padding(4.dp),
+                            contentScale = ContentScale.Fit
+                        )
+                    }
+                } else {
+                    Box(
+                        modifier = Modifier
+                            .size(64.dp)
+                            .clip(RoundedCornerShape(16.dp))
+                            .background(
+                                Brush.linearGradient(
+                                    colors = listOf(BrandConfig.gradientStart, BrandConfig.gradientEnd),
+                                    start = Offset(0f, 0f),
+                                    end = Offset(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY)
+                                )
+                            ),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.Gavel,
+                            contentDescription = null,
+                            tint = Color.White,
+                            modifier = Modifier.size(32.dp)
+                        )
+                    }
                 }
             }
 
             Spacer(Modifier.height(20.dp))
 
             Text(
-                text = "Meu Processo",
+                text = BrandConfig.appDisplayName,
                 style = MaterialTheme.typography.headlineLarge,
-                color = EjPrimary,
+                color = BrandConfig.primary,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth()
             )
@@ -156,7 +173,7 @@ fun LoginScreen(
             Text(
                 text = "Justica na palma da sua mao.",
                 style = MaterialTheme.typography.bodyMedium,
-                color = EjOnSurfaceVariant,
+                color = BrandConfig.onSurfaceVariant,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth()
             )
@@ -166,7 +183,7 @@ fun LoginScreen(
             Text(
                 text = "Bem-vindo de volta",
                 style = MaterialTheme.typography.titleLarge,
-                color = EjPrimary
+                color = BrandConfig.primary
             )
 
             // CPF field
@@ -174,7 +191,7 @@ fun LoginScreen(
             Text(
                 text = "CPF",
                 style = MaterialTheme.typography.labelLarge,
-                color = EjOnSurface
+                color = BrandConfig.onSurface
             )
             Spacer(Modifier.height(6.dp))
             TextField(
@@ -184,19 +201,19 @@ fun LoginScreen(
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(12.dp)),
                 colors = TextFieldDefaults.colors(
-                    focusedContainerColor   = EjSurfaceContainerHigh,
-                    unfocusedContainerColor = EjSurfaceContainerHigh,
+                    focusedContainerColor   = BrandConfig.surfaceContainerHigh,
+                    unfocusedContainerColor = BrandConfig.surfaceContainerHigh,
                     focusedIndicatorColor   = Color.Transparent,
                     unfocusedIndicatorColor = Color.Transparent,
-                    focusedTextColor        = EjOnSurface,
-                    unfocusedTextColor      = EjOnSurface,
+                    focusedTextColor        = BrandConfig.onSurface,
+                    unfocusedTextColor      = BrandConfig.onSurface,
                 ),
-                placeholder = { Text("000.000.000-00", color = EjOnSurfaceVariant) },
+                placeholder = { Text("000.000.000-00", color = BrandConfig.onSurfaceVariant) },
                 trailingIcon = {
                     Icon(
                         Icons.Outlined.Person,
                         contentDescription = null,
-                        tint = EjOnSurfaceVariant
+                        tint = BrandConfig.onSurfaceVariant
                     )
                 },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
@@ -208,7 +225,7 @@ fun LoginScreen(
             Text(
                 text = "Senha",
                 style = MaterialTheme.typography.labelLarge,
-                color = EjOnSurface
+                color = BrandConfig.onSurface
             )
             Spacer(Modifier.height(6.dp))
             TextField(
@@ -218,14 +235,14 @@ fun LoginScreen(
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(12.dp)),
                 colors = TextFieldDefaults.colors(
-                    focusedContainerColor   = EjSurfaceContainerHigh,
-                    unfocusedContainerColor = EjSurfaceContainerHigh,
+                    focusedContainerColor   = BrandConfig.surfaceContainerHigh,
+                    unfocusedContainerColor = BrandConfig.surfaceContainerHigh,
                     focusedIndicatorColor   = Color.Transparent,
                     unfocusedIndicatorColor = Color.Transparent,
-                    focusedTextColor        = EjOnSurface,
-                    unfocusedTextColor      = EjOnSurface,
+                    focusedTextColor        = BrandConfig.onSurface,
+                    unfocusedTextColor      = BrandConfig.onSurface,
                 ),
-                placeholder = { Text("••••••••", color = EjOnSurfaceVariant) },
+                placeholder = { Text("••••••••", color = BrandConfig.onSurfaceVariant) },
                 visualTransformation = if (passwordVisible) VisualTransformation.None
                                        else PasswordVisualTransformation(),
                 trailingIcon = {
@@ -234,7 +251,7 @@ fun LoginScreen(
                             imageVector = if (passwordVisible) Icons.Outlined.VisibilityOff
                                           else Icons.Outlined.Visibility,
                             contentDescription = if (passwordVisible) "Ocultar senha" else "Mostrar senha",
-                            tint = EjOnSurfaceVariant
+                            tint = BrandConfig.onSurfaceVariant
                         )
                     }
                 },
@@ -246,7 +263,7 @@ fun LoginScreen(
             Spacer(Modifier.height(8.dp))
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
                 TextButton(onClick = {}, contentPadding = PaddingValues(0.dp)) {
-                    Text("Esqueci minha senha", color = EjSecondary)
+                    Text("Esqueci minha senha", color = BrandConfig.secondary)
                 }
             }
 
@@ -257,10 +274,10 @@ fun LoginScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .clip(RoundedCornerShape(8.dp))
-                        .background(EjErrorContainer.copy(alpha = 0.4f))
+                        .background(BrandConfig.errorContainer.copy(alpha = 0.4f))
                         .drawBehind {
                             drawRect(
-                                color = EjError,
+                                color = BrandConfig.error,
                                 size = Size(4.dp.toPx(), size.height)
                             )
                         }
@@ -270,13 +287,13 @@ fun LoginScreen(
                         Icon(
                             Icons.Outlined.Info,
                             contentDescription = null,
-                            tint = EjError,
+                            tint = BrandConfig.error,
                             modifier = Modifier.size(20.dp)
                         )
                         Spacer(Modifier.width(8.dp))
                         Text(
                             text = (uiState as LoginUiState.Error).message,
-                            color = EjOnErrorContainer,
+                            color = BrandConfig.onErrorContainer,
                             style = MaterialTheme.typography.bodyMedium
                         )
                     }
@@ -339,7 +356,7 @@ fun LoginScreen(
                 Text(
                     "OU ACESSE COM",
                     style = MaterialTheme.typography.labelSmall,
-                    color = EjOnSurfaceVariant
+                    color = BrandConfig.onSurfaceVariant
                 )
                 Spacer(Modifier.width(8.dp))
                 HorizontalDivider(modifier = Modifier.weight(1f))
@@ -353,20 +370,20 @@ fun LoginScreen(
                     .fillMaxWidth()
                     .height(48.dp),
                 shape = RoundedCornerShape(12.dp),
-                border = BorderStroke(1.dp, EjOutlineVariant),
-                colors = ButtonDefaults.outlinedButtonColors(containerColor = EjSurfaceContainerLow)
+                border = BorderStroke(1.dp, BrandConfig.outlineVariant),
+                colors = ButtonDefaults.outlinedButtonColors(containerColor = BrandConfig.surfaceContainerLow)
             ) {
                 Icon(
                     Icons.Outlined.Fingerprint,
                     contentDescription = null,
-                    tint = EjPrimary,
+                    tint = BrandConfig.primary,
                     modifier = Modifier.size(20.dp)
                 )
                 Spacer(Modifier.width(8.dp))
                 Text(
                     "Entrar com Biometria",
                     style = MaterialTheme.typography.labelLarge,
-                    color = EjPrimary
+                    color = BrandConfig.primary
                 )
             }
 
@@ -377,7 +394,7 @@ fun LoginScreen(
                     append("Nao possui uma conta? ")
                     withStyle(
                         SpanStyle(
-                            color = EjSecondary,
+                            color = BrandConfig.secondary,
                             textDecoration = TextDecoration.Underline
                         )
                     ) {
@@ -393,12 +410,12 @@ fun LoginScreen(
             Spacer(Modifier.height(20.dp))
             Card(
                 shape = RoundedCornerShape(8.dp),
-                colors = CardDefaults.cardColors(containerColor = EjSurfaceContainerLow),
+                colors = CardDefaults.cardColors(containerColor = BrandConfig.surfaceContainerLow),
                 modifier = Modifier
                     .fillMaxWidth()
                     .drawBehind {
                         drawRect(
-                            color = EjSecondary,
+                            color = BrandConfig.secondary,
                             size = Size(4.dp.toPx(), size.height)
                         )
                     }
@@ -411,13 +428,13 @@ fun LoginScreen(
                         modifier = Modifier
                             .size(32.dp)
                             .clip(RoundedCornerShape(6.dp))
-                            .background(EjSecondaryFixed),
+                            .background(BrandConfig.secondaryFixed),
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
                             Icons.Outlined.VerifiedUser,
                             contentDescription = null,
-                            tint = EjSecondary,
+                            tint = BrandConfig.secondary,
                             modifier = Modifier.size(20.dp)
                         )
                     }
@@ -426,12 +443,12 @@ fun LoginScreen(
                         Text(
                             "Dados protegidos pela LGPD",
                             style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold),
-                            color = EjOnSurface
+                            color = BrandConfig.onSurface
                         )
                         Text(
                             "Suas informacoes sao criptografadas.",
                             style = MaterialTheme.typography.bodyMedium,
-                            color = EjOnSurfaceVariant
+                            color = BrandConfig.onSurfaceVariant
                         )
                     }
                 }

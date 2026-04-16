@@ -16,7 +16,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [ ] **Phase 1: Backend Foundation** - Supabase + Fastify + Auth + RLS + LGPD basics & observability
 - [ ] **Phase 2: DataJud Integration & Sync Worker** - CNJ validation, BullMQ worker, tiered refresh, circuit breaker, diffing
 - [ ] **Phase 3: Claude AI Translation** - Jargon-to-plain-PT translation with prompt caching, injection defense, token telemetry
-- [x] **Phase 4: app_escritorio (Admin Android Client)** - Advogado/admin flow: client CRUD, preview "as client sees", manual messages (completed 2026-04-16)
+- [ ] **Phase 4: app_escritorio (Admin Android Client)** - Advogado/admin flow: client CRUD, preview "as client sees", manual messages
 - [ ] **Phase 5: app_cliente (End-user MVP)** - Process list, plain-language status, timeline, onboarding, LGPD consent gate
 - [ ] **Phase 6: Push Notifications & In-app Center** - FCM high-priority dispatch + WorkManager fallback + notification center
 - [ ] **Phase 7: Stripe Billing & Grace Period** - Checkout, Customer Portal, webhook idempotency, entitlement ladder
@@ -78,11 +78,11 @@ Plans:
 **Plans**: 6 plans
 Plans:
 - [ ] 02-01-PLAN.md — CNJ validator (mod-97) + tribunal map + DataJud adapter (HTTP + Zod)
-- [x] 02-02-PLAN.md — Supabase migration 002: processos, movimentacoes, sync_errors + RLS
+- [ ] 02-02-PLAN.md — Supabase migration 002: processos, movimentacoes, sync_errors + RLS
 - [ ] 02-03-PLAN.md — [BLOCKING] supabase db push + verificação do schema no painel
 - [ ] 02-04-PLAN.md — BullMQ worker: circuit breaker Redis + step-job checkpoint + tier scheduler + diff idempotente
-- [x] 02-05-PLAN.md — Fastify routes: GET /processos/:id (staleness 72h) + POST /processos + Bull Board /admin/queues
-- [x] 02-06-PLAN.md — Testes completos: checkpoint, idempotência, circuit breaker Redis, staleness limites
+- [ ] 02-05-PLAN.md — Fastify routes: GET /processos/:id (staleness 72h) + POST /processos + Bull Board /admin/queues
+- [ ] 02-06-PLAN.md — Testes completos: checkpoint, idempotência, circuit breaker Redis, staleness limites
 **UI hint**: no
 
 ### Phase 3: Claude AI Translation (Core Value Prop)
@@ -110,35 +110,20 @@ Plans:
   3. Tapping a client opens the read-only "as client sees" preview showing AI-translated movimentações exactly as app_cliente will render them
   4. The advogado can send a manual message/aviso to a specific client, and the message is persisted for eventual delivery
   5. The "gerenciar assinatura" button opens the Stripe Customer Portal via Chrome Custom Tabs (portal session acquired from backend), and CI runs lint + unit + UI tests on every commit to the app_escritorio module
-**Plans**: 8 plans
-Plans:
-- [x] 04-01-PLAN.md — Version catalog + core-network Kotlin plugin fix + AuthInterceptor + ClienteApi + NetworkModule + TokenDataStore + JwtDecoder
-- [x] 04-02-PLAN.md — CPF/CNJ validators com testes unitários (:core-common) + MovimentacaoCard + ProcessoStatusCard (:core-ui)
-- [x] 04-03-PLAN.md — Auth flow: LoginScreen + LoginViewModel + EscritorioNavGraph (5 rotas @Serializable) + ClienteListScreen com search
-- [x] 04-04-PLAN.md — CadastroClienteScreen + CadastroClienteViewModel com validação CPF/CNJ inline
-- [x] 04-05-PLAN.md — ClienteDetalheScreen (sync status) + PreviewScreen (MovimentacaoCard + disclaimer)
-- [x] 04-06-PLAN.md — MensagemBottomSheet (fire-and-forget) + Stripe Customer Portal via Chrome Custom Tabs
-- [x] 04-07-PLAN.md — HiltTestRunner + 5 UI tests instrumentados + CI workflow app-escritorio lint+test+assemble
-- [ ] 04-08-PLAN.md — [GAP CLOSURE] Disclaimer MovimentacaoCard (D-10 + ESCR-06) + ultimaSincronizacao ProcessoStatusCard (ESCR-08)
+**Plans**: TBD
 **UI hint**: yes
 
 ### Phase 5: app_cliente (End-user MVP)
 **Goal**: The end-user Android app delivers the MVP experience — login, a list of their own processes, plain-language status, translated timeline, next important date, process cadastral data, "last update" freshness indicator, onboarding, LGPD consent gate, and WhatsApp fallback to their advogado — so a leigo can understand their case without calling their lawyer.
 **Depends on**: Phase 4
-**Requirements**: APP-01, APP-02, APP-03, APP-04, APP-05, APP-06, APP-07, APP-08, APP-11, APP-12, APP-13, APP-15, APP-16, LGPD-02
+**Requirements**: APP-01, APP-02, APP-03, APP-04, APP-05, APP-06, APP-07, APP-08, APP-11, APP-12, APP-13, APP-14, APP-15, APP-16, LGPD-02
 **Success Criteria** (what must be TRUE):
   1. A cliente logs in and immediately sees a list of their own processes, bound to their CPF, with nothing from other tenants leaking through
-  2. Opening a process shows: plain-language current status, translated movimentação timeline, next important date in a prominent card, and cadastral data (CNJ, vara, comarca, partes) with plain-language labels
+  2. Opening a process shows: plain-language current status, translated movimentação timeline, next important date in a prominent card, and cadastral data (CNJ, vara, comarca, partes), all labeled with "Explicação gerada por IA" disclaimers where applicable
   3. "Última sincronização há X horas" is visible on the process screen, and the "sem movimentação recente" state renders a reassuring message instead of a blank screen
-  4. The 4-screen onboarding appears on first open (no skip) and the LGPD consent screen must be accepted before any process data is shown (consent gate; D-06: no AI disclaimers)
-  5. A "Falar com meu advogado" button opens WhatsApp via deep-link with tel: fallback, and CI runs lint + unit tests on every commit to the app_cliente module
-**Plans**: 5 plans
-Plans:
-- [x] 05-01-PLAN.md — Backend gaps: migration cliente_usuario_id + RLS update + GET /processos list + GET /processos/:id/movimentacoes + telefone_whatsapp
-- [x] 05-02-PLAN.md — Foundation: libs.versions.toml deps + app-cliente build config + PortalJuridicoTheme + 8 core-ui components + nav graph + SplashViewModel + LoginScreen
-- [x] 05-03-PLAN.md — Process screens: ProcessoListScreen + ProcessoDetailScreen (single LazyColumn, D-01 to D-07) + repository + unit tests
-- [ ] 05-04-PLAN.md — Onboarding (4 pages, no skip, D-09) + LGPD consent gate (scroll-detect, D-11 to D-13) + Compose UI tests
-- [ ] 05-05-PLAN.md — HiltTestRunner + empty timeline test + CI workflow app-cliente lint+test+assembleDemoDebug
+  4. The 3-4 step onboarding appears on first open and the LGPD consent screen must be accepted before any process data is shown (consent gate)
+  5. A "Falar com meu advogado" button opens WhatsApp or email via deep-link, and CI runs lint + unit + UI tests on every commit to the app_cliente module
+**Plans**: TBD
 **UI hint**: yes
 
 ### Phase 6: Push Notifications & In-app Center
@@ -151,14 +136,7 @@ Plans:
   3. The in-app notification center loads unread notifications from the backend and surfaces anything the FCM push may have missed
   4. WorkManager runs a periodic fallback poll for unread notifications, and the onboarding screen guides the user through disabling battery optimization on Xiaomi/Samsung/Motorola
   5. FCM 404 responses for invalid device tokens cause the backend to clean up the token so it is never retried
-**Plans**: 6 plans
-Plans:
-- [ ] 06-01-PLAN.md — Migration SQL (device_tokens + notifications + RLS) + version catalog (Firebase BOM 34.12.0, WorkManager 2.11.2, hilt-work 1.2.0)
-- [ ] 06-02-PLAN.md — Backend FCM: firebase.ts + FcmDispatchService (data-only, high-priority, token cleanup) + rotas /api/devices e /api/notifications
-- [ ] 06-03-PLAN.md — [BLOCKING] supabase db push migration 007 + setup Firebase Console (google-services.json + service account)
-- [ ] 06-04-PLAN.md — Android FCM: PortalMessagingService + ClienteApplication (HiltWorkerFactory + NotificationChannel) + NotificationPollWorker (@HiltWorker, 15min)
-- [ ] 06-05-PLAN.md — Central de notificações: NotificationsViewModel + NotificationCenterScreen (BadgedBox, seções Não lidas/Lidas) + NavGraph integration
-- [ ] 06-06-PLAN.md — Onboarding 4→5 telas: tela 3 POST_NOTIFICATIONS + tela 5 BatteryOptimizationScreen (OEM Xiaomi/Samsung/Motorola + botão Pular)
+**Plans**: TBD
 **UI hint**: yes
 
 ### Phase 7: Stripe Billing & Grace Period
@@ -171,33 +149,20 @@ Plans:
   3. Entitlement middleware blocks protected endpoints for tenants whose subscription is not active, returning a clear "subscription required" error
   4. The grace-period state machine progresses through Day 0 email → Day 3 in-app banner → Day 7 escritório read-only → Day 14 suspension, and tenant data is never deleted — only `status` is flipped
   5. From app_escritorio, "Gerenciar assinatura" opens the Stripe Customer Portal via Custom Tabs and plan changes round-trip back to the tenant record
-**Plans**: 6 plans
-Plans:
-- [x] 07-01-PLAN.md — SQL migration 0009 (schema extension) + 4 Vitest test scaffolds (Wave 0 / TDD Red phase)
-- [x] 07-02-PLAN.md — Entitlement middleware (HTTP 402 gate, Redis cache, fail-closed) + super_admin role extension
-- [x] 07-03-PLAN.md — Webhook receiver (BILLING-03/04) + grace-period pure service + admin tenant endpoints
-- [x] 07-04-PLAN.md — [BLOCKING] supabase db push migration 0009 + Studio verification
-- [ ] 07-05-PLAN.md — BullMQ daily cron grace period worker (Resend emails, idempotent transitions)
-- [ ] 07-06-PLAN.md — GET /api/v1/tenant/status + Android billing UX (banner + suspension screens + WorkManager poll)
+**Plans**: TBD
 **UI hint**: no
 
 ### Phase 8: LGPD Hardening & Production Readiness
 **Goal**: The platform closes the LGPD compliance loop — Art. 18 data deletion, Art. 33 sub-processor disclosure, consent lifecycle, and production launch gates — so Portal Jurídico can be safely offered to Brazilian law offices without exposing the company to ANPD sanctions or OAB ethics violations.
 **Depends on**: Phase 7
-**Requirements**: LGPD-05, LGPD-06
+**Requirements**: LGPD-05
 **Success Criteria** (what must be TRUE):
   1. An escritório admin can invoke an Art. 18 "delete client" endpoint that cascades deletion across processos, movimentações, chat, consent records, and notifications, leaving no orphaned PII
   2. The privacy policy served in-app explicitly names Anthropic as an international sub-processor (Art. 33) and the LGPD consent screen versioning matches the stored `lgpd_consent` row
   3. Cross-tenant leak test, PII-redaction log test, and webhook idempotency replay drill all pass in CI before any production deploy is accepted
   4. Production monitoring dashboards (error rates, Claude spend, DataJud circuit state, FCM delivery rate) are live with on-call-safe alert thresholds
   5. A launch readiness checklist is signed off: backup/restore rehearsed, Supabase Pro tier active, secrets split between API and worker environments, and the "launch blockers" list (DataJud quota verified, Claude ZDR verified, Brazilian privacy lawyer review) is either green or explicitly accepted with mitigation
-**Plans**: 5 plans
-Plans:
-- [ ] 08-01-PLAN.md — Art. 18 backend: DELETE /api/v1/clientes/:clienteId + cancelarJobsDoCliente BullMQ + supabase db push [BLOCKING] + TDD tests (Wave 1)
-- [ ] 08-02-PLAN.md — Consent re-gate: termos_versao_atual in GET /api/v1/tenant/status + TERMS_VERSION config + TDD tests (Wave 1)
-- [ ] 08-03-PLAN.md — CI production gates: webhook idempotency test impl + production-gates blocking CI job (Wave 2)
-- [ ] 08-04-PLAN.md — Art. 18 Android UX: AlertDialog in ClienteDetalheScreen + DELETE Retrofit endpoint + LAUNCH-CHECKLIST.md (Wave 2)
-- [ ] 08-05-PLAN.md — app_cliente consent re-gate: SplashViewModel checks termos_versao_atual vs DataStore on every launch, routes to LGPDConsentScreen if mismatch (Wave 2)
+**Plans**: TBD
 **UI hint**: no
 
 ## Progress
@@ -211,11 +176,11 @@ Phases execute in numeric order: 0 → 1 → 2 → 3 → 4 → 5 → 6 → 7 →
 | 1. Backend Foundation | 3/8 | In Progress|  |
 | 2. DataJud Integration & Sync Worker | 0/6 | Not started | - |
 | 3. Claude AI Translation | 0/1 | Not started | - |
-| 4. app_escritorio | 7/7 | Complete   | 2026-04-16 |
-| 5. app_cliente | 0/5 | Not started | - |
-| 6. Push Notifications & In-app Center | 0/6 | Not started | - |
-| 7. Stripe Billing & Grace Period | 4/6 | In Progress|  |
-| 8. LGPD Hardening & Production Readiness | 0/4 | Not started | - |
+| 4. app_escritorio | 0/TBD | Not started | - |
+| 5. app_cliente | 0/TBD | Not started | - |
+| 6. Push Notifications & In-app Center | 0/TBD | Not started | - |
+| 7. Stripe Billing & Grace Period | 0/TBD | Not started | - |
+| 8. LGPD Hardening & Production Readiness | 0/TBD | Not started | - |
 
 ## Research Flags
 
@@ -227,9 +192,9 @@ Phases flagged as needing extra research at the planning boundary (per research/
 | 1 | needs-research | Q6 Supabase RLS syntax, Supavisor config, Auth Hook docs (2026 state) |
 | 2 | needs-research (CRITICAL) | Q1 DataJud 2026 rate limits, auth, response schema, tribunal coverage; Q10 segredo de justiça visibility |
 | 3 | needs-research | Q2 Claude PT-BR legal jargon quality (50-100 real samples); Q3 Anthropic Zero Data Retention; Q5 OAB ethics on AI explicação vs aconselhamento |
-| 4 | planned | stack verified: Retrofit 3.0.0, Navigation Compose 2.9.7, DataStore 1.2.1, jwtdecode 2.0.2, browser 1.10.0 |
+| 4 | needs-research | supabase-kt 3.x, Ktor 3 client patterns in 2026 |
 | 5 | standard | — |
-| 6 | planned | stack verified: Firebase BOM 34.12.0, firebase-admin 13.8.0, WorkManager 2.11.2, hilt-work 1.2.0 |
+| 6 | needs-research | Q8 FCM HTTP v1 API state + Android 13+ POST_NOTIFICATIONS flow; Q11 notification impact triage |
 | 7 | needs-research | Q9 Stripe API version pin + Customer Portal options; Q13 willingness-to-pay por escritório |
 | 8 | needs-research (LAUNCH BLOCKER) | Q4 LGPD enforcement precedents post-May 2025; Brazilian privacy lawyer review |
 
@@ -249,19 +214,9 @@ Phases flagged as needing extra research at the planning boundary (per research/
 - DATAJUD-01..09 → Phase 2 (all 9)
 - AI-01..08 → Phase 3 (all 8)
 - ESCR-01..11 → Phase 4 (all 11)
-- APP-01..08, APP-11..16 → Phase 5 (14, note: APP-14 removed by user D-06)
+- APP-01..08, APP-11..16 → Phase 5 (14)
 - APP-09, APP-10 → Phase 6 (2)
 - NOTIFY-01..07 → Phase 6 (all 7)
 - BILLING-01..07 → Phase 7 (all 7)
 
 **Note:** LGPD is split across Phase 1 (basics baked into infra), Phase 5 (consent gate in app_cliente), and Phase 8 (hardening + Art. 18 deletion + launch gates) — spanning but never duplicating.
-
-### Phase 9: Multiplatform (KMP + Compose Multiplatform) — migrar app Android para Kotlin Multiplatform com suporte a iOS
-
-**Goal:** [To be planned]
-**Requirements**: TBD
-**Depends on:** Phase 8
-**Plans:** 4/6 plans executed
-
-Plans:
-- [ ] TBD (run /gsd-plan-phase 9 to break down)

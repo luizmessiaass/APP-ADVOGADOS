@@ -1,5 +1,6 @@
 package com.aethixdigital.portaljuridico.cliente.features.welcome
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -34,23 +35,20 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.aethixdigital.portaljuridico.ui.theme.EjBackground
-import com.aethixdigital.portaljuridico.ui.theme.EjOnSurfaceVariant
-import com.aethixdigital.portaljuridico.ui.theme.EjPrimary
-import com.aethixdigital.portaljuridico.ui.theme.EjSecondary
-import com.aethixdigital.portaljuridico.ui.theme.EjSurfaceContainerHigh
-import com.aethixdigital.portaljuridico.ui.theme.EjSurfaceContainerLow
+import com.aethixdigital.portaljuridico.cliente.brand.BrandConfig
 
 @Composable
 fun WelcomeScreen(
     onComecarClick: () -> Unit,
     onJaSouClienteClick: () -> Unit
 ) {
-    Scaffold(containerColor = EjBackground) { innerPadding ->
+    Scaffold(containerColor = BrandConfig.background) { innerPadding ->
         Column(
             modifier = Modifier
                 .padding(innerPadding)
@@ -60,7 +58,7 @@ fun WelcomeScreen(
         ) {
             Spacer(Modifier.height(48.dp))
 
-            // Logo card
+            // Logo card — shows brand PNG if available, falls back to vector icon
             Card(
                 modifier = Modifier.size(96.dp),
                 shape = RoundedCornerShape(12.dp),
@@ -71,12 +69,24 @@ fun WelcomeScreen(
                     modifier = Modifier.size(96.dp),
                     contentAlignment = Alignment.Center
                 ) {
-                    Icon(
-                        imageVector = Icons.Outlined.AccountBalance,
-                        contentDescription = null,
-                        modifier = Modifier.size(48.dp),
-                        tint = EjSecondary
-                    )
+                    val logoRes = BrandConfig.logoResId
+                    if (logoRes != null) {
+                        Image(
+                            painter = painterResource(id = logoRes),
+                            contentDescription = BrandConfig.appDisplayName,
+                            modifier = Modifier
+                                .size(72.dp)
+                                .padding(8.dp),
+                            contentScale = ContentScale.Fit
+                        )
+                    } else {
+                        Icon(
+                            imageVector = Icons.Outlined.AccountBalance,
+                            contentDescription = null,
+                            modifier = Modifier.size(48.dp),
+                            tint = BrandConfig.secondary
+                        )
+                    }
                 }
             }
 
@@ -84,9 +94,9 @@ fun WelcomeScreen(
 
             // Title
             Text(
-                text = "Meu Processo",
+                text = BrandConfig.appDisplayName,
                 style = MaterialTheme.typography.headlineLarge,
-                color = EjPrimary
+                color = BrandConfig.primary
             )
 
             // Gold accent line
@@ -95,15 +105,15 @@ fun WelcomeScreen(
                 modifier = Modifier
                     .width(48.dp)
                     .height(4.dp)
-                    .background(EjSecondary)
+                    .background(BrandConfig.secondary)
             )
 
             Spacer(Modifier.height(8.dp))
 
             Text(
-                text = "Seu processo juridico em portugues claro.",
+                text = BrandConfig.appTagline,
                 style = MaterialTheme.typography.headlineMedium,
-                color = EjPrimary,
+                color = BrandConfig.primary,
                 textAlign = TextAlign.Center
             )
 
@@ -112,7 +122,7 @@ fun WelcomeScreen(
             Text(
                 text = "Acompanhe cada etapa do seu processo sem precisar ligar para o advogado.",
                 style = MaterialTheme.typography.bodyLarge,
-                color = EjOnSurfaceVariant,
+                color = BrandConfig.onSurfaceVariant,
                 textAlign = TextAlign.Center
             )
 
@@ -124,13 +134,13 @@ fun WelcomeScreen(
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 FeatureTile(
-                    icon = { Icon(Icons.Outlined.Gavel, contentDescription = null, tint = EjSecondary, modifier = Modifier.size(28.dp)) },
+                    icon = { Icon(Icons.Outlined.Gavel, contentDescription = null, tint = BrandConfig.secondary, modifier = Modifier.size(28.dp)) },
                     title = "Traducao Juridica",
                     description = "Textos juridicos em linguagem simples",
                     modifier = Modifier.weight(1f)
                 )
                 FeatureTile(
-                    icon = { Icon(Icons.Outlined.Notifications, contentDescription = null, tint = EjSecondary, modifier = Modifier.size(28.dp)) },
+                    icon = { Icon(Icons.Outlined.Notifications, contentDescription = null, tint = BrandConfig.secondary, modifier = Modifier.size(28.dp)) },
                     title = "Alertas em Tempo Real",
                     description = "Saiba imediatamente sobre novidades",
                     modifier = Modifier.weight(1f)
@@ -147,7 +157,7 @@ fun WelcomeScreen(
                     .clip(RoundedCornerShape(12.dp))
                     .background(
                         Brush.linearGradient(
-                            colors = listOf(Color(0xFF041631), Color(0xFF1B2B47)),
+                            colors = listOf(BrandConfig.gradientStart, BrandConfig.gradientEnd),
                             start = Offset(0f, 0f),
                             end = Offset(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY)
                         )
@@ -182,7 +192,7 @@ fun WelcomeScreen(
             TextButton(onClick = onJaSouClienteClick) {
                 Text(
                     "Ja sou cliente",
-                    color = EjPrimary
+                    color = BrandConfig.primary
                 )
             }
 
@@ -191,7 +201,7 @@ fun WelcomeScreen(
             Text(
                 text = "Ao continuar, voce concorda com os Termos de Uso e Politica de Privacidade.",
                 style = MaterialTheme.typography.labelSmall,
-                color = EjOnSurfaceVariant,
+                color = BrandConfig.onSurfaceVariant,
                 textAlign = TextAlign.Center
             )
 
@@ -210,7 +220,7 @@ private fun FeatureTile(
     Card(
         modifier = modifier,
         shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = EjSurfaceContainerLow),
+        colors = CardDefaults.cardColors(containerColor = BrandConfig.surfaceContainerLow),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Column(modifier = Modifier.padding(12.dp)) {
@@ -218,7 +228,7 @@ private fun FeatureTile(
                 modifier = Modifier
                     .size(40.dp)
                     .clip(RoundedCornerShape(8.dp))
-                    .background(EjSurfaceContainerHigh),
+                    .background(BrandConfig.surfaceContainerHigh),
                 contentAlignment = Alignment.Center
             ) {
                 icon()
@@ -227,13 +237,13 @@ private fun FeatureTile(
             Text(
                 text = title,
                 style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold),
-                color = EjPrimary
+                color = BrandConfig.primary
             )
             Spacer(Modifier.height(4.dp))
             Text(
                 text = description,
                 style = MaterialTheme.typography.labelSmall,
-                color = EjOnSurfaceVariant
+                color = BrandConfig.onSurfaceVariant
             )
         }
     }

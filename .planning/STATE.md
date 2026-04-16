@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 07-04-PLAN.md
-last_updated: "2026-04-16T17:33:29.682Z"
-last_activity: 2026-04-16
+stopped_at: "Completed 01-03: custom-access-token hook ativo + SMTP Resend configurado"
+last_updated: "2026-04-15T03:03:16.576Z"
+last_activity: 2026-04-15
 progress:
-  total_phases: 10
-  completed_phases: 1
-  total_plans: 50
-  completed_plans: 30
-  percent: 60
+  total_phases: 9
+  completed_phases: 0
+  total_plans: 20
+  completed_plans: 6
+  percent: 30
 ---
 
 # Project State
@@ -22,14 +22,14 @@ See: .planning/PROJECT.md (updated 2026-04-14)
 
 **Project:** Portal Jurídico — SaaS B2B para Escritórios de Advocacia
 **Core value:** O cliente leigo consegue entender o que está acontecendo no seu processo jurídico sem precisar ligar para o advogado.
-**Current focus:** Phase 07 — stripe-billing-grace-period
+**Current focus:** Phase 00 — android-bootstrap-cleanup
 
 ## Current Position
 
-Phase: 07 (stripe-billing-grace-period) — EXECUTING
-Plan: 2 of 6
+Phase: 00 (android-bootstrap-cleanup) — EXECUTING
+Plan: 2 of 5
 Status: Ready to execute
-Last activity: 2026-04-16
+Last activity: 2026-04-15
 
 Progress: [░░░░░░░░░░] 0%
 
@@ -37,7 +37,7 @@ Progress: [░░░░░░░░░░] 0%
 
 **Velocity:**
 
-- Total plans completed: 3
+- Total plans completed: 0
 - Average duration: —
 - Total execution time: 0.0 hours
 
@@ -46,7 +46,6 @@ Progress: [░░░░░░░░░░] 0%
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | — | — | — | — |
-| 02 | 3 | - | - |
 
 **Recent Trend:**
 
@@ -54,13 +53,6 @@ Progress: [░░░░░░░░░░] 0%
 - Trend: —
 
 *Updated after each plan completion*
-| Phase 04 P03 | 9 | 2 tasks | 17 files |
-| Phase 04 P04 | 25 | 1 tasks | 6 files |
-| Phase 04 P05 | 25 | 1 tasks | 10 files |
-| Phase 04 P06 | 25 | 1 tasks | 11 files |
-| Phase 04 P07 | 35 | 2 tasks | 13 files |
-| Phase 07 P03 | 35 | 2 tasks | 9 files |
-| Phase 07 P04 | 525633 | 2 tasks | 0 files |
 
 ## Accumulated Context
 
@@ -74,28 +66,6 @@ Recent decisions affecting current work:
 - Project init: Supabase como backend-as-a-service (Auth + DB + RLS + Storage)
 - Project init: Dois apps Android separados (cliente + escritório) — evita UI condicional
 - Project init: Stripe para monetização (SDK maduro, assinaturas recorrentes)
-- [Phase 04-03]: TokenProvider interface em core-network elimina dependência circular core-network → core-data via AuthInterceptor
-- [Phase 04-03]: getTokenFlow() (Flow) e getToken() (suspend) separados em TokenDataStore para suportar tanto observação como leitura pontual
-- [Phase 04-04]: EMAIL_REGEX Kotlin pura em vez de android.util.Patterns — compatível com unit tests JVM sem Robolectric
-- [Phase 04-05]: ProcessoStatusCard reutilizado de :core-ui para exibir sync DataJud em ClienteDetalheScreen (ESCR-08)
-- [Phase 04-05]: clienteId extraído via SavedStateHandle em ViewModels para compatibilidade com Navigation Compose type-safe 2.9
-- [Phase 04-06]: Bottom Sheet de mensagem gerenciado por estado local em ClienteDetalheScreen — onEnviarMensagemClick removido da assinatura publica
-- [Phase 04-06]: portalUrl como StateFlow nullable observado via LaunchedEffect para abrir Chrome Custom Tabs automaticamente
-- [Phase 04-07]: HiltTestRunner registrado como testInstrumentationRunner — suporte a @HiltAndroidTest em UI tests instrumentados
-- [Phase 04-07]: Testes instrumentados excluídos do CI job (sem emulator — D-20); UI tests rodam manualmente ou em CI com emulator dedicado
-- [Phase 07]: UUID nos testes deve ser RFC 4122 válido — Zod z.string().uuid() rejeita UUIDs com octetos fora do padrão hex
-- [Phase 07]: resolveGracePeriod() sempre retorna conjunto completo de reset — pagamento bem-sucedido sempre reseta completamente
-- [Phase 07]: Usar 'supabase db push' (nunca 'db reset') para migrations em banco com dados de tenants — db reset destruiria todos os dados
-
-### Roadmap Evolution
-
-- Phase 9 added: Multiplatform (KMP + Compose Multiplatform) — migrar app Android para Kotlin Multiplatform com suporte a iOS
-
-### Quick Tasks Completed
-
-| # | Description | Date | Commit | Directory |
-|---|-------------|------|--------|-----------|
-| 260416-jt1 | Implementar identidade visual Editorial Juris no app-cliente | 2026-04-16 | cf6f961 | [260416-jt1-implementar-identidade-visual-editorial-](./quick/260416-jt1-implementar-identidade-visual-editorial-/) |
 
 ### Pending Todos
 
@@ -109,6 +79,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-16T17:33:29.675Z
-Stopped at: Completed 07-04-PLAN.md
+Last session: 2026-04-15T03:03:16.570Z
+Stopped at: Completed 01-03: custom-access-token hook ativo + SMTP Resend configurado
 Resume file: None

@@ -28,6 +28,10 @@ android {
             dimension = "tenant"
             applicationId = "com.aethixdigital.portaljuridico.demo"
         }
+        create("flores") {
+            dimension = "tenant"
+            applicationId = "com.aethixdigital.portaljuridico.flores"
+        }
     }
 
     buildTypes {
@@ -45,6 +49,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 
