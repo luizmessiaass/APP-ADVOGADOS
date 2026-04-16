@@ -11,6 +11,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.aethixdigital.portaljuridico.data.repository.AuthRepository
+import com.aethixdigital.portaljuridico.escritorio.feature.clientes.cadastro.CadastroClienteScreen
 import com.aethixdigital.portaljuridico.escritorio.feature.clientes.list.ClienteListScreen
 import com.aethixdigital.portaljuridico.escritorio.feature.login.LoginScreen
 
@@ -58,8 +59,10 @@ fun EscritorioNavGraph(authRepository: AuthRepository) {
             Text("Detalhe cliente — implementado em 04-05")
         }
         composable<EscritorioRoute.CadastroCliente> {
-            // Plano 04-04 implementa esta tela
-            Text("Cadastro cliente — implementado em 04-04")
+            CadastroClienteScreen(
+                onSuccess = { navController.popBackStack() },
+                onBack = { navController.popBackStack() }
+            )
         }
         composable<EscritorioRoute.PreviewCliente> {
             // Plano 04-05 implementa esta tela

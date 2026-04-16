@@ -79,4 +79,10 @@ class ClienteListViewModelTest {
 class FakeClienteRepository : ClienteRepository {
     var result: Result<List<ClienteItem>> = Result.success(emptyList())
     override suspend fun listarClientes(search: String?) = result
+    override suspend fun cadastrarCliente(
+        nome: String,
+        cpf: String,
+        email: String,
+        numeroCnj: String
+    ): Result<String> = Result.success("fake-id")
 }
