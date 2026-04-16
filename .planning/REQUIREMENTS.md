@@ -43,14 +43,14 @@
 
 ### AI Translation (AI)
 
-- [x] **AI-01**: Endpoint traduz movimentações jurídicas para português simples via Claude API
-- [x] **AI-02**: Prompt usa caching de tokens (system prompt + glossário jurídico em blocos `cache_control`)
-- [x] **AI-03**: Input de movimentação é delimitado por tags XML (`<movimentacao>...</movimentacao>`) para isolar de instruções do sistema
-- [x] **AI-04**: Output é validado por schema antes de salvar (`{status, proxima_data, explicacao, impacto}`)
-- [x] **AI-05**: Tradução já realizada é cacheada por hash do texto original (não reprocessa movimentação igual)
-- [x] **AI-06**: Cada resposta da IA exibe disclaimer visível: "Explicação gerada por IA — confirme com seu advogado"
-- [x] **AI-07**: Limites de tokens por tenant estão configurados com alertas de gasto em 50/80/100%
-- [x] **AI-08**: Modelo Haiku é usado para tradução em lote; Sonnet para interações (v1.1)
+- [ ] **AI-01**: Endpoint traduz movimentações jurídicas para português simples via Claude API
+- [ ] **AI-02**: Prompt usa caching de tokens (system prompt + glossário jurídico em blocos `cache_control`)
+- [ ] **AI-03**: Input de movimentação é delimitado por tags XML (`<movimentacao>...</movimentacao>`) para isolar de instruções do sistema
+- [ ] **AI-04**: Output é validado por schema antes de salvar (`{status, proxima_data, explicacao, impacto}`)
+- [ ] **AI-05**: Tradução já realizada é cacheada por hash do texto original (não reprocessa movimentação igual)
+- [ ] **AI-06**: Cada resposta da IA exibe disclaimer visível: "Explicação gerada por IA — confirme com seu advogado"
+- [ ] **AI-07**: Limites de tokens por tenant estão configurados com alertas de gasto em 50/80/100%
+- [ ] **AI-08**: Modelo Haiku é usado para tradução em lote; Sonnet para interações (v1.1)
 
 ### Push Notifications (NOTIFY)
 
@@ -64,13 +64,13 @@
 
 ### Stripe Billing (BILLING)
 
-- [x] **BILLING-01**: Escritório consegue assinar um plano via Stripe Checkout hosted
-- [x] **BILLING-02**: Escritório consegue gerenciar assinatura (cancelar, mudar plano) via Stripe Customer Portal
-- [x] **BILLING-03**: Webhook Stripe é verificado por assinatura antes de processar (`stripe.webhooks.constructEvent`)
-- [x] **BILLING-04**: Todos os eventos Stripe são registrados em tabela `stripe_events` para idempotência (replay-safe)
+- [ ] **BILLING-01**: Escritório consegue assinar um plano via Stripe Checkout hosted
+- [ ] **BILLING-02**: Escritório consegue gerenciar assinatura (cancelar, mudar plano) via Stripe Customer Portal
+- [ ] **BILLING-03**: Webhook Stripe é verificado por assinatura antes de processar (`stripe.webhooks.constructEvent`)
+- [ ] **BILLING-04**: Todos os eventos Stripe são registrados em tabela `stripe_events` para idempotência (replay-safe)
 - [ ] **BILLING-05**: Middleware de entitlement verifica `subscription_status` do tenant antes de liberar endpoints protegidos
 - [ ] **BILLING-06**: State machine de grace period: Dia 0 (email) → Dia 3 (banner in-app) → Dia 7 (painel escritório somente leitura) → Dia 14 (suspensão total)
-- [x] **BILLING-07**: Tenant nunca tem dados deletados por falta de pagamento (apenas `status` desativado)
+- [ ] **BILLING-07**: Tenant nunca tem dados deletados por falta de pagamento (apenas `status` desativado)
 
 ### LGPD Compliance (LGPD)
 
@@ -83,17 +83,17 @@
 
 ### app_escritorio (ESCR)
 
-- [x] **ESCR-01**: Advogado/admin consegue fazer login com email/senha
-- [x] **ESCR-02**: Advogado consegue cadastrar novo cliente (nome, CPF, email, número CNJ)
-- [x] **ESCR-03**: Validação de CPF e número CNJ acontece no formulário de cadastro antes de submeter
-- [x] **ESCR-04**: Advogado consegue visualizar lista de clientes com status resumido dos processos
-- [x] **ESCR-05**: Advogado consegue buscar cliente por nome, CPF ou número de processo
-- [x] **ESCR-06**: Advogado consegue visualizar o processo "como o cliente vê" (preview read-only das movimentações traduzidas)
-- [x] **ESCR-07**: Advogado consegue enviar mensagem/aviso manual para o cliente via app
-- [x] **ESCR-08**: Tela do cliente mostra status da última sincronização DataJud de cada processo
-- [x] **ESCR-09**: Advogado consegue acessar Stripe Customer Portal para gerenciar assinatura via Chrome Custom Tabs
-- [x] **ESCR-10**: App_escritorio usa arquitetura Clean Architecture + MVVM + Compose com módulos `:core-*` compartilhados
-- [x] **ESCR-11**: App_escritorio passa linting, testes unitários e UI tests no CI antes de qualquer release
+- [ ] **ESCR-01**: Advogado/admin consegue fazer login com email/senha
+- [ ] **ESCR-02**: Advogado consegue cadastrar novo cliente (nome, CPF, email, número CNJ)
+- [ ] **ESCR-03**: Validação de CPF e número CNJ acontece no formulário de cadastro antes de submeter
+- [ ] **ESCR-04**: Advogado consegue visualizar lista de clientes com status resumido dos processos
+- [ ] **ESCR-05**: Advogado consegue buscar cliente por nome, CPF ou número de processo
+- [ ] **ESCR-06**: Advogado consegue visualizar o processo "como o cliente vê" (preview read-only das movimentações traduzidas)
+- [ ] **ESCR-07**: Advogado consegue enviar mensagem/aviso manual para o cliente via app
+- [ ] **ESCR-08**: Tela do cliente mostra status da última sincronização DataJud de cada processo
+- [ ] **ESCR-09**: Advogado consegue acessar Stripe Customer Portal para gerenciar assinatura via Chrome Custom Tabs
+- [ ] **ESCR-10**: App_escritorio usa arquitetura Clean Architecture + MVVM + Compose com módulos `:core-*` compartilhados
+- [ ] **ESCR-11**: App_escritorio passa linting, testes unitários e UI tests no CI antes de qualquer release
 
 ### app_cliente (APP)
 
@@ -219,25 +219,25 @@ Full per-requirement mapping (updated 2026-04-14 after roadmap creation).
 | DATAJUD-07 | Phase 2 | Pending |
 | DATAJUD-08 | Phase 2 | Pending |
 | DATAJUD-09 | Phase 2 | Pending |
-| AI-01 | Phase 3 | Complete |
-| AI-02 | Phase 3 | Complete |
-| AI-03 | Phase 3 | Complete |
-| AI-04 | Phase 3 | Complete |
-| AI-05 | Phase 3 | Complete |
-| AI-06 | Phase 3 | Complete |
-| AI-07 | Phase 3 | Complete |
-| AI-08 | Phase 3 | Complete |
-| ESCR-01 | Phase 4 | Complete |
-| ESCR-02 | Phase 4 | Complete |
-| ESCR-03 | Phase 4 | Complete |
-| ESCR-04 | Phase 4 | Complete |
-| ESCR-05 | Phase 4 | Complete |
-| ESCR-06 | Phase 4 | Complete |
-| ESCR-07 | Phase 4 | Complete |
-| ESCR-08 | Phase 4 | Complete |
-| ESCR-09 | Phase 4 | Complete |
-| ESCR-10 | Phase 4 | Complete |
-| ESCR-11 | Phase 4 | Complete |
+| AI-01 | Phase 3 | Pending |
+| AI-02 | Phase 3 | Pending |
+| AI-03 | Phase 3 | Pending |
+| AI-04 | Phase 3 | Pending |
+| AI-05 | Phase 3 | Pending |
+| AI-06 | Phase 3 | Pending |
+| AI-07 | Phase 3 | Pending |
+| AI-08 | Phase 3 | Pending |
+| ESCR-01 | Phase 4 | Pending |
+| ESCR-02 | Phase 4 | Pending |
+| ESCR-03 | Phase 4 | Pending |
+| ESCR-04 | Phase 4 | Pending |
+| ESCR-05 | Phase 4 | Pending |
+| ESCR-06 | Phase 4 | Pending |
+| ESCR-07 | Phase 4 | Pending |
+| ESCR-08 | Phase 4 | Pending |
+| ESCR-09 | Phase 4 | Pending |
+| ESCR-10 | Phase 4 | Pending |
+| ESCR-11 | Phase 4 | Pending |
 | APP-01 | Phase 5 | Pending |
 | APP-02 | Phase 5 | Pending |
 | APP-03 | Phase 5 | Pending |
@@ -262,31 +262,14 @@ Full per-requirement mapping (updated 2026-04-14 after roadmap creation).
 | NOTIFY-05 | Phase 6 | Pending |
 | NOTIFY-06 | Phase 6 | Pending |
 | NOTIFY-07 | Phase 6 | Pending |
-| BILLING-01 | Phase 7 | Complete |
-| BILLING-02 | Phase 7 | Complete |
-| BILLING-03 | Phase 7 | Complete |
-| BILLING-04 | Phase 7 | Complete |
+| BILLING-01 | Phase 7 | Pending |
+| BILLING-02 | Phase 7 | Pending |
+| BILLING-03 | Phase 7 | Pending |
+| BILLING-04 | Phase 7 | Pending |
 | BILLING-05 | Phase 7 | Pending |
 | BILLING-06 | Phase 7 | Pending |
-| BILLING-07 | Phase 7 | Complete |
+| BILLING-07 | Phase 7 | Pending |
 | LGPD-05 | Phase 8 | Pending |
-
----
-
-## v2 Requirements (Future — post-v1)
-
-### Escavador Integration & Auto-discovery (ESCAV)
-
-- [ ] **ESCAV-01**: Perfil do escritório armazena número OAB do advogado responsável (`oab_numero` na tabela `tenants`)
-- [ ] **ESCAV-02**: No cadastro do cliente, o sistema busca automaticamente os processos via CPF do cliente + OAB do escritório na Escavador API — eliminando a entrada manual de CNJ
-- [ ] **ESCAV-03**: Lista de processos encontrados é apresentada ao advogado para confirmação antes de ser vinculada ao cliente
-- [ ] **ESCAV-04**: Adapter DataJud é substituído por adapter Escavador em `core-network` — contrato de interface mantido para não quebrar a camada de sync
-- [ ] **ESCAV-05**: Custo por consulta Escavador é registrado por tenant para repasse no modelo de cobrança
-
-> **Contexto:** DataJud busca por CPF retorna todos os processos da pessoa no Brasil inteiro. O filtro CPF + OAB é necessário para retornar apenas os processos daquele cliente com aquele escritório específico. Escavador suporta essa busca combinada de forma confiável; DataJud não.
-> Seed de referência: `.planning/seeds/escavador-api-migration.md`
-
----
 
 **Coverage:**
 - v1 requirements: 88 total (BOOT: 6 + INFRA: 9 + AUTH: 9 + DATAJUD: 9 + AI: 8 + NOTIFY: 7 + BILLING: 7 + LGPD: 6 + ESCR: 11 + APP: 16)

@@ -6,7 +6,7 @@ import { env } from '../config.js'
 export interface TenantUser {
   sub: string
   tenant_id: string
-  role: 'admin_escritorio' | 'advogado' | 'cliente' | 'super_admin'
+  role: 'admin_escritorio' | 'advogado' | 'cliente'
 }
 
 // JWKS cache: createRemoteJWKSet ja faz cache interno — NAO recriar por request
@@ -81,21 +81,3 @@ const authPlugin: FastifyPluginAsync = async (fastify) => {
 }
 
 export default fp(authPlugin, { name: 'auth' })
-
-/**
- * requireSuperAdmin — guard helper for super_admin-only routes.
- * Returns true if the request user is super_admin; sends 403 and returns false otherwise.
- * T-7-06: super_admin check must be explicit in each handler — no implicit bypass.
- */
-import type { FastifyRequest, FastifyReply } from 'fastify'
-export function requireSuperAdmin(request: FastifyRequest, reply: FastifyReply): boolean {
-  if (request.user?.role !== 'super_admin') {
-    reply.code(403).send({
-      success: false,
-      error: 'Acesso restrito a super_admin.',
-      code: 'FORBIDDEN',
-    })
-    return false
-  }
-  return true
-}
