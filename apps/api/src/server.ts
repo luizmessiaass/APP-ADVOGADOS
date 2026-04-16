@@ -11,6 +11,7 @@ import { authRoutes } from './routes/auth/index.js'
 import { lgpdRoutes } from './routes/lgpd/index.js'
 import { healthRoutes } from './routes/health.js'
 import { processosRoutes } from './routes/processos.js'
+import { movimentacoesRoutes } from './routes/processos/movimentacoes.js'
 import { getDatajudQueue } from './queues/datajud-queue.js'
 import { createBullMQRedisClient } from './lib/redis.js'
 
@@ -121,6 +122,9 @@ export function buildApp(opts: FastifyServerOptions = {}): FastifyInstance {
 
   // Rotas de processos (DATAJUD-01, DATAJUD-02, DATAJUD-09)
   app.register(processosRoutes, { prefix: '/api/v1' })
+
+  // Rotas de movimentacoes (Phase 5 — GET /api/v1/processos/:id/movimentacoes)
+  app.register(movimentacoesRoutes, { prefix: '/api/v1/processos' })
 
   return app
 }
