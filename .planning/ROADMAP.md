@@ -16,7 +16,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [ ] **Phase 1: Backend Foundation** - Supabase + Fastify + Auth + RLS + LGPD basics & observability
 - [ ] **Phase 2: DataJud Integration & Sync Worker** - CNJ validation, BullMQ worker, tiered refresh, circuit breaker, diffing
 - [ ] **Phase 3: Claude AI Translation** - Jargon-to-plain-PT translation with prompt caching, injection defense, token telemetry
-- [ ] **Phase 4: app_escritorio (Admin Android Client)** - Advogado/admin flow: client CRUD, preview "as client sees", manual messages
+- [x] **Phase 4: app_escritorio (Admin Android Client)** - Advogado/admin flow: client CRUD, preview "as client sees", manual messages (completed 2026-04-16)
 - [ ] **Phase 5: app_cliente (End-user MVP)** - Process list, plain-language status, timeline, onboarding, LGPD consent gate
 - [ ] **Phase 6: Push Notifications & In-app Center** - FCM high-priority dispatch + WorkManager fallback + notification center
 - [ ] **Phase 7: Stripe Billing & Grace Period** - Checkout, Customer Portal, webhook idempotency, entitlement ladder
@@ -118,7 +118,7 @@ Plans:
 - [x] 04-04-PLAN.md — CadastroClienteScreen + CadastroClienteViewModel com validação CPF/CNJ inline
 - [x] 04-05-PLAN.md — ClienteDetalheScreen (sync status) + PreviewScreen (MovimentacaoCard + disclaimer)
 - [x] 04-06-PLAN.md — MensagemBottomSheet (fire-and-forget) + Stripe Customer Portal via Chrome Custom Tabs
-- [ ] 04-07-PLAN.md — HiltTestRunner + 5 UI tests instrumentados + CI workflow app-escritorio lint+test+assemble
+- [x] 04-07-PLAN.md — HiltTestRunner + 5 UI tests instrumentados + CI workflow app-escritorio lint+test+assemble
 **UI hint**: yes
 
 ### Phase 5: app_cliente (End-user MVP)
@@ -197,7 +197,7 @@ Phases execute in numeric order: 0 → 1 → 2 → 3 → 4 → 5 → 6 → 7 →
 | 1. Backend Foundation | 3/8 | In Progress|  |
 | 2. DataJud Integration & Sync Worker | 0/6 | Not started | - |
 | 3. Claude AI Translation | 0/1 | Not started | - |
-| 4. app_escritorio | 6/7 | In Progress|  |
+| 4. app_escritorio | 7/7 | Complete   | 2026-04-16 |
 | 5. app_cliente | 0/5 | Not started | - |
 | 6. Push Notifications & In-app Center | 0/6 | Not started | - |
 | 7. Stripe Billing & Grace Period | 0/TBD | Not started | - |

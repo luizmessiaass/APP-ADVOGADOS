@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Phase 7 context gathered
-last_updated: "2026-04-16T13:39:30.274Z"
-last_activity: 2026-04-16 -- Phase 05 execution started
+stopped_at: Completed 04-07-PLAN.md
+last_updated: "2026-04-16T13:59:33.403Z"
+last_activity: 2026-04-16
 progress:
   total_phases: 9
-  completed_phases: 1
-  total_plans: 38
-  completed_plans: 21
-  percent: 55
+  completed_phases: 2
+  total_plans: 40
+  completed_plans: 23
+  percent: 57
 ---
 
 # Project State
@@ -27,9 +27,9 @@ See: .planning/PROJECT.md (updated 2026-04-14)
 ## Current Position
 
 Phase: 05 (android-app-fluxo-cliente-mvp) — EXECUTING
-Plan: 1 of 5
-Status: Executing Phase 05
-Last activity: 2026-04-16 -- Phase 05 execution started
+Plan: 2 of 5
+Status: Ready to execute
+Last activity: 2026-04-16
 
 Progress: [░░░░░░░░░░] 0%
 
@@ -58,6 +58,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 04 P04 | 25 | 1 tasks | 6 files |
 | Phase 04 P05 | 25 | 1 tasks | 10 files |
 | Phase 04 P06 | 25 | 1 tasks | 11 files |
+| Phase 04 P07 | 35 | 2 tasks | 13 files |
 
 ## Accumulated Context
 
@@ -78,6 +79,8 @@ Recent decisions affecting current work:
 - [Phase 04-05]: clienteId extraído via SavedStateHandle em ViewModels para compatibilidade com Navigation Compose type-safe 2.9
 - [Phase 04-06]: Bottom Sheet de mensagem gerenciado por estado local em ClienteDetalheScreen — onEnviarMensagemClick removido da assinatura publica
 - [Phase 04-06]: portalUrl como StateFlow nullable observado via LaunchedEffect para abrir Chrome Custom Tabs automaticamente
+- [Phase 04-07]: HiltTestRunner registrado como testInstrumentationRunner — suporte a @HiltAndroidTest em UI tests instrumentados
+- [Phase 04-07]: Testes instrumentados excluídos do CI job (sem emulator — D-20); UI tests rodam manualmente ou em CI com emulator dedicado
 
 ### Pending Todos
 
@@ -91,6 +94,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-16T13:39:30.269Z
-Stopped at: Phase 7 context gathered
-Resume file: .planning/phases/07-stripe-billing-grace-period/07-CONTEXT.md
+Last session: 2026-04-16T13:59:22.325Z
+Stopped at: Completed 04-07-PLAN.md
+Resume file: None
