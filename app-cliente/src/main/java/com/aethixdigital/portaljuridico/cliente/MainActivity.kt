@@ -12,6 +12,7 @@ import com.aethixdigital.portaljuridico.cliente.brand.BrandConfig
 import com.aethixdigital.portaljuridico.cliente.brand.toColorScheme
 import com.aethixdigital.portaljuridico.cliente.features.auth.SplashViewModel
 import com.aethixdigital.portaljuridico.cliente.navigation.ClienteNavGraph
+import com.aethixdigital.portaljuridico.cliente.navigation.Routes
 import com.aethixdigital.portaljuridico.data.repository.AuthRepository
 import com.aethixdigital.portaljuridico.escritorio.navigation.EscritorioNavGraph
 import com.aethixdigital.portaljuridico.ui.theme.PortalJuridicoTheme
@@ -32,7 +33,7 @@ class MainActivity : ComponentActivity() {
                 val startDest by splashViewModel.startDestination.collectAsState()
                 val role by splashViewModel.userRole.collectAsState()
 
-                if (startDest != null) {
+                if (startDest != null && !(startDest == Routes.ADMIN_HOME && role == null)) {
                     when {
                         role in setOf("advogado", "admin_escritorio") -> {
                             EscritorioNavGraph(authRepository = authRepository)
