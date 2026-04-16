@@ -30,6 +30,12 @@ class ClienteDetalheViewModel @Inject constructor(
     private val _uiState = MutableStateFlow<ClienteDetalheUiState>(ClienteDetalheUiState.Loading)
     val uiState: StateFlow<ClienteDetalheUiState> = _uiState.asStateFlow()
 
+    private val _portalUrl = MutableStateFlow<String?>(null)
+    val portalUrl: StateFlow<String?> = _portalUrl.asStateFlow()
+
+    private val _portalError = MutableStateFlow<String?>(null)
+    val portalError: StateFlow<String?> = _portalError.asStateFlow()
+
     init {
         loadCliente()
     }
@@ -39,6 +45,15 @@ class ClienteDetalheViewModel @Inject constructor(
             clienteRepository.getClienteById(clienteId).fold(
                 onSuccess = { _uiState.value = ClienteDetalheUiState.Success(it) },
                 onFailure = { _uiState.value = ClienteDetalheUiState.Error(it.message ?: "Erro") }
+            )
+        }
+    }
+
+    fun loadPortalUrl() {
+        viewModelScope.launch {
+            clienteRepository.getPortalSessionUrl().fold(
+                onSuccess = { url -> _portalUrl.value = url },
+                onFailure = { _portalError.value = it.message ?: "Erro ao obter link do portal" }
             )
         }
     }

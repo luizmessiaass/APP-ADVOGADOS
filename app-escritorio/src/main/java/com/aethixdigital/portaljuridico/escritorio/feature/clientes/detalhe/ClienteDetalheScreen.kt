@@ -21,10 +21,15 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -35,10 +40,20 @@ import com.aethixdigital.portaljuridico.ui.components.ProcessoStatusCard
 fun ClienteDetalheScreen(
     onBack: () -> Unit,
     onPreviewClick: (clienteId: String) -> Unit,
-    onEnviarMensagemClick: (clienteId: String) -> Unit,
     viewModel: ClienteDetalheViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val portalUrl by viewModel.portalUrl.collectAsState()
+    val portalError by viewModel.portalError.collectAsState()
+    var showMensagemSheet by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+
+    // Abrir CCT quando URL estiver disponível (ESCR-09)
+    LaunchedEffect(portalUrl) {
+        portalUrl?.let { url ->
+            openStripePortal(context, url)
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -107,12 +122,37 @@ fun ClienteDetalheScreen(
                     ) {
                         Text("Ver como cliente")
                     }
+                    // ESCR-07: Bottom Sheet de mensagem manual (D-13)
                     OutlinedButton(
-                        onClick = { onEnviarMensagemClick(viewModel.getClienteId()) },
+                        onClick = { showMensagemSheet = true },
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Text("Enviar mensagem")
                     }
+                    // ESCR-09: Stripe Customer Portal via Chrome Custom Tabs
+                    OutlinedButton(
+                        onClick = { viewModel.loadPortalUrl() },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text("Gerenciar assinatura")
+                    }
+                    // Erro do portal Stripe (se houver)
+                    portalError?.let { error ->
+                        Text(
+                            text = error,
+                            color = MaterialTheme.colorScheme.error,
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                    }
+                }
+
+                // ModalBottomSheet condicional (ESCR-07)
+                if (showMensagemSheet) {
+                    MensagemBottomSheet(
+                        clienteId = viewModel.getClienteId(),
+                        clienteNome = cliente.nome,
+                        onDismiss = { showMensagemSheet = false }
+                    )
                 }
             }
         }

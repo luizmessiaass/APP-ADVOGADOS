@@ -60,8 +60,7 @@ fun EscritorioNavGraph(authRepository: AuthRepository) {
                 onBack = { navController.popBackStack() },
                 onPreviewClick = { clienteId ->
                     navController.navigate(EscritorioRoute.PreviewCliente(clienteId))
-                },
-                onEnviarMensagemClick = { _ -> /* implementado em 04-06 */ }
+                }
             )
         }
         composable<EscritorioRoute.CadastroCliente> {
