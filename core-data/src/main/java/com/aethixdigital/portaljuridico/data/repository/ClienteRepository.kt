@@ -3,6 +3,7 @@ package com.aethixdigital.portaljuridico.data.repository
 import com.aethixdigital.portaljuridico.network.api.ClienteApi
 import com.aethixdigital.portaljuridico.network.model.dto.CadastroClienteRequest
 import com.aethixdigital.portaljuridico.network.model.dto.ClienteItem
+import com.aethixdigital.portaljuridico.network.model.dto.EnviarMensagemRequest
 import com.aethixdigital.portaljuridico.network.model.dto.PreviewResponse
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -17,6 +18,8 @@ interface ClienteRepository {
     ): Result<String>
     suspend fun getClienteById(id: String): Result<ClienteItem>
     suspend fun previewCliente(clienteId: String): Result<PreviewResponse>
+    suspend fun enviarMensagem(clienteId: String, texto: String): Result<String>
+    suspend fun getPortalSessionUrl(): Result<String>
 }
 
 @Singleton
@@ -46,5 +49,13 @@ class ClienteRepositoryImpl @Inject constructor(
 
     override suspend fun previewCliente(clienteId: String): Result<PreviewResponse> = runCatching {
         clienteApi.previewCliente(clienteId)
+    }
+
+    override suspend fun enviarMensagem(clienteId: String, texto: String): Result<String> = runCatching {
+        clienteApi.enviarMensagem(clienteId, EnviarMensagemRequest(texto)).id
+    }
+
+    override suspend fun getPortalSessionUrl(): Result<String> = runCatching {
+        clienteApi.getPortalSession().url
     }
 }

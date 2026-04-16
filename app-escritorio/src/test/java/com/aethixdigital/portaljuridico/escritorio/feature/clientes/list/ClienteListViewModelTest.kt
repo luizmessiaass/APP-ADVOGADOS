@@ -90,4 +90,8 @@ class FakeClienteRepository : ClienteRepository {
         Result.success(ClienteItem("1", "Test", "00000000000", null, null))
     override suspend fun previewCliente(clienteId: String): Result<PreviewResponse> =
         Result.success(PreviewResponse(ClienteItem("1", "Test", "00000000000", null, null), emptyList()))
+    override suspend fun enviarMensagem(clienteId: String, texto: String): Result<String> =
+        Result.success("fake-msg-id")
+    override suspend fun getPortalSessionUrl(): Result<String> =
+        Result.success("https://billing.stripe.com/test")
 }
