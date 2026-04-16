@@ -37,6 +37,17 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
+    }
+
+    defaultConfig {
+        // SUPPORT_WHATSAPP: número para link wa.me/ no botão "Gerenciar assinatura"
+        // Fornecer via gradle.properties ou CI: SUPPORT_WHATSAPP=5511999999999
+        buildConfigField(
+            "String",
+            "SUPPORT_WHATSAPP",
+            "\"${project.findProperty("SUPPORT_WHATSAPP") ?: ""}\"",
+        )
     }
 }
 
