@@ -5,6 +5,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.aethixdigital.portaljuridico.cliente.features.auth.LoginScreen
+import com.aethixdigital.portaljuridico.cliente.features.processos.ProcessoDetailScreen
+import com.aethixdigital.portaljuridico.cliente.features.processos.ProcessoListScreen
 
 @Composable
 fun ClienteNavGraph(navController: NavHostController, startDestination: String) {
@@ -19,12 +21,11 @@ fun ClienteNavGraph(navController: NavHostController, startDestination: String) 
             TODO("LgpdConsentScreen — implemented in Plan 05-04")
         }
         composable(Routes.PROCESSO_LIST) {
-            TODO("ProcessoListScreen — implemented in Plan 05-03")
+            ProcessoListScreen(navController = navController)
         }
         composable(Routes.PROCESSO_DETAIL_WITH_ID) { backStackEntry ->
-            @Suppress("UNUSED_VARIABLE")
             val processoId = backStackEntry.arguments?.getString("processoId") ?: return@composable
-            TODO("ProcessoDetailScreen — implemented in Plan 05-03")
+            ProcessoDetailScreen(processoId = processoId, navController = navController)
         }
     }
 }
