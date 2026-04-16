@@ -67,6 +67,13 @@ Recent decisions affecting current work:
 - Project init: Dois apps Android separados (cliente + escritório) — evita UI condicional
 - Project init: Stripe para monetização (SDK maduro, assinaturas recorrentes)
 
+### Quick Tasks Completed
+
+| # | Description | Date | Commit | Directory |
+|---|-------------|------|--------|-----------|
+| 260416-jt1 | Implementar identidade visual Editorial Juris no app-cliente | 2026-04-16 | cf6f961 | [260416-jt1](./quick/260416-jt1-implementar-identidade-visual-editorial-/) |
+| 260416-l5h | Product Flavors app-cliente: default + flores (Flores Advocacia) | 2026-04-16 | 0a8312c | [260416-l5h](./quick/260416-l5h-configurar-product-flavors-no-app-client/) |
+
 ### Pending Todos
 
 None yet.
