@@ -5,6 +5,8 @@ import androidx.datastore.preferences.core.edit
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aethixdigital.portaljuridico.cliente.features.auth.LGPD_ACCEPTED_KEY
+import com.aethixdigital.portaljuridico.cliente.features.auth.TERMS_VERSION
+import com.aethixdigital.portaljuridico.cliente.features.auth.TERMS_VERSION_KEY
 import com.aethixdigital.portaljuridico.cliente.features.auth.TOKEN_KEY
 import com.aethixdigital.portaljuridico.cliente.features.auth.REFRESH_TOKEN_KEY
 import com.aethixdigital.portaljuridico.cliente.features.auth.clienteDataStore
@@ -38,11 +40,13 @@ class LgpdConsentViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.value = UiState.Loading
             val result = runCatching {
-                clienteApi.postConsentimento(ConsentimentoRequest(versaoTermos = "2026-04-15"))
+                clienteApi.postConsentimento(ConsentimentoRequest(versaoTermos = TERMS_VERSION))
             }
             result.onSuccess {
                 context.clienteDataStore.edit { prefs ->
                     prefs[LGPD_ACCEPTED_KEY] = true
+                    // D-05/D-06: salvar a versão dos termos aceita para o re-gate futuro
+                    prefs[TERMS_VERSION_KEY] = TERMS_VERSION
                 }
                 _uiState.value = UiState.Success
             }.onFailure {
