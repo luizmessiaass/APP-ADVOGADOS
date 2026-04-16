@@ -668,22 +668,22 @@ fun BillingStatusBanner(
 
 ---
 
-## Open Questions
+## Open Questions (RESOLVED)
 
-1. **BRT timezone confirmation**
+1. **BRT timezone confirmation** — RESOLVED
    - What we know: Brazil abolished summer time (horário de verão) in 2019 via Decreto 9.772/2019
    - What's unclear: Whether any infrastructure (Railway, Redis, or BullMQ) overrides timezone interpretation
-   - Recommendation: Hardcode UTC offset `-03:00` in a comment next to the cron pattern and verify on first test deployment
+   - Resolution: Hardcode UTC offset `-03:00` as a comment next to cron pattern `0 12 * * *` in worker.ts. Plan 05 Task 2 action explicitly documents this. BullMQ uses system-independent UTC parsing — no Railway/Redis override possible. Cron `0 12 * * *` is permanently correct for BRT.
 
-2. **super_admin without tenant_id**
+2. **super_admin without tenant_id** — RESOLVED
    - What we know: The Custom Access Token Hook requires a row in `public.usuarios` with a `tenant_id`
    - What's unclear: Whether the system admin user should belong to a real `escritorio` row or have a sentinel value
-   - Recommendation: Create a special `escritorios` row for internal use (`nome: 'Portal Juridico Admin'`, `status: 'active'`) and assign the super_admin user to it. Simpler than adding nullable tenant_id paths everywhere.
+   - Resolution: Create a special `escritorios` row for internal use (`nome: 'Portal Juridico Admin'`, `status: 'active'`) and assign the super_admin user to it. This avoids nullable `tenant_id` paths everywhere and keeps the auth token shape consistent. Documented in Plan 03 super_admin guard pattern.
 
-3. **Webhook authentication strength**
+3. **Webhook authentication strength** — RESOLVED
    - What we know: Stripe uses HMAC-SHA256 with timestamp; Asaas uses different mechanism
    - What's unclear: If a payment provider is chosen before this phase is implemented, should the webhook receiver be provider-specific?
-   - Recommendation: Use generic `X-Webhook-Secret` header (constant comparison) for now. Document that this will be replaced with provider-specific HMAC when a provider is chosen.
+   - Resolution: Use generic `X-Webhook-Secret` header with `crypto.timingSafeEqual` constant-time comparison for now. Plan 03 Task 1 action explicitly uses `timingSafeEqual` to prevent timing attacks. When a provider is chosen, a provider-specific adapter translates to the normalized payload — the webhook receiver itself does not change.
 
 ---
 
