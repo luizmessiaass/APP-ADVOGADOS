@@ -1,5 +1,6 @@
 import type { FastifyInstance } from 'fastify'
 import { supabaseAdmin } from '../../lib/supabase.js'
+import { env } from '../../config.js'
 
 export async function tenantStatusRoutes(app: FastifyInstance): Promise<void> {
   app.get('/status', async (request, reply) => {
@@ -31,6 +32,8 @@ export async function tenantStatusRoutes(app: FastifyInstance): Promise<void> {
       grace_banner: data.grace_banner,
       grace_period_started_at: data.grace_period_started_at,
       days_until_suspension: daysUntilSuspension,
+      // D-07 Phase 8: versão atual dos termos — Android compara com DataStore para re-gate
+      termos_versao_atual: env.TERMS_VERSION,
     })
   })
 }

@@ -10,6 +10,8 @@ export const env = cleanEnv(process.env, {
   SENTRY_DSN: str({ default: '' }),
   BETTERSTACK_SOURCE_TOKEN: str({ default: '' }),
   PRIVACY_POLICY_URL: str({ default: 'https://notion.so/portaljuridico-privacidade' }),
-  BILLING_WEBHOOK_SECRET: str({ default: '' }),
+  BILLING_WEBHOOK_SECRET: str(),
+  // D-06 Phase 8: versão atual dos termos (ISO date) — bumpar para forçar re-gate de consentimento
+  TERMS_VERSION: str({ default: '2026-04-16' }),
 })
 // cleanEnv lanca EnvVarError se variavel obrigatoria ausente — processo termina imediatamente
