@@ -170,7 +170,14 @@ Plans:
   3. Entitlement middleware blocks protected endpoints for tenants whose subscription is not active, returning a clear "subscription required" error
   4. The grace-period state machine progresses through Day 0 email → Day 3 in-app banner → Day 7 escritório read-only → Day 14 suspension, and tenant data is never deleted — only `status` is flipped
   5. From app_escritorio, "Gerenciar assinatura" opens the Stripe Customer Portal via Custom Tabs and plan changes round-trip back to the tenant record
-**Plans**: TBD
+**Plans**: 6 plans
+Plans:
+- [ ] 07-01-PLAN.md — SQL migration 0009 (schema extension) + 4 Vitest test scaffolds (Wave 0 / TDD Red phase)
+- [ ] 07-02-PLAN.md — Entitlement middleware (HTTP 402 gate, Redis cache, fail-closed) + super_admin role extension
+- [ ] 07-03-PLAN.md — Webhook receiver (BILLING-03/04) + grace-period pure service + admin tenant endpoints
+- [ ] 07-04-PLAN.md — [BLOCKING] supabase db push migration 0009 + Studio verification
+- [ ] 07-05-PLAN.md — BullMQ daily cron grace period worker (Resend emails, idempotent transitions)
+- [ ] 07-06-PLAN.md — GET /api/v1/tenant/status + Android billing UX (banner + suspension screens + WorkManager poll)
 **UI hint**: no
 
 ### Phase 8: LGPD Hardening & Production Readiness
