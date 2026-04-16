@@ -173,8 +173,8 @@ Plans:
   5. From app_escritorio, "Gerenciar assinatura" opens the Stripe Customer Portal via Custom Tabs and plan changes round-trip back to the tenant record
 **Plans**: 6 plans
 Plans:
-- [ ] 07-01-PLAN.md — SQL migration 0009 (schema extension) + 4 Vitest test scaffolds (Wave 0 / TDD Red phase)
-- [ ] 07-02-PLAN.md — Entitlement middleware (HTTP 402 gate, Redis cache, fail-closed) + super_admin role extension
+- [x] 07-01-PLAN.md — SQL migration 0009 (schema extension) + 4 Vitest test scaffolds (Wave 0 / TDD Red phase)
+- [x] 07-02-PLAN.md — Entitlement middleware (HTTP 402 gate, Redis cache, fail-closed) + super_admin role extension
 - [ ] 07-03-PLAN.md — Webhook receiver (BILLING-03/04) + grace-period pure service + admin tenant endpoints
 - [ ] 07-04-PLAN.md — [BLOCKING] supabase db push migration 0009 + Studio verification
 - [ ] 07-05-PLAN.md — BullMQ daily cron grace period worker (Resend emails, idempotent transitions)
@@ -191,7 +191,12 @@ Plans:
   3. Cross-tenant leak test, PII-redaction log test, and webhook idempotency replay drill all pass in CI before any production deploy is accepted
   4. Production monitoring dashboards (error rates, Claude spend, DataJud circuit state, FCM delivery rate) are live with on-call-safe alert thresholds
   5. A launch readiness checklist is signed off: backup/restore rehearsed, Supabase Pro tier active, secrets split between API and worker environments, and the "launch blockers" list (DataJud quota verified, Claude ZDR verified, Brazilian privacy lawyer review) is either green or explicitly accepted with mitigation
-**Plans**: TBD
+**Plans**: 4 plans
+Plans:
+- [ ] 08-01-PLAN.md — Art. 18 backend: DELETE /api/v1/clientes/:clienteId + cancelarJobsDoCliente BullMQ + supabase db push [BLOCKING] + TDD tests (Wave 1)
+- [ ] 08-02-PLAN.md — Consent re-gate: termos_versao_atual in GET /api/v1/tenant/status + TERMS_VERSION config + TDD tests (Wave 1)
+- [ ] 08-03-PLAN.md — CI production gates: webhook idempotency test impl + production-gates blocking CI job (Wave 2)
+- [ ] 08-04-PLAN.md — Art. 18 Android UX: AlertDialog in ClienteDetalheScreen + DELETE Retrofit endpoint + LAUNCH-CHECKLIST.md (Wave 2)
 **UI hint**: no
 
 ## Progress
@@ -208,8 +213,8 @@ Phases execute in numeric order: 0 → 1 → 2 → 3 → 4 → 5 → 6 → 7 →
 | 4. app_escritorio | 7/7 | Complete   | 2026-04-16 |
 | 5. app_cliente | 0/5 | Not started | - |
 | 6. Push Notifications & In-app Center | 0/6 | Not started | - |
-| 7. Stripe Billing & Grace Period | 0/TBD | Not started | - |
-| 8. LGPD Hardening & Production Readiness | 0/TBD | Not started | - |
+| 7. Stripe Billing & Grace Period | 0/6 | Not started | - |
+| 8. LGPD Hardening & Production Readiness | 0/4 | Not started | - |
 
 ## Research Flags
 
