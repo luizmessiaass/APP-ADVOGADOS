@@ -20,6 +20,9 @@ interface ClienteApi {
     @GET("api/v1/clientes")
     suspend fun listarClientes(@Query("search") search: String? = null): List<ClienteItem>
 
+    @GET("api/v1/clientes/{id}")
+    suspend fun getClienteById(@Path("id") clienteId: String): ClienteItem
+
     @GET("api/v1/clientes/{id}/preview")
     suspend fun previewCliente(@Path("id") clienteId: String): PreviewResponse
 

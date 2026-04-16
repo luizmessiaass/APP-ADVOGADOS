@@ -2,6 +2,7 @@ package com.aethixdigital.portaljuridico.escritorio.feature.clientes.list
 
 import com.aethixdigital.portaljuridico.data.repository.ClienteRepository
 import com.aethixdigital.portaljuridico.network.model.dto.ClienteItem
+import com.aethixdigital.portaljuridico.network.model.dto.PreviewResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -85,4 +86,8 @@ class FakeClienteRepository : ClienteRepository {
         email: String,
         numeroCnj: String
     ): Result<String> = Result.success("fake-id")
+    override suspend fun getClienteById(id: String): Result<ClienteItem> =
+        Result.success(ClienteItem("1", "Test", "00000000000", null, null))
+    override suspend fun previewCliente(clienteId: String): Result<PreviewResponse> =
+        Result.success(PreviewResponse(ClienteItem("1", "Test", "00000000000", null, null), emptyList()))
 }
