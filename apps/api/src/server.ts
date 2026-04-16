@@ -10,6 +10,7 @@ import entitlementPlugin from './plugins/entitlement.js'
 import sentryPlugin from './plugins/sentry.js'
 import { authRoutes } from './routes/auth/index.js'
 import { lgpdRoutes } from './routes/lgpd/index.js'
+import { clientesRoutes } from './routes/clientes/index.js'
 import { healthRoutes } from './routes/health.js'
 import { processosRoutes } from './routes/processos.js'
 import { movimentacoesRoutes } from './routes/processos/movimentacoes.js'
@@ -128,6 +129,7 @@ export function buildApp(opts: FastifyServerOptions = {}): FastifyInstance {
   // Rotas de autenticacao e LGPD
   app.register(authRoutes, { prefix: '/api/v1/auth' })
   app.register(lgpdRoutes, { prefix: '/api/v1/lgpd' })
+  app.register(clientesRoutes, { prefix: '/api/v1/clientes' })
 
   // Rotas de processos (DATAJUD-01, DATAJUD-02, DATAJUD-09)
   app.register(processosRoutes, { prefix: '/api/v1' })

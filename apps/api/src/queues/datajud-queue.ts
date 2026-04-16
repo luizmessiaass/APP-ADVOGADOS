@@ -32,10 +32,10 @@ export type SyncStep =
 
 let _datajudQueue: Queue<SyncJobData> | undefined;
 
-export function getDatajudQueue(redis: Redis): Queue<SyncJobData> {
+export function getDatajudQueue(redis?: Redis): Queue<SyncJobData> {
   if (!_datajudQueue) {
     _datajudQueue = new Queue<SyncJobData>(DATAJUD_QUEUE_NAME, {
-      connection: redis,
+      connection: redis as Redis,
       defaultJobOptions: {
         attempts: 5,
         backoff: {
