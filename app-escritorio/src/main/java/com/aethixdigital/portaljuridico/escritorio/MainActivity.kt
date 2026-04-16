@@ -4,39 +4,25 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import com.aethixdigital.portaljuridico.data.repository.AuthRepository
+import com.aethixdigital.portaljuridico.escritorio.navigation.EscritorioNavGraph
 import com.aethixdigital.portaljuridico.ui.theme.PortalJuridicoTheme
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+    @Inject
+    lateinit var authRepository: AuthRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             PortalJuridicoTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Text(
-                        text = "Portal Jurídico — Admin",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
+                EscritorioNavGraph(authRepository = authRepository)
             }
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun MainPreview() {
-    PortalJuridicoTheme {
-        Text("Portal Jurídico — Admin")
     }
 }
