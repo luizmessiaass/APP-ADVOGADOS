@@ -19,7 +19,7 @@ android {
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "com.aethixdigital.portaljuridico.cliente.HiltTestRunner"
     }
 
     flavorDimensions += "tenant"
@@ -50,6 +50,8 @@ android {
 
 dependencies {
     implementation(project(":core-common"))
+    implementation(project(":core-network"))
+    implementation(project(":core-data"))
     implementation(project(":core-ui"))
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)

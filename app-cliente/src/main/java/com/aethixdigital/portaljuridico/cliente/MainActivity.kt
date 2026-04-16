@@ -4,51 +4,33 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import com.aethixdigital.portaljuridico.common.AppConfig
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.compose.rememberNavController
+import com.aethixdigital.portaljuridico.cliente.features.auth.SplashViewModel
+import com.aethixdigital.portaljuridico.cliente.navigation.ClienteNavGraph
 import com.aethixdigital.portaljuridico.ui.theme.PortalJuridicoTheme
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-
-    @Inject lateinit var appConfig: AppConfig
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             PortalJuridicoTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Portal Jurídico",
-                        modifier = Modifier.padding(innerPadding)
+                val splashViewModel: SplashViewModel = hiltViewModel()
+                val startDest by splashViewModel.startDestination.collectAsState()
+                if (startDest != null) {
+                    val navController = rememberNavController()
+                    ClienteNavGraph(
+                        navController = navController,
+                        startDestination = startDest!!
                     )
                 }
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Bem-vindo ao $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    PortalJuridicoTheme {
-        Greeting("Portal Jurídico")
     }
 }
