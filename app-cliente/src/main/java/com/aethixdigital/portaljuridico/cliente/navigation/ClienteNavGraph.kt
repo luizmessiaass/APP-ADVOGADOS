@@ -5,6 +5,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.aethixdigital.portaljuridico.cliente.features.auth.LoginScreen
+import com.aethixdigital.portaljuridico.cliente.features.lgpd.LgpdConsentScreen
 import com.aethixdigital.portaljuridico.cliente.features.onboarding.OnboardingScreen
 import com.aethixdigital.portaljuridico.cliente.features.processo.ProcessoDetailScreen
 import com.aethixdigital.portaljuridico.cliente.features.processo.ProcessoListScreen
@@ -32,12 +33,7 @@ fun ClienteNavGraph(navController: NavHostController, startDestination: String) 
             OnboardingScreen(navController = navController)
         }
         composable(Routes.LGPD_CONSENT) {
-            // LGPD consent ainda nao implementado — placeholder navegavel
-            ProcessoListScreen(
-                onProcessoClick = { id ->
-                    navController.navigate("${Routes.PROCESSO_DETAIL}/$id")
-                }
-            )
+            LgpdConsentScreen(navController = navController)
         }
         composable(Routes.PROCESSO_LIST) {
             ProcessoListScreen(
