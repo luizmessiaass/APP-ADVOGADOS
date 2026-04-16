@@ -126,6 +126,22 @@ Plans:
 **Plans**: TBD
 **UI hint**: yes
 
+### Phase 5.1: Restore + Unificar Apps (APK Único com Roteamento por Role)
+**Goal**: A single APK serves both clientes and advogados — after login, the JWT role routes the user to the correct flow (ClienteNavGraph for "cliente", EscritorioNavGraph for "advogado"/"admin_escritorio"). Prerequisite: restore 69 Kotlin files accidentally deleted in commit cb083fb, which left the build broken.
+**Depends on**: Phase 5
+**Requirements**: APP-01
+**Success Criteria** (what must be TRUE):
+  1. `./gradlew :app-cliente:assembleDebug` completes without errors — build is restored
+  2. A user with role "cliente" logs in and reaches ProcessoListScreen
+  3. A user with role "advogado" logs in and reaches ClienteListScreen (escritório flow)
+  4. Restarting the app with a saved "advogado" token goes directly to EscritorioNavGraph (no login re-prompt)
+  5. Restarting the app with a saved "cliente" token goes to the correct cliente destination (PROCESSO_LIST or LGPD gate)
+**Plans**: 2 plans
+Plans:
+- [ ] 05.1-01-PLAN.md — Restore: git checkout cb083fb~1 for 69 deleted files + build.gradle.kts deps
+- [ ] 05.1-02-PLAN.md — Unify: convert app-escritorio to library, single entry point in app-cliente with role routing
+**UI hint**: yes
+
 ### Phase 6: Push Notifications & In-app Center
 **Goal**: New movimentações reach the cliente reliably via FCM high-priority push, with an in-app notification center and WorkManager polling as safety nets against Brazilian OEM battery-optimizer drops — turning the app from "download and forget" into an actively useful channel.
 **Depends on**: Phase 5
