@@ -89,18 +89,19 @@ export const processosRoutes: FastifyPluginAsync = async (fastify) => {
   // POST /api/v1/processos — cadastrar novo processo
   // DATAJUD-01: validação CNJ antes de qualquer I/O
   // -------------------------------------------------------------------------
-  fastify.post<{ Body: { numero_cnj: string } }>('/processos', {
+  fastify.post<{ Body: { numero_cnj: string; cliente_usuario_id?: string } }>('/processos', {
     schema: {
       body: {
         type: 'object',
         required: ['numero_cnj'],
         properties: {
           numero_cnj: { type: 'string' },
+          cliente_usuario_id: { type: 'string', format: 'uuid' }, // optional — assign process to a client user
         },
       },
     },
   }, async (request, reply) => {
-    const { numero_cnj } = request.body
+    const { numero_cnj, cliente_usuario_id } = request.body
     const tenantId = request.user.tenant_id
     const token = request.headers.authorization?.slice(7) ?? ''
 
@@ -141,6 +142,8 @@ export const processosRoutes: FastifyPluginAsync = async (fastify) => {
         tribunal,
         tier_refresh: 'cold', // começa como cold — sem movimentações conhecidas
         sincronizado: false,
+        // Phase 5: optional — assign process to a specific client user
+        ...(cliente_usuario_id ? { cliente_usuario_id } : {}),
       })
       .select('id, numero_cnj, tribunal, tier_refresh, created_at')
       .single()
