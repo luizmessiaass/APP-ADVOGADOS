@@ -110,7 +110,7 @@ Plans:
   3. Tapping a client opens the read-only "as client sees" preview showing AI-translated movimentações exactly as app_cliente will render them
   4. The advogado can send a manual message/aviso to a specific client, and the message is persisted for eventual delivery
   5. The "gerenciar assinatura" button opens the Stripe Customer Portal via Chrome Custom Tabs (portal session acquired from backend), and CI runs lint + unit + UI tests on every commit to the app_escritorio module
-**Plans**: 7 plans
+**Plans**: 8 plans
 Plans:
 - [x] 04-01-PLAN.md — Version catalog + core-network Kotlin plugin fix + AuthInterceptor + ClienteApi + NetworkModule + TokenDataStore + JwtDecoder
 - [x] 04-02-PLAN.md — CPF/CNJ validators com testes unitários (:core-common) + MovimentacaoCard + ProcessoStatusCard (:core-ui)
@@ -119,6 +119,7 @@ Plans:
 - [x] 04-05-PLAN.md — ClienteDetalheScreen (sync status) + PreviewScreen (MovimentacaoCard + disclaimer)
 - [x] 04-06-PLAN.md — MensagemBottomSheet (fire-and-forget) + Stripe Customer Portal via Chrome Custom Tabs
 - [x] 04-07-PLAN.md — HiltTestRunner + 5 UI tests instrumentados + CI workflow app-escritorio lint+test+assemble
+- [ ] 04-08-PLAN.md — [GAP CLOSURE] Disclaimer MovimentacaoCard (D-10 + ESCR-06) + ultimaSincronizacao ProcessoStatusCard (ESCR-08)
 **UI hint**: yes
 
 ### Phase 5: app_cliente (End-user MVP)
@@ -248,3 +249,13 @@ Phases flagged as needing extra research at the planning boundary (per research/
 - BILLING-01..07 → Phase 7 (all 7)
 
 **Note:** LGPD is split across Phase 1 (basics baked into infra), Phase 5 (consent gate in app_cliente), and Phase 8 (hardening + Art. 18 deletion + launch gates) — spanning but never duplicating.
+
+### Phase 9: Multiplatform (KMP + Compose Multiplatform) — migrar app Android para Kotlin Multiplatform com suporte a iOS
+
+**Goal:** [To be planned]
+**Requirements**: TBD
+**Depends on:** Phase 8
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd-plan-phase 9 to break down)
