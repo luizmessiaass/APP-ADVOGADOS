@@ -64,10 +64,10 @@
 
 ### Stripe Billing (BILLING)
 
-- [ ] **BILLING-01**: Escritório consegue assinar um plano via Stripe Checkout hosted
-- [ ] **BILLING-02**: Escritório consegue gerenciar assinatura (cancelar, mudar plano) via Stripe Customer Portal
-- [ ] **BILLING-03**: Webhook Stripe é verificado por assinatura antes de processar (`stripe.webhooks.constructEvent`)
-- [ ] **BILLING-04**: Todos os eventos Stripe são registrados em tabela `stripe_events` para idempotência (replay-safe)
+- [x] **BILLING-01**: Escritório consegue assinar um plano via Stripe Checkout hosted
+- [x] **BILLING-02**: Escritório consegue gerenciar assinatura (cancelar, mudar plano) via Stripe Customer Portal
+- [x] **BILLING-03**: Webhook Stripe é verificado por assinatura antes de processar (`stripe.webhooks.constructEvent`)
+- [x] **BILLING-04**: Todos os eventos Stripe são registrados em tabela `stripe_events` para idempotência (replay-safe)
 - [ ] **BILLING-05**: Middleware de entitlement verifica `subscription_status` do tenant antes de liberar endpoints protegidos
 - [ ] **BILLING-06**: State machine de grace period: Dia 0 (email) → Dia 3 (banner in-app) → Dia 7 (painel escritório somente leitura) → Dia 14 (suspensão total)
 - [ ] **BILLING-07**: Tenant nunca tem dados deletados por falta de pagamento (apenas `status` desativado)
@@ -262,14 +262,31 @@ Full per-requirement mapping (updated 2026-04-14 after roadmap creation).
 | NOTIFY-05 | Phase 6 | Pending |
 | NOTIFY-06 | Phase 6 | Pending |
 | NOTIFY-07 | Phase 6 | Pending |
-| BILLING-01 | Phase 7 | Pending |
-| BILLING-02 | Phase 7 | Pending |
-| BILLING-03 | Phase 7 | Pending |
-| BILLING-04 | Phase 7 | Pending |
+| BILLING-01 | Phase 7 | Complete |
+| BILLING-02 | Phase 7 | Complete |
+| BILLING-03 | Phase 7 | Complete |
+| BILLING-04 | Phase 7 | Complete |
 | BILLING-05 | Phase 7 | Pending |
 | BILLING-06 | Phase 7 | Pending |
 | BILLING-07 | Phase 7 | Pending |
 | LGPD-05 | Phase 8 | Pending |
+
+---
+
+## v2 Requirements (Future — post-v1)
+
+### Escavador Integration & Auto-discovery (ESCAV)
+
+- [ ] **ESCAV-01**: Perfil do escritório armazena número OAB do advogado responsável (`oab_numero` na tabela `tenants`)
+- [ ] **ESCAV-02**: No cadastro do cliente, o sistema busca automaticamente os processos via CPF do cliente + OAB do escritório na Escavador API — eliminando a entrada manual de CNJ
+- [ ] **ESCAV-03**: Lista de processos encontrados é apresentada ao advogado para confirmação antes de ser vinculada ao cliente
+- [ ] **ESCAV-04**: Adapter DataJud é substituído por adapter Escavador em `core-network` — contrato de interface mantido para não quebrar a camada de sync
+- [ ] **ESCAV-05**: Custo por consulta Escavador é registrado por tenant para repasse no modelo de cobrança
+
+> **Contexto:** DataJud busca por CPF retorna todos os processos da pessoa no Brasil inteiro. O filtro CPF + OAB é necessário para retornar apenas os processos daquele cliente com aquele escritório específico. Escavador suporta essa busca combinada de forma confiável; DataJud não.
+> Seed de referência: `.planning/seeds/escavador-api-migration.md`
+
+---
 
 **Coverage:**
 - v1 requirements: 88 total (BOOT: 6 + INFRA: 9 + AUTH: 9 + DATAJUD: 9 + AI: 8 + NOTIFY: 7 + BILLING: 7 + LGPD: 6 + ESCR: 11 + APP: 16)
