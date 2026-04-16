@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Phase 6 context gathered
-last_updated: "2026-04-16T01:40:02.543Z"
-last_activity: 2026-04-16 -- Phase 04 planning complete
+stopped_at: Completed 04-03-PLAN.md
+last_updated: "2026-04-16T13:10:07.758Z"
+last_activity: 2026-04-16
 progress:
   total_phases: 9
   completed_phases: 1
-  total_plans: 27
-  completed_plans: 15
-  percent: 56
+  total_plans: 38
+  completed_plans: 18
+  percent: 47
 ---
 
 # Project State
@@ -22,14 +22,14 @@ See: .planning/PROJECT.md (updated 2026-04-14)
 
 **Project:** Portal Jurídico — SaaS B2B para Escritórios de Advocacia
 **Core value:** O cliente leigo consegue entender o que está acontecendo no seu processo jurídico sem precisar ligar para o advogado.
-**Current focus:** Phase 02 — datajud-integration-sync-worker
+**Current focus:** Phase 04 — android-app-fluxo-advogado
 
 ## Current Position
 
-Phase: 03
-Plan: Not started
+Phase: 04 (android-app-fluxo-advogado) — EXECUTING
+Plan: 2 of 7
 Status: Ready to execute
-Last activity: 2026-04-16 -- Phase 04 planning complete
+Last activity: 2026-04-16
 
 Progress: [░░░░░░░░░░] 0%
 
@@ -54,6 +54,7 @@ Progress: [░░░░░░░░░░] 0%
 - Trend: —
 
 *Updated after each plan completion*
+| Phase 04 P03 | 9 | 2 tasks | 17 files |
 
 ## Accumulated Context
 
@@ -67,6 +68,8 @@ Recent decisions affecting current work:
 - Project init: Supabase como backend-as-a-service (Auth + DB + RLS + Storage)
 - Project init: Dois apps Android separados (cliente + escritório) — evita UI condicional
 - Project init: Stripe para monetização (SDK maduro, assinaturas recorrentes)
+- [Phase 04-03]: TokenProvider interface em core-network elimina dependência circular core-network → core-data via AuthInterceptor
+- [Phase 04-03]: getTokenFlow() (Flow) e getToken() (suspend) separados em TokenDataStore para suportar tanto observação como leitura pontual
 
 ### Pending Todos
 
@@ -80,6 +83,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-16T01:34:20.251Z
-Stopped at: Phase 6 context gathered
-Resume file: .planning/phases/06-push-notifications-in-app-center/06-CONTEXT.md
+Last session: 2026-04-16T13:10:07.753Z
+Stopped at: Completed 04-03-PLAN.md
+Resume file: None

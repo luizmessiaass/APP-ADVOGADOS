@@ -112,9 +112,9 @@ Plans:
   5. The "gerenciar assinatura" button opens the Stripe Customer Portal via Chrome Custom Tabs (portal session acquired from backend), and CI runs lint + unit + UI tests on every commit to the app_escritorio module
 **Plans**: 7 plans
 Plans:
-- [ ] 04-01-PLAN.md — Version catalog + core-network Kotlin plugin fix + AuthInterceptor + ClienteApi + NetworkModule + TokenDataStore + JwtDecoder
-- [ ] 04-02-PLAN.md — CPF/CNJ validators com testes unitários (:core-common) + MovimentacaoCard + ProcessoStatusCard (:core-ui)
-- [ ] 04-03-PLAN.md — Auth flow: LoginScreen + LoginViewModel + EscritorioNavGraph (5 rotas @Serializable) + ClienteListScreen com search
+- [x] 04-01-PLAN.md — Version catalog + core-network Kotlin plugin fix + AuthInterceptor + ClienteApi + NetworkModule + TokenDataStore + JwtDecoder
+- [x] 04-02-PLAN.md — CPF/CNJ validators com testes unitários (:core-common) + MovimentacaoCard + ProcessoStatusCard (:core-ui)
+- [x] 04-03-PLAN.md — Auth flow: LoginScreen + LoginViewModel + EscritorioNavGraph (5 rotas @Serializable) + ClienteListScreen com search
 - [ ] 04-04-PLAN.md — CadastroClienteScreen + CadastroClienteViewModel com validação CPF/CNJ inline
 - [ ] 04-05-PLAN.md — ClienteDetalheScreen (sync status) + PreviewScreen (MovimentacaoCard + disclaimer)
 - [ ] 04-06-PLAN.md — MensagemBottomSheet (fire-and-forget) + Stripe Customer Portal via Chrome Custom Tabs
@@ -197,7 +197,7 @@ Phases execute in numeric order: 0 → 1 → 2 → 3 → 4 → 5 → 6 → 7 →
 | 1. Backend Foundation | 3/8 | In Progress|  |
 | 2. DataJud Integration & Sync Worker | 0/6 | Not started | - |
 | 3. Claude AI Translation | 0/1 | Not started | - |
-| 4. app_escritorio | 0/7 | Not started | - |
+| 4. app_escritorio | 3/7 | In Progress|  |
 | 5. app_cliente | 0/5 | Not started | - |
 | 6. Push Notifications & In-app Center | 0/6 | Not started | - |
 | 7. Stripe Billing & Grace Period | 0/TBD | Not started | - |
