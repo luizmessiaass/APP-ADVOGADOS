@@ -6,6 +6,7 @@ import { BullMQAdapter } from '@bull-board/api/bullMQAdapter'
 import { FastifyAdapter } from '@bull-board/fastify'
 import { env } from './config.js'
 import authPlugin from './plugins/auth.js'
+import entitlementPlugin from './plugins/entitlement.js'
 import sentryPlugin from './plugins/sentry.js'
 import { authRoutes } from './routes/auth/index.js'
 import { lgpdRoutes } from './routes/lgpd/index.js'
@@ -68,6 +69,12 @@ export function buildApp(opts: FastifyServerOptions = {}): FastifyInstance {
   // Plugins de infraestrutura
   app.register(sentryPlugin)
   app.register(authPlugin)
+
+  // Entitlement gate: MUST register after authPlugin (declares dependencies: ['auth'])
+  // T-7-04: Redis cache 30s TTL + explicit invalidation on status changes
+  // T-7-06: super_admin still checked — no bypass for admin role
+  const entitlementRedis = createBullMQRedisClient()
+  app.register(entitlementPlugin, { redis: entitlementRedis })
 
   // -------------------------------------------------------------------------
   // Bull Board em /admin/queues com guard Bearer token (D-10/D-11/D-12)

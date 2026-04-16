@@ -6,7 +6,7 @@ import { env } from '../config.js'
 export interface TenantUser {
   sub: string
   tenant_id: string
-  role: 'admin_escritorio' | 'advogado' | 'cliente'
+  role: 'admin_escritorio' | 'advogado' | 'cliente' | 'super_admin'
 }
 
 // JWKS cache: createRemoteJWKSet ja faz cache interno — NAO recriar por request
