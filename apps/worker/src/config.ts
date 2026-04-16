@@ -6,4 +6,6 @@ export const env = cleanEnv(process.env, {
   SUPABASE_SERVICE_ROLE_KEY: str(),
   REDIS_URL: url(),
   SENTRY_DSN: str({ default: '' }),
+  RESEND_API_KEY: str({ default: '' }),
+  RESEND_FROM_EMAIL: str({ default: 'Portal Juridico <noreply@portaljuridico.com.br>' }),
 })
