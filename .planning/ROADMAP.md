@@ -82,7 +82,7 @@ Plans:
 - [ ] 02-03-PLAN.md — [BLOCKING] supabase db push + verificação do schema no painel
 - [ ] 02-04-PLAN.md — BullMQ worker: circuit breaker Redis + step-job checkpoint + tier scheduler + diff idempotente
 - [x] 02-05-PLAN.md — Fastify routes: GET /processos/:id (staleness 72h) + POST /processos + Bull Board /admin/queues
-- [ ] 02-06-PLAN.md — Testes completos: checkpoint, idempotência, circuit breaker Redis, staleness limites
+- [x] 02-06-PLAN.md — Testes completos: checkpoint, idempotência, circuit breaker Redis, staleness limites
 **UI hint**: no
 
 ### Phase 3: Claude AI Translation (Core Value Prop)
