@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.datastore.preferences.core.edit
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.aethixdigital.portaljuridico.data.auth.TokenDataStore
 import com.aethixdigital.portaljuridico.network.api.AuthApi
 import com.aethixdigital.portaljuridico.network.model.dto.LoginRequest
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -26,6 +27,7 @@ private val VALID_ROLES = setOf("cliente", "advogado", "admin_escritorio")
 @HiltViewModel
 open class LoginViewModel @Inject constructor(
     private val authApi: AuthApi,
+    private val tokenDataStore: TokenDataStore,
     @ApplicationContext private val context: Context,
 ) : ViewModel() {
 
@@ -34,7 +36,7 @@ open class LoginViewModel @Inject constructor(
 
     fun login(email: String, password: String) {
         if (email.isBlank() || password.isBlank()) {
-            _uiState.value = LoginUiState.Error("Preencha email e senha.")
+            _uiState.value = LoginUiState.Error("Preencha CPF e senha.")
             return
         }
         viewModelScope.launch {
@@ -46,14 +48,18 @@ open class LoginViewModel @Inject constructor(
                     _uiState.value = LoginUiState.Error("Conta não autorizada.")
                     return@launch
                 }
+                tokenDataStore.saveToken(response.token)
                 context.clienteDataStore.edit { prefs ->
                     prefs[TOKEN_KEY] = response.token
                     prefs[ROLE_KEY] = role
+                    prefs[ONBOARDING_SEEN_KEY] = true
+                    prefs[LGPD_ACCEPTED_KEY] = true
+                    prefs[TERMS_VERSION_KEY] = TERMS_VERSION
                 }
                 _uiState.value = LoginUiState.Success(role)
             } catch (e: retrofit2.HttpException) {
-                if (e.code() == 401) {
-                    _uiState.value = LoginUiState.Error("Email ou senha incorretos. Tente novamente.")
+                if (e.code() == 400 || e.code() == 401) {
+                    _uiState.value = LoginUiState.Error("CPF ou senha incorretos. Tente novamente.")
                 } else {
                     _uiState.value = LoginUiState.Error("Erro ao fazer login. Tente novamente.")
                 }

@@ -20,15 +20,12 @@ android {
         versionCode = 1
         versionName = "1.0"
         testInstrumentationRunner = "com.aethixdigital.portaljuridico.cliente.HiltTestRunner"
-        buildConfigField("String", "API_BASE_URL", "\"http://10.0.2.2:3000\"")
+        buildConfigField("String", "API_BASE_URL", "\"https://ydhntdhmtdxvzfdktjtf.supabase.co/functions/v1/portal-api/\"")
+        manifestPlaceholders["usesCleartextTraffic"] = "false"
     }
 
     flavorDimensions += "tenant"
     productFlavors {
-        create("demo") {
-            dimension = "tenant"
-            applicationId = "com.aethixdigital.portaljuridico.demo"
-        }
         create("flores") {
             dimension = "tenant"
             applicationId = "com.aethixdigital.portaljuridico.flores"
@@ -38,14 +35,16 @@ android {
     buildTypes {
         release {
             isMinifyEnabled = true
+            manifestPlaceholders["usesCleartextTraffic"] = "false"
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            buildConfigField("String", "API_BASE_URL", "\"https://api.portaljuridico.com.br\"")
+            buildConfigField("String", "API_BASE_URL", "\"https://ydhntdhmtdxvzfdktjtf.supabase.co/functions/v1/portal-api/\"")
         }
         debug {
-            buildConfigField("String", "API_BASE_URL", "\"http://10.0.2.2:3000\"")
+            manifestPlaceholders["usesCleartextTraffic"] = "true"
+            buildConfigField("String", "API_BASE_URL", "\"https://ydhntdhmtdxvzfdktjtf.supabase.co/functions/v1/portal-api/\"")
         }
     }
     compileOptions {
