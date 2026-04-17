@@ -5,11 +5,14 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.preferencesDataStore
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+
+private val Context.billingDataStore by preferencesDataStore(name = "billing_prefs")
 
 /**
  * Polls GET /api/v1/tenant/status every 30 minutes via WorkManager.
@@ -35,7 +38,7 @@ class TenantStatusWorker @AssistedInject constructor(
     override suspend fun doWork(): Result {
         return try {
             val status = repository.getStatus()
-            applicationContext.dataStore.edit { prefs ->
+            applicationContext.billingDataStore.edit { prefs ->
                 prefs[BILLING_STATUS_KEY] = status.status
                 prefs[GRACE_BANNER_KEY] = status.graceBanner
                 status.daysUntilSuspension?.let { prefs[DAYS_UNTIL_SUSPENSION_KEY] = it }

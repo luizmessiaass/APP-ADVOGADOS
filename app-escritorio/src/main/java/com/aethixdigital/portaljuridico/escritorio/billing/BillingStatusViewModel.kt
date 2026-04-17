@@ -7,6 +7,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
 import retrofit2.http.GET
 import javax.inject.Inject
 
@@ -35,15 +37,16 @@ interface TenantStatusRepository {
 }
 
 // Retrofit data class for API response
+@JsonClass(generateAdapter = true)
 data class TenantStatusResponse(
     val status: String,
-    val grace_banner: Boolean,
-    val grace_period_started_at: String?,
-    val days_until_suspension: Int?,
+    @Json(name = "grace_banner") val graceBanner: Boolean,
+    @Json(name = "grace_period_started_at") val gracePeriodStartedAt: String?,
+    @Json(name = "days_until_suspension") val daysUntilSuspension: Int?,
 )
 
 interface TenantStatusApi {
-    @GET("tenant/status")
+    @GET("api/v1/tenant/status")
     suspend fun getStatus(): TenantStatusResponse
 }
 

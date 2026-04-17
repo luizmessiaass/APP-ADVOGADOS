@@ -62,12 +62,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.TextDecoration
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
@@ -89,8 +89,9 @@ fun LoginScreen(
     var passwordVisible by remember { mutableStateOf(false) }
 
     LaunchedEffect(uiState) {
-        if (uiState is LoginUiState.Success) {
-            val destination = when (uiState.role) {
+        val currentState = uiState
+        if (currentState is LoginUiState.Success) {
+            val destination = when (currentState.role) {
                 "advogado", "admin_escritorio" -> Routes.ADMIN_HOME
                 else -> Routes.PROCESSO_LIST
             }

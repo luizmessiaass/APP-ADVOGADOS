@@ -1,5 +1,7 @@
 plugins {
     alias(libs.plugins.android.library)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.hilt.android)
 }
 
 android {
@@ -16,5 +18,12 @@ android {
 }
 
 dependencies {
+    implementation(project(":core-common"))
+    implementation(project(":core-network"))
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.compiler)
+    implementation(libs.datastore.preferences)
+    implementation(libs.jwt.decode)
+    implementation(libs.retrofit)
     testImplementation(libs.junit)
 }

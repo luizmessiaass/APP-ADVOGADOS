@@ -299,20 +299,20 @@ private fun DadosCadastraisSection(
                     .padding(bottom = 16.dp)
             ) {
                 DadoCadastralItem(label = "Número do processo", valor = processo.numeroCnj)
-                if (!processo.tribunal.isNullOrBlank()) {
-                    DadoCadastralItem(label = "Tribunal responsável", valor = processo.tribunal)
+                processo.tribunal?.takeIf { it.isNotBlank() }?.let {
+                    DadoCadastralItem(label = "Tribunal responsável", valor = it)
                 }
-                if (!processo.comarca.isNullOrBlank()) {
-                    DadoCadastralItem(label = "Cidade / Comarca", valor = processo.comarca)
+                processo.comarca?.takeIf { it.isNotBlank() }?.let {
+                    DadoCadastralItem(label = "Cidade / Comarca", valor = it)
                 }
-                if (!processo.classeProcessual.isNullOrBlank()) {
-                    DadoCadastralItem(label = "Tipo de processo", valor = processo.classeProcessual)
+                processo.classeProcessual?.takeIf { it.isNotBlank() }?.let {
+                    DadoCadastralItem(label = "Tipo de processo", valor = it)
                 }
-                if (!processo.requerente.isNullOrBlank()) {
-                    DadoCadastralItem(label = "Requerente", valor = processo.requerente)
+                processo.requerente?.takeIf { it.isNotBlank() }?.let {
+                    DadoCadastralItem(label = "Requerente", valor = it)
                 }
-                if (!processo.requerido.isNullOrBlank()) {
-                    DadoCadastralItem(label = "Requerido", valor = processo.requerido)
+                processo.requerido?.takeIf { it.isNotBlank() }?.let {
+                    DadoCadastralItem(label = "Requerido", valor = it)
                 }
             }
         }
