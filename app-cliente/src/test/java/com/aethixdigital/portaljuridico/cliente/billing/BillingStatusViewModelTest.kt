@@ -1,10 +1,15 @@
 package com.aethixdigital.portaljuridico.cliente.billing
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.setMain
+import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
+import org.junit.Before
 import org.junit.Test
 
 /**
@@ -14,6 +19,17 @@ import org.junit.Test
  */
 @OptIn(ExperimentalCoroutinesApi::class)
 class BillingStatusViewModelTest {
+    private val testDispatcher = UnconfinedTestDispatcher()
+
+    @Before
+    fun setUp() {
+        Dispatchers.setMain(testDispatcher)
+    }
+
+    @After
+    fun tearDown() {
+        Dispatchers.resetMain()
+    }
 
     private class FakeTenantStatusRepository(
         private val result: Result<TenantBillingStatus>,
@@ -30,7 +46,7 @@ class BillingStatusViewModelTest {
         )
 
     @Test
-    fun `read_only status emits Success with correct state`() = runTest(UnconfinedTestDispatcher()) {
+    fun `read_only status emits Success with correct state`() = runTest(testDispatcher) {
         val viewModel = viewModelWith(
             TenantBillingStatus(
                 status = "read_only",
@@ -48,7 +64,7 @@ class BillingStatusViewModelTest {
     }
 
     @Test
-    fun `suspended status emits Success with status=suspended`() = runTest(UnconfinedTestDispatcher()) {
+    fun `suspended status emits Success with status=suspended`() = runTest(testDispatcher) {
         val viewModel = viewModelWith(
             TenantBillingStatus(
                 status = "suspended",
@@ -64,7 +80,7 @@ class BillingStatusViewModelTest {
     }
 
     @Test
-    fun `active status emits Success with graceBanner=false`() = runTest(UnconfinedTestDispatcher()) {
+    fun `active status emits Success with graceBanner=false`() = runTest(testDispatcher) {
         val viewModel = viewModelWith(
             TenantBillingStatus(
                 status = "active",
@@ -81,7 +97,7 @@ class BillingStatusViewModelTest {
     }
 
     @Test
-    fun `repository error emits Error state`() = runTest(UnconfinedTestDispatcher()) {
+    fun `repository error emits Error state`() = runTest(testDispatcher) {
         val viewModel = viewModelWithError()
 
         val state = viewModel.billingState.value

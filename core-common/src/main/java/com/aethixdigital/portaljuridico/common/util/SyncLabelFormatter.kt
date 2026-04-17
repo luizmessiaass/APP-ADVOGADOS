@@ -21,7 +21,7 @@ object SyncLabelFormatter {
         val diffHours = ChronoUnit.HOURS.between(sincronizado, agora)
         return when {
             diffHours < 24L -> "Sincronizado há ${diffHours}h"
-            diffHours < 168L -> "Sincronizado há ${diffHours / 24}d"
+            diffHours <= 168L -> "Sincronizado há ${diffHours / 24}d"
             else -> "Sincronizado há ${diffHours / 168} semanas"
         }
     }
