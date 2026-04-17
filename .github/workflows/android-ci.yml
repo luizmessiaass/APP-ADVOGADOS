@@ -1,5 +1,5 @@
 # Android CI — Phase 0 baseline
-# Decisions: D-18 (push/PR to main/master), D-19 (lint + test + assembleDemoDebug),
+# Decisions: D-18 (push/PR to main/master), D-19 (lint + test + assembleFloresDebug),
 #            D-20 (no emulator tests), D-21 (Android-only, backend CI in Phase 1)
 
 name: Android CI
@@ -29,16 +29,16 @@ jobs:
         run: chmod +x gradlew
 
       - name: Run lint
-        run: ./gradlew :app-cliente:lintDemoDebug :app-escritorio:lintDebug
+        run: ./gradlew :app-cliente:lintFloresDebug :app-escritorio:lintDebug
 
       - name: Run unit tests
         run: ./gradlew test
 
-      - name: Assemble demo debug APK
-        run: ./gradlew :app-cliente:assembleDemoDebug
+      - name: Assemble Flores debug APK
+        run: ./gradlew :app-cliente:assembleFloresDebug
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: demo-debug-apk
-          path: app-cliente/build/outputs/apk/demo/debug/*.apk
+          name: flores-debug-apk
+          path: app-cliente/build/outputs/apk/flores/debug/*.apk
