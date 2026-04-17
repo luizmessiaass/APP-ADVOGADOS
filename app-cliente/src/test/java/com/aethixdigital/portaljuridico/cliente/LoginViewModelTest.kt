@@ -59,7 +59,7 @@ class LoginViewModelTest {
         logic.login("cliente@test.com", "password123")
         advanceUntilIdle()
 
-        assertEquals(LoginUiState.Success, logic.uiState.value)
+        assertEquals(LoginUiState.Success("cliente"), logic.uiState.value)
         assertNotNull(logic.savedToken)
         assertEquals("jwt.cliente.token", logic.savedToken)
     }
@@ -133,7 +133,7 @@ class LoginLogic(private val authApi: AuthApi) {
                 return
             }
             savedToken = response.token
-            _uiState.value = LoginUiState.Success
+            _uiState.value = LoginUiState.Success(response.role)
         } catch (e: HttpException) {
             if (e.code() == 401) {
                 _uiState.value = LoginUiState.Error("Email ou senha incorretos. Tente novamente.")

@@ -97,4 +97,6 @@ class FakeMensagemClienteRepository : ClienteRepository {
     override suspend fun enviarMensagem(clienteId: String, texto: String) = enviarResult
 
     override suspend fun getPortalSessionUrl() = Result.success("https://billing.stripe.com/test")
+
+    override suspend fun deletarCliente(clienteId: String): Result<Unit> = Result.success(Unit)
 }

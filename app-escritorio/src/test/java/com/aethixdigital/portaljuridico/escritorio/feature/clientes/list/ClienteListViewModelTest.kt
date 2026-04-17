@@ -94,4 +94,6 @@ class FakeClienteRepository : ClienteRepository {
         Result.success("fake-msg-id")
     override suspend fun getPortalSessionUrl(): Result<String> =
         Result.success("https://billing.stripe.com/test")
+    override suspend fun deletarCliente(clienteId: String): Result<Unit> =
+        Result.success(Unit)
 }
